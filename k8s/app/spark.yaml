@@ -1,0 +1,77 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spark-config
+  namespace: law-chatbot
+data:
+  KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+  KAFKA_TOPIC: "van-ban-phap-luat"
+  MINIO_ENDPOINT: "http://minio:9000"
+  MINIO_ACCESS_KEY: "minioadmin"
+  MINIO_SECRET_KEY: "minioadmin"
+  MINIO_BUCKET: "phapluat"
+  ELASTICSEARCH_URL: "http://elasticsearch:9200"
+---
+# Spark Streaming - long-running job
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-streaming
+  namespace: law-chatbot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spark-streaming
+  template:
+    metadata:
+      labels:
+        app: spark-streaming
+    spec:
+      containers:
+        - name: spark-streaming
+          image: law-chatbot/spark:latest
+          imagePullPolicy: Never
+          command: ["spark-submit", "--master", "local[*]", "spark/streaming/consumer.py"]
+          envFrom:
+            - configMapRef:
+                name: spark-config
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+---
+# Spark Batch - manual trigger via Job
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: spark-batch
+  namespace: law-chatbot
+spec:
+  backoffLimit: 2
+  template:
+    metadata:
+      labels:
+        app: spark-batch
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: spark-batch
+          image: law-chatbot/spark:latest
+          imagePullPolicy: Never
+          command: ["spark-submit", "--master", "local[*]", "spark/batch/pipeline.py"]
+          envFrom:
+            - configMapRef:
+                name: spark-config
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+      restartPolicy: OnFailure

@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+
+# Node
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+
+# Environment
+.env
+.env.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Claude
+.claude/
+CLAUDE.md
+
+PRD_Legal_Chatbot.pdf
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Spark
+spark/checkpoints/
+*.jar
+metastore_db/
+derby.log
+
+# Scrapy
+crawler/.scrapy/
+
+# Logs
+*.log
+logs/
+
+# Data (local testing)
+data/
+*.parquet
+*.json.gz
