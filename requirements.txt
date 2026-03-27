@@ -6,6 +6,7 @@ scrapy-playwright>=0.0.34
 # Kafka
 confluent-kafka>=2.3
 kafka-python>=2.0
+minio>=7.2
 
 # Spark
 pyspark>=3.5
