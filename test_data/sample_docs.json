@@ -1,0 +1,38 @@
+[
+  {
+    "id": "test-001",
+    "title": "Luat Doanh nghiep 2020",
+    "doc_type": "Luat",
+    "doc_number": "59/2020/QH14",
+    "issued_date": "2020-06-17",
+    "agency": "Quoc hoi",
+    "content_html": "<p>Dieu 1. Pham vi dieu chinh</p><p>Luat nay quy dinh ve viec thanh lap, to chuc quan ly, to chuc lai, giai the va hoat dong co lien quan cua doanh nghiep, bao gom doanh nghiep tu nhan, cong ty hop danh, cong ty trach nhiem huu han, cong ty co phan.</p><p>Dieu 2. Doi tuong ap dung</p><p>1. Doanh nghiep. 2. Co quan, to chuc, ca nhan co lien quan den viec thanh lap, to chuc quan ly, to chuc lai, giai the va hoat dong co lien quan cua doanh nghiep.</p>",
+    "url": "https://thuvienphapluat.vn/van-ban/Doanh-nghiep/Luat-59-2020-QH14",
+    "crawled_at": "2026-03-26T10:30:00Z",
+    "status": "con-hieu-luc"
+  },
+  {
+    "id": "test-002",
+    "title": "Nghi dinh 01/2021/ND-CP ve dang ky doanh nghiep",
+    "doc_type": "Nghi dinh",
+    "doc_number": "01/2021/ND-CP",
+    "issued_date": "2021-01-04",
+    "agency": "Chinh phu",
+    "content_html": "<p>Dieu 1. Pham vi dieu chinh</p><p>Nghi dinh nay quy dinh chi tiet ve ho so, trinh tu, thu tuc dang ky doanh nghiep; dang ky ho kinh doanh; quy dinh ve co quan dang ky kinh doanh va quan ly nha nuoc ve dang ky doanh nghiep.</p>",
+    "url": "https://thuvienphapluat.vn/van-ban/Doanh-nghiep/Nghi-dinh-01-2021-ND-CP",
+    "crawled_at": "2026-03-26T10:35:00Z",
+    "status": "con-hieu-luc"
+  },
+  {
+    "id": "test-003",
+    "title": "Bo luat Lao dong 2019",
+    "doc_type": "Luat",
+    "doc_number": "45/2019/QH14",
+    "issued_date": "2019-11-20",
+    "agency": "Quoc hoi",
+    "content_html": "<p>Dieu 1. Pham vi dieu chinh</p><p>Bo luat nay quy dinh tieu chuan lao dong; quyen, nghia vu va trach nhiem cua nguoi lao dong, nguoi su dung lao dong, to chuc dai dien nguoi lao dong tai co so, to chuc dai dien nguoi su dung lao dong trong quan he lao dong va cac quan he khac lien quan truc tiep den quan he lao dong.</p>",
+    "url": "https://thuvienphapluat.vn/van-ban/Lao-dong/Bo-luat-45-2019-QH14",
+    "crawled_at": "2026-03-26T10:40:00Z",
+    "status": "con-hieu-luc"
+  }
+]
