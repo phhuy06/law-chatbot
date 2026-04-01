@@ -1,8 +1,8 @@
 import os
-from dotenv import load_dotenv
+import sys
 
-load_dotenv()
-
+os.environ['PYSPARK_PYTHON'] = sys.executable
+os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
 
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import explode, col
