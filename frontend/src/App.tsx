@@ -4,7 +4,27 @@ import ChatInput from "./components/ChatInput";
 import { ChatMessage as ChatMessageType, ChatResponse } from "./types";
 import "./App.css";
 
-// Mock response cho tuan 1 (chua co backend)
+// API Configuration
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const USE_MOCK = import.meta.env.VITE_USE_MOCK === "true"; // Set to "true" to use mock
+
+// Real API call
+const sendQuestion = async (question: string): Promise<ChatResponse> => {
+  const res = await fetch(`${API_BASE}/api/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ question }),
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ detail: "Unknown error" }));
+    throw new Error(error.detail || `API error: ${res.status}`);
+  }
+
+  return res.json();
+};
+
+// Mock response (for testing without backend)
 const mockResponse = async (question: string): Promise<ChatResponse> => {
   // Gia lap delay 1 giay
   await new Promise((r) => setTimeout(r, 1000));
@@ -47,18 +67,41 @@ export default function App() {
     setIsLoading(true);
 
     try {
-      // Goi mock API (tuan sau se thay bang API call that)
-      const response = await mockResponse(question);
+      // Goi API (real hoac mock tuy theo config)
+      const response = USE_MOCK 
+        ? await mockResponse(question)
+        : await sendQuestion(question);
 
-      // Them message assistant vao list
+      // Tao message assistant rong
+      const assistantMessageId = (Date.now() + 1).toString();
       const assistantMessage: ChatMessageType = {
-        id: (Date.now() + 1).toString(),
+        id: assistantMessageId,
         role: "assistant",
-        content: response.answer,
+        content: "",
         sources: response.sources,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, assistantMessage]);
+
+      // Hieu ung typing: hien thi tung chu mot
+      const fullText = response.answer;
+      let currentIndex = 0;
+
+      const typingInterval = setInterval(() => {
+        if (currentIndex < fullText.length) {
+          currentIndex++;
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === assistantMessageId
+                ? { ...msg, content: fullText.slice(0, currentIndex) }
+                : msg
+            )
+          );
+        } else {
+          clearInterval(typingInterval);
+          setIsLoading(false);
+        }
+      }, 20); // 20ms cho moi chu (co the dieu chinh)
     } catch (error) {
       console.error("Error:", error);
       // Hien thi loi neu co
@@ -69,7 +112,6 @@ export default function App() {
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
-    } finally {
       setIsLoading(false);
     }
   };
