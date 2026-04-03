@@ -50,13 +50,12 @@ Frontend sẽ chạy tại: http://localhost:3000
 
 ## Tính năng
 
-- ✅ Giao diện chat responsive (desktop + mobile)
-- ✅ Typing animation (chữ xuất hiện từng chữ một)
-- ✅ Hiển thị nguồn trích dẫn (sources)
-- ✅ Auto-scroll khi có tin nhắn mới
-- ✅ Loading state khi đang chờ phản hồi
-- ✅ Error handling
-- ✅ Mock mode để test không cần backend
+-  Giao diện chat responsive (desktop + mobile)
+-  Hiển thị nguồn trích dẫn (sources)
+-  Auto-scroll khi có tin nhắn mới
+-  Loading state khi đang chờ phản hồi
+-  Error handling
+-  Mock mode để test không cần backend
 
 ## Cấu trúc thư mục
 

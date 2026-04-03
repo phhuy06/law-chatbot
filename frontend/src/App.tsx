@@ -83,7 +83,6 @@ export default function App() {
       };
       setMessages((prev) => [...prev, assistantMessage]);
 
-      // Hieu ung typing: hien thi tung chu mot
       const fullText = response.answer;
       let currentIndex = 0;
 
