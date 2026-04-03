@@ -2,12 +2,16 @@ from playwright.sync_api import sync_playwright
 import re
 import csv
 from datetime import datetime
+import time
+import random
 
 import os
 
 BASEDIR = os.path.dirname(__file__)
 OUTPUT = os.path.join(BASEDIR, "output", "test-data.csv")
 START_URL = "https://thuvienphapluat.vn/hoi-dap-phap-luat/tien-te-ngan-hang"
+START_PAGE = 2
+END_PAGE = 10
 
 
 def normalize_text(s: str) -> str:
@@ -150,7 +154,7 @@ def extract_from_detail(page, url):
     }
 
 
-def main(limit=20):
+def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0):
     with sync_playwright() as pw:
         browser = pw.chromium.launch(headless=True, args=["--disable-blink-features=AutomationControlled"])
         context = browser.new_context(user_agent=(
@@ -158,63 +162,114 @@ def main(limit=20):
             " Chrome/114.0.0.0 Safari/537.36"
         ))
         page = context.new_page()
-        page.goto(START_URL, wait_until="domcontentloaded")
 
-        # wait for list container
-        try:
-            page.wait_for_selector("div.tvpl-main.container.pt-3.pb-3", timeout=5000)
-        except Exception:
-            pass
+        all_links = []
+        for p in range(start_page, end_page + 1):
+            list_url = f"{START_URL}?page={p}"
+            print(f"Fetching list page: {list_url}")
+            try:
+                page.goto(list_url, wait_until="domcontentloaded", timeout=20000)
+            except Exception as e:
+                print(f"Failed to load list page {list_url}: {e}")
+                continue
 
-        # collect article links from articles inside container
-        links = []
-        articles = page.query_selector_all("div.tvpl-main.container.pt-3.pb-3 article")
-        if not articles:
-            articles = page.query_selector_all("article")
-        for a in articles:
-            el = a.query_selector("a")
-            if el:
-                href = el.get_attribute("href")
-                if href and href.startswith("/"):
-                    href = "https://thuvienphapluat.vn" + href
-                if href and href.startswith("http"):
-                    links.append(href)
-        # fallback: look for article links on page
-        if not links:
-            for a in page.query_selector_all("a"):
-                href = a.get_attribute("href")
-                if href and "/hoi-dap-phap-luat/" in href and href.endswith('.html'):
-                    if href.startswith('/'):
-                        href = 'https://thuvienphapluat.vn' + href
-                    links.append(href)
+            # wait for list container
+            try:
+                page.wait_for_selector("div.tvpl-main.container.pt-3.pb-3", timeout=5000)
+            except Exception:
+                pass
 
-        # dedupe and limit
+            # collect article links from articles inside container
+            links = []
+            articles = page.query_selector_all("div.tvpl-main.container.pt-3.pb-3 article")
+            if not articles:
+                articles = page.query_selector_all("article")
+            for a in articles:
+                el = a.query_selector("a")
+                if el:
+                    href = el.get_attribute("href")
+                    if href and href.startswith("/"):
+                        href = "https://thuvienphapluat.vn" + href
+                    if href and href.startswith("http"):
+                        links.append(href)
+            # fallback: look for article links on page
+            if not links:
+                for a in page.query_selector_all("a"):
+                    href = a.get_attribute("href")
+                    if href and "/hoi-dap-phap-luat/" in href and href.endswith('.html'):
+                        if href.startswith('/'):
+                            href = 'https://thuvienphapluat.vn' + href
+                        links.append(href)
+
+            # dedupe per page and add
+            seen_local = set()
+            for l in links:
+                if l not in seen_local:
+                    seen_local.add(l)
+                    all_links.append(l)
+
+            # polite delay between list pages
+            time.sleep(random.uniform(1.0, 2.0))
+
+        # dedupe overall
         seen = set()
         ordered = []
-        for l in links:
+        for l in all_links:
             if l not in seen:
                 seen.add(l)
                 ordered.append(l)
-        links = ordered[:limit]
 
-        # open CSV
-        with open(OUTPUT, "w", encoding="utf-8", newline='') as f:
+        if per_page_limit and per_page_limit > 0:
+            links_to_process = ordered[:per_page_limit]
+        else:
+            links_to_process = ordered
+
+        # prepare output CSV: append mode, write header only if file missing or empty
+        os.makedirs(os.path.dirname(OUTPUT), exist_ok=True)
+        existing_urls = set()
+        if os.path.exists(OUTPUT):
+            try:
+                with open(OUTPUT, "r", encoding="utf-8", newline='') as rf:
+                    rdr = csv.reader(rf, delimiter=",", quoting=csv.QUOTE_ALL)
+                    # skip header
+                    first = True
+                    for row in rdr:
+                        if first:
+                            first = False
+                            continue
+                        if len(row) >= 10:
+                            existing_urls.add(row[9])
+            except Exception:
+                existing_urls = set()
+
+        write_header = not os.path.exists(OUTPUT) or os.path.getsize(OUTPUT) == 0
+        with open(OUTPUT, "a", encoding="utf-8", newline='') as f:
             writer = csv.writer(f, delimiter=",", quoting=csv.QUOTE_ALL)
-            writer.writerow(["id","question","answer","category","author","published_date","legal_refs","tags","views","url"])
-            for idx, link in enumerate(links, 1):
+            if write_header:
+                writer.writerow(["id","question","answer","category","author","published_date","legal_refs","tags","views","url"])
+
+            to_process = [l for l in links_to_process if l not in existing_urls]
+            print(f"New links to process (excluding already-present): {len(to_process)}")
+
+            for idx, link in enumerate(to_process, 1):
+                print(f"Processing {idx}/{len(to_process)}: {link}")
                 try:
-                    page.goto(link, wait_until="domcontentloaded", timeout=15000)
+                    page.goto(link, wait_until="domcontentloaded", timeout=20000)
                     item = extract_from_detail(page, link)
                     writer.writerow([
-                        item['id'], item['question'], item['answer'], item['category'], item['author'],
-                        item['published_date'], item['legal_refs'], item['tags'], item['views'], item['url']
+                        item.get('id', ''), item.get('question', ''), item.get('answer', ''),
+                        item.get('category', ''), item.get('author', ''), item.get('published_date', ''),
+                        item.get('legal_refs', ''), item.get('tags', ''), item.get('views', 0), item.get('url', '')
                     ])
                 except Exception as e:
                     print(f"Error fetching {link}: {e}")
+
+                # polite delay between articles
+                time.sleep(random.uniform(1.0, 2.0))
 
         context.close()
         browser.close()
 
 
 if __name__ == '__main__':
-    main(limit=20)
+    main()
