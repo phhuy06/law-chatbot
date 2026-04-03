@@ -5,7 +5,7 @@ import { ChatMessage as ChatMessageType, ChatResponse } from "./types";
 import "./App.css";
 
 // API Configuration
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_BASE = import.meta.env.VITE_API_URL || "";
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === "true"; // Set to "true" to use mock
 
 // Real API call

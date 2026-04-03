@@ -58,6 +58,64 @@ services:
     ports:
       - "6379:6379"
 
+  # --- Spark ---
+  spark-master:
+    image: bitnami/spark:3.5
+    environment:
+      - SPARK_MODE=master
+      - SPARK_MASTER_HOST=spark-master
+    ports:
+      - "7077:7077"
+      - "8080:8080"
+
+  spark-worker:
+    image: bitnami/spark:3.5
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=2g
+      - SPARK_WORKER_CORES=2
+
+  spark-job:
+    build:
+      context: .
+      dockerfile: spark/Dockerfile
+    depends_on:
+      - spark-master
+      - kafka
+      - elasticsearch
+      - minio
+    env_file:
+      - .env
+    environment:
+      SPARK_MASTER_URL: spark://spark-master:7077
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      MINIO_ENDPOINT: minio:9000
+
+  # --- Kafka Workers ---
+  kafka-consumer:
+    build:
+      context: .
+      dockerfile: kafka/Dockerfile
+    depends_on:
+      - kafka
+      - minio
+    restart: on-failure
+
+  csv-to-kafka:
+    build:
+      context: .
+      dockerfile: kafka/Dockerfile
+    depends_on:
+      - kafka
+    volumes:
+      - ./crawler/output:/app/crawler/output:ro
+    command: ["python", "csv_to_kafka.py", "--csv", "/app/crawler/output/demo-data.csv"]
+    restart: "no"
+
   # --- Application ---
   backend:
     build:
