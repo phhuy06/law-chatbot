@@ -4,13 +4,14 @@ import csv
 from datetime import datetime
 import time
 import random
+import argparse
 
 import os
 
 BASEDIR = os.path.dirname(__file__)
-OUTPUT = os.path.join(BASEDIR, "output", "test-data.csv")
-START_URL = "https://thuvienphapluat.vn/hoi-dap-phap-luat/tien-te-ngan-hang"
-START_PAGE = 2
+OUTPUT = os.path.join(BASEDIR, "output", "quyen-dan-su.csv")
+START_URL = "https://thuvienphapluat.vn/hoi-dap-phap-luat/quyen-dan-su"
+START_PAGE = 1
 END_PAGE = 10
 
 
@@ -154,7 +155,24 @@ def extract_from_detail(page, url):
     }
 
 
-def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0):
+def safe_goto(page, url, retries=3, timeout=20000):
+    """Navigate with retries and exponential backoff. Returns True on success, False on final failure."""
+    attempt = 0
+    while attempt <= retries:
+        try:
+            page.goto(url, wait_until="domcontentloaded", timeout=timeout)
+            return True
+        except Exception as e:
+            attempt += 1
+            if attempt > retries:
+                print(f"Failed to goto {url} after {retries} retries: {e}")
+                return False
+            backoff = (2 ** (attempt - 1)) + random.uniform(0.5, 1.5)
+            print(f"Goto failed ({attempt}/{retries}) for {url}: {e}; retrying after {backoff:.1f}s")
+            time.sleep(backoff)
+
+
+def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0, delay_min=1.0, delay_max=2.0, retries=3):
     with sync_playwright() as pw:
         browser = pw.chromium.launch(headless=True, args=["--disable-blink-features=AutomationControlled"])
         context = browser.new_context(user_agent=(
@@ -168,7 +186,9 @@ def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0):
             list_url = f"{START_URL}?page={p}"
             print(f"Fetching list page: {list_url}")
             try:
-                page.goto(list_url, wait_until="domcontentloaded", timeout=20000)
+                ok = safe_goto(page, list_url, retries=retries, timeout=20000)
+                if not ok:
+                    continue
             except Exception as e:
                 print(f"Failed to load list page {list_url}: {e}")
                 continue
@@ -254,7 +274,10 @@ def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0):
             for idx, link in enumerate(to_process, 1):
                 print(f"Processing {idx}/{len(to_process)}: {link}")
                 try:
-                    page.goto(link, wait_until="domcontentloaded", timeout=20000)
+                    ok = safe_goto(page, link, retries=retries, timeout=20000)
+                    if not ok:
+                        print(f"Skipping {link} due to repeated navigation failures")
+                        continue
                     item = extract_from_detail(page, link)
                     writer.writerow([
                         item.get('id', ''), item.get('question', ''), item.get('answer', ''),
@@ -265,11 +288,19 @@ def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0):
                     print(f"Error fetching {link}: {e}")
 
                 # polite delay between articles
-                time.sleep(random.uniform(1.0, 2.0))
+                time.sleep(random.uniform(delay_min, delay_max))
 
         context.close()
         browser.close()
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description='Playwright scraper for thuvienphapluat')
+    parser.add_argument('--start', type=int, default=START_PAGE, help='start page')
+    parser.add_argument('--end', type=int, default=END_PAGE, help='end page')
+    parser.add_argument('--limit', type=int, default=0, help='limit total articles (0 = all)')
+    parser.add_argument('--delay-min', type=float, default=1.0, help='minimum per-request delay')
+    parser.add_argument('--delay-max', type=float, default=2.0, help='maximum per-request delay')
+    parser.add_argument('--retries', type=int, default=3, help='navigation retry attempts')
+    args = parser.parse_args()
+    main(start_page=args.start, end_page=args.end, per_page_limit=args.limit, delay_min=args.delay_min, delay_max=args.delay_max, retries=args.retries)
