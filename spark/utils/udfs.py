@@ -2,7 +2,9 @@ import re
 import unicodedata
 from bs4 import BeautifulSoup
 from pyspark.sql.functions import udf
-from pyspark.sql.types import StringType, ArrayType
+from pyspark.sql.types import StringType, ArrayType, FloatType
+import os
+from openai import OpenAI
 
 def clean_text_udf(html_content: str) -> str:
     if not html_content or not isinstance(html_content, str):
@@ -65,3 +67,43 @@ def chunk_text_udf(text: str, max_length: int = 500, overlap: int = 50) -> list[
 
 clean_text = udf(clean_text_udf, StringType())
 chunk_text = udf(chunk_text_udf, ArrayType(StringType()))
+
+"""def get_embedding_udf(text: str) -> list[float]:
+
+    if not text:
+        return []
+        
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        print("Cảnh báo: Chưa set biến môi trường OPENAI_API_KEY")
+        return []
+        
+    try:
+        client = OpenAI(api_key=api_key)
+        response = client.embeddings.create(
+            model="text-embedding-3-small",
+            input=text
+        )
+        return response.data[0].embedding
+    except Exception as e:
+        print(f"Lỗi khi nhúng text: {e}")
+        return []
+embed_text = udf(get_embedding_udf, ArrayType(FloatType()))"""
+
+def get_embedding_udf(text: str) -> list[float]:
+    api_key = os.environ.get("OPENAI_API_KEY", "api_key_chua_co")
+    if api_key == "api_key_chua_co":
+        return [0.01] * 1536
+        
+    try:
+        client = OpenAI(api_key=api_key)
+        response = client.embeddings.create(
+            model="text-embedding-3-small",
+            input=text
+        )
+        return response.data[0].embedding
+    except Exception as e:
+        print(f"Lỗi khi nhúng text: {e}")
+        return [0.01] * 1536
+
+embed_text = udf(get_embedding_udf, ArrayType(FloatType()))
