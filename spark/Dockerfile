@@ -9,3 +9,5 @@ RUN pip install --no-cache-dir -r requirements-spark.txt
 COPY spark/ ./spark/
 
 USER 1001
+
+CMD ["python", "-m", "spark.streaming.consumer"]

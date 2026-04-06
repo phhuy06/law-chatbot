@@ -43,6 +43,11 @@ services:
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
     volumes:
       - es-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.12.2
@@ -52,6 +57,20 @@ services:
       - "5601:5601"
     environment:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+
+  es-init:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ES_INDEX_BATCH: phapluat-batch
+      ES_INDEX_REALTIME: phapluat-realtime
+    command: ["python", "scripts/init_elasticsearch.py"]
+    restart: "no"
 
   redis:
     image: redis:7-alpine
@@ -83,10 +102,16 @@ services:
       context: .
       dockerfile: spark/Dockerfile
     depends_on:
-      - spark-master
-      - kafka
-      - elasticsearch
-      - minio
+      spark-master:
+        condition: service_started
+      kafka:
+        condition: service_started
+      elasticsearch:
+        condition: service_healthy
+      minio:
+        condition: service_started
+      es-init:
+        condition: service_completed_successfully
     env_file:
       - .env
     environment:
@@ -103,6 +128,8 @@ services:
     depends_on:
       - kafka
       - minio
+    env_file:
+      - .env
     restart: on-failure
 
   csv-to-kafka:
@@ -111,10 +138,26 @@ services:
       dockerfile: kafka/Dockerfile
     depends_on:
       - kafka
+    env_file:
+      - .env
     volumes:
       - ./crawler/output:/app/crawler/output:ro
     command: ["python", "csv_to_kafka.py", "--csv", "/app/crawler/output/demo-data.csv"]
     restart: "no"
+    profiles:
+      - seed
+
+  data-ingest:
+    build:
+      context: .
+      dockerfile: kafka/Dockerfile
+    depends_on:
+      - kafka
+      - minio
+    env_file:
+      - .env
+    command: ["python", "minio_ingest.py"]
+    restart: on-failure
 
   # --- Application ---
   backend:
@@ -129,8 +172,12 @@ services:
       ELASTICSEARCH_URL: http://elasticsearch:9200
       REDIS_URL: redis://redis:6379/0
     depends_on:
-      - elasticsearch
-      - redis
+      elasticsearch:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      es-init:
+        condition: service_completed_successfully
 
   frontend:
     build:

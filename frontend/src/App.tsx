@@ -6,9 +6,7 @@ import "./App.css";
 
 // API Configuration
 const API_BASE = import.meta.env.VITE_API_URL || "";
-const USE_MOCK = import.meta.env.VITE_USE_MOCK === "true"; // Set to "true" to use mock
 
-// Real API call
 const sendQuestion = async (question: string): Promise<ChatResponse> => {
   const res = await fetch(`${API_BASE}/api/chat`, {
     method: "POST",
@@ -22,27 +20,6 @@ const sendQuestion = async (question: string): Promise<ChatResponse> => {
   }
 
   return res.json();
-};
-
-// Mock response (for testing without backend)
-const mockResponse = async (question: string): Promise<ChatResponse> => {
-  // Gia lap delay 1 giay
-  await new Promise((r) => setTimeout(r, 1000));
-  return {
-    answer: `Đây là câu trả lời mẫu cho: "${question}". Theo quy định pháp luật Việt Nam, doanh nghiệp cần tuân thủ các quy định về đăng ký kinh doanh, thuế, và các nghĩa vụ pháp lý khác.`,
-    sources: [
-      {
-        title: "Luật Doanh nghiệp 2020",
-        url: "https://thuvienphapluat.vn/van-ban/Doanh-nghiep/Luat-Doanh-nghiep-2020-59-2020-QH14-427301.aspx",
-        doc_number: "59/2020/QH14",
-      },
-      {
-        title: "Bộ luật Dân sự 2015",
-        url: "https://thuvienphapluat.vn/van-ban/Quyen-dan-su/Bo-luat-Dan-su-2015-91-2015-QH13-296543.aspx",
-        doc_number: "91/2015/QH13",
-      },
-    ],
-  };
 };
 
 export default function App() {
@@ -67,10 +44,7 @@ export default function App() {
     setIsLoading(true);
 
     try {
-      // Goi API (real hoac mock tuy theo config)
-      const response = USE_MOCK 
-        ? await mockResponse(question)
-        : await sendQuestion(question);
+      const response = await sendQuestion(question);
 
       // Tao message assistant rong
       const assistantMessageId = (Date.now() + 1).toString();

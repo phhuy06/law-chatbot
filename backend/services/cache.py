@@ -20,14 +20,21 @@ class CacheService:
         return f"chat:{h}"
 
     async def get(self, question: str) -> dict | None:
-        key = self._make_key(question)
-        data = await self._redis.get(key)
-        if data is None:
+        try:
+            key = self._make_key(question)
+            data = await self._redis.get(key)
+            if data is None:
+                return None
+            logger.info("Cache hit for key: %s", key[:20])
+            return json.loads(data)
+        except Exception as exc:
+            logger.warning("Cache GET failed, skipping: %s", exc)
             return None
-        logger.info("Cache hit for key: %s", key[:20])
-        return json.loads(data)
 
     async def set(self, question: str, response: dict):
-        key = self._make_key(question)
-        await self._redis.setex(key, self._ttl, json.dumps(response, ensure_ascii=False))
-        logger.info("Cached response for key: %s (TTL=%ds)", key[:20], self._ttl)
+        try:
+            key = self._make_key(question)
+            await self._redis.setex(key, self._ttl, json.dumps(response, ensure_ascii=False))
+            logger.info("Cached response for key: %s (TTL=%ds)", key[:20], self._ttl)
+        except Exception as exc:
+            logger.warning("Cache SET failed, skipping: %s", exc)

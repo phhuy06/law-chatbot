@@ -17,13 +17,20 @@ sys.path.append(project_root)
 from spark.utils.udfs import clean_text, chunk_text, embed_text
 
 def run_streaming_pipeline():
+    es_url = os.environ.get("ELASTICSEARCH_URL", "http://localhost:9200")
+    es_host = es_url.replace("http://", "").replace("https://", "").split(":")[0]
+    es_port = es_url.replace("http://", "").replace("https://", "").split(":")[-1]
+    kafka_servers = os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
+    kafka_topic = os.environ.get("KAFKA_TOPIC", "van-ban-phap-luat")
+    es_index_realtime = os.environ.get("ES_INDEX_REALTIME", "phapluat-realtime")
+
     spark = SparkSession.builder \
         .appName("Legal-Chatbot-Streaming") \
         .config("spark.driver.extraJavaOptions", "-Dfile.encoding=UTF-8") \
-        .config("es.nodes", "localhost") \
-        .config("es.port", "9200") \
+        .config("es.nodes", es_host) \
+        .config("es.port", es_port) \
         .config("es.nodes.wan.only", "true") \
-        .config("es.index.auto.create", "true") \
+        .config("es.index.auto.create", "false") \
         .getOrCreate()
 
     spark.sparkContext.addFile(os.path.join(project_root, "spark"), recursive=True)
@@ -40,8 +47,8 @@ def run_streaming_pipeline():
 
     df_kafka = spark.readStream \
         .format("kafka") \
-        .option("kafka.bootstrap.servers", "localhost:9092") \
-        .option("subscribe", "van-ban-phap-luat") \
+        .option("kafka.bootstrap.servers", kafka_servers) \
+        .option("subscribe", kafka_topic) \
         .option("startingOffsets", "latest") \
         .load()
 
@@ -75,9 +82,9 @@ def run_streaming_pipeline():
                 return
 
             print(f"Đang ghi Micro-Batch {batch_id} ({len(rows)} dòng) vào Elasticsearch...")
-            
+
             from elasticsearch import Elasticsearch, helpers
-            es = Elasticsearch("http://localhost:9200")
+            es = Elasticsearch(es_url)
             
             actions = []
             for row in rows:
@@ -86,7 +93,7 @@ def run_streaming_pipeline():
                     doc["embedding"] = list(doc["embedding"])
                 
                 actions.append({
-                    "_index": "phapluat-realtime",
+                    "_index": es_index_realtime,
                     "_id": doc.get("doc_number"), 
                     "_source": doc
                 })

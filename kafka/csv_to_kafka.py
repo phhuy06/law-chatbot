@@ -4,6 +4,7 @@ import csv
 import logging
 import sys
 import time
+from datetime import datetime, timezone
 
 from producer import DocumentProducer
 
@@ -28,6 +29,7 @@ def parse_row(row: dict) -> dict:
         "tags": row.get("tags", ""),
         "views": int(row.get("views", 0) or 0),
         "url": row.get("url", ""),
+        "crawled_at": row.get("crawled_at", datetime.now(timezone.utc).isoformat()),
     }
 
 
