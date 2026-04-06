@@ -16,11 +16,15 @@ sys.path.append(project_root)
 from spark.utils.udfs import clean_text, chunk_text, embed_text
 
 def run_batch_pipeline():
+    es_url = os.environ.get("ELASTICSEARCH_URL", "http://localhost:9200")
+    es_host = es_url.replace("http://", "").replace("https://", "").split(":")[0]
+    es_port = es_url.replace("http://", "").replace("https://", "").split(":")[-1]
+
     spark = SparkSession.builder \
         .appName("Legal-Chatbot-Batch-Pipeline") \
         .config("spark.driver.extraJavaOptions", "-Dfile.encoding=UTF-8") \
-        .config("es.nodes", "localhost") \
-        .config("es.port", "9200") \
+        .config("es.nodes", es_host) \
+        .config("es.port", es_port) \
         .config("es.nodes.wan.only", "true") \
         .getOrCreate()
 
@@ -53,7 +57,7 @@ def run_batch_pipeline():
 
     df_final.write \
         .format("org.elasticsearch.spark.sql") \
-        .option("es.resource", "phapluat-batch") \
+        .option("es.resource", os.environ.get("ES_INDEX_BATCH", "phapluat-batch")) \
         .option("es.mapping.id", "doc_number") \
         .mode("append") \
         .save()

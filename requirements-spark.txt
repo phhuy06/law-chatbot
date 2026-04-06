@@ -2,3 +2,4 @@ openai>=1.12
 elasticsearch>=8.12
 boto3>=1.34
 python-dotenv>=1.0
+beautifulsoup4>=4.12
