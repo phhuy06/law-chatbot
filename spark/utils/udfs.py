@@ -68,28 +68,6 @@ def chunk_text_udf(text: str, max_length: int = 500, overlap: int = 50) -> list[
 clean_text = udf(clean_text_udf, StringType())
 chunk_text = udf(chunk_text_udf, ArrayType(StringType()))
 
-"""def get_embedding_udf(text: str) -> list[float]:
-
-    if not text:
-        return []
-        
-    api_key = os.environ.get("OPENAI_API_KEY")
-    if not api_key:
-        print("Cảnh báo: Chưa set biến môi trường OPENAI_API_KEY")
-        return []
-        
-    try:
-        client = OpenAI(api_key=api_key)
-        response = client.embeddings.create(
-            model="text-embedding-3-small",
-            input=text
-        )
-        return response.data[0].embedding
-    except Exception as e:
-        print(f"Lỗi khi nhúng text: {e}")
-        return []
-embed_text = udf(get_embedding_udf, ArrayType(FloatType()))"""
-
 def get_embedding_udf(text: str) -> list[float]:
     api_key = os.environ.get("OPENAI_API_KEY", "api_key_chua_co")
     if api_key == "api_key_chua_co":

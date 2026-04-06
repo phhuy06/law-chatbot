@@ -39,7 +39,9 @@ PRD_Legal_Chatbot.pdf
 Thumbs.db
 
 # Spark
+checkpoints/
 spark/checkpoints/
+spark/.cph/
 *.jar
 metastore_db/
 derby.log

@@ -45,13 +45,34 @@ async def chat(req: ChatRequest):
         return cached
 
     # 2. Embed question
-    vector = await llm_service.embed(question)
+    try:
+        vector = await llm_service.embed(question)
+    except Exception as exc:
+        logger.error("Embedding failed: %s", exc)
+        raise HTTPException(
+            status_code=502,
+            detail="Failed to generate embedding for the question. Please try again later.",
+        )
 
     # 3. Search ES (kNN + full-text, both indices)
-    chunks = await search_service.hybrid_search(question, vector, top_k=5)
+    try:
+        chunks = await search_service.hybrid_search(question, vector, top_k=5)
+    except Exception as exc:
+        logger.error("Elasticsearch search failed: %s", exc)
+        raise HTTPException(
+            status_code=502,
+            detail="Search service is currently unavailable. Please try again later.",
+        )
 
     # 4. Generate answer with GPT
-    answer = await llm_service.generate(question, chunks)
+    try:
+        answer = await llm_service.generate(question, chunks)
+    except Exception as exc:
+        logger.error("LLM generation failed: %s", exc)
+        raise HTTPException(
+            status_code=502,
+            detail="Language model service is currently unavailable. Please try again later.",
+        )
 
     # 5. Build sources (deduplicate by URL)
     seen_urls = set()
