@@ -9,7 +9,8 @@ export interface ChatMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
-  sources?: Source[];   
+  sources?: Source[];
+  isLoading?: boolean;
   timestamp: Date;
 }
 

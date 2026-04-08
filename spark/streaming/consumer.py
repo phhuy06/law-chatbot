@@ -73,7 +73,8 @@ def run_streaming_pipeline():
 
     checkpoint_dir = os.path.join(project_root, "checkpoints", "streaming_python")
     
-    print("Đang chờ dữ liệu mới từ Kafka...")
+    print(f"[streaming] Pipeline ready. Kafka={kafka_servers}, Topic={kafka_topic}, ES={es_url}, Index={es_index_realtime}")
+    print("[streaming] Waiting for new data from Kafka...")
 
     def write_to_es_python(batch_df, batch_id):
         try:
