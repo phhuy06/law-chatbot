@@ -43,19 +43,29 @@ export default function App() {
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
 
+    // Show loading dots while waiting for API
+    const loadingId = (Date.now() + 1).toString();
+    const loadingMessage: ChatMessageType = {
+      id: loadingId,
+      role: "assistant",
+      content: "...",
+      isLoading: true,
+      timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, loadingMessage]);
+
     try {
       const response = await sendQuestion(question);
 
-      // Tao message assistant rong
-      const assistantMessageId = (Date.now() + 1).toString();
-      const assistantMessage: ChatMessageType = {
-        id: assistantMessageId,
-        role: "assistant",
-        content: "",
-        sources: response.sources,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, assistantMessage]);
+      // Replace loading message with real response
+      const assistantMessageId = loadingId;
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === loadingId
+            ? { ...msg, content: "", sources: response.sources, isLoading: false }
+            : msg
+        )
+      );
 
       const fullText = response.answer;
       let currentIndex = 0;
@@ -77,14 +87,13 @@ export default function App() {
       }, 20); // 20ms cho moi chu (co the dieu chinh)
     } catch (error) {
       console.error("Error:", error);
-      // Hien thi loi neu co
-      const errorMessage: ChatMessageType = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content: "Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại.",
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, errorMessage]);
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === loadingId
+            ? { ...msg, content: "Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại.", isLoading: false }
+            : msg
+        )
+      );
       setIsLoading(false);
     }
   };
