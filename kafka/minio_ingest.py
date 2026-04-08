@@ -20,8 +20,11 @@ MINIO_BUCKET = os.environ.get("MINIO_BUCKET", "phapluat")
 KAFKA_BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "kafka:9092")
 KAFKA_TOPIC = os.environ.get("KAFKA_TOPIC", "van-ban-phap-luat")
 
-UNPROCESSED_PREFIX = os.environ.get("INGEST_UNPROCESSED_PREFIX", "csv/unprocessed/")
+UNPROCESSED_PREFIX = os.environ.get("INGEST_UNPROCESSED_PREFIX", "csv/")
 PROCESSED_PREFIX = os.environ.get("INGEST_PROCESSED_PREFIX", "csv/processed/")
+# TODO(prod): This is the speed layer (10s) for dev/testing.
+# In production, batch layer should run on a nightly cron schedule instead
+# of polling. Set INGEST_POLL_INTERVAL=86400 or replace with a scheduler.
 POLL_INTERVAL = int(os.environ.get("INGEST_POLL_INTERVAL", "10"))
 BATCH_SIZE = int(os.environ.get("INGEST_BATCH_SIZE", "50"))
 
@@ -112,6 +115,8 @@ def poll_loop():
                 MINIO_BUCKET, prefix=UNPROCESSED_PREFIX, recursive=True,
             )
             for obj in objects:
+                if obj.object_name.startswith(PROCESSED_PREFIX):
+                    continue
                 if obj.object_name.endswith(".csv"):
                     try:
                         process_csv(minio_client, producer, obj.object_name)
