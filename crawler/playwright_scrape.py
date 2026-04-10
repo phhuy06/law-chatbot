@@ -11,8 +11,8 @@ from bs4 import BeautifulSoup
 from typing import Dict, List
 
 BASEDIR = os.path.dirname(__file__)
-OUTPUT = os.path.join(BASEDIR, "output", "tai-chinh-nha-nuoc.csv")
-START_URL = "https://thuvienphapluat.vn/hoi-dap-phap-luat/tai-chinh-nha-nuoc"
+OUTPUT = os.path.join(BASEDIR, "output", "thu-tuc-to-tung.csv")
+START_URL = "https://thuvienphapluat.vn/hoi-dap-phap-luat/thu-tuc-to-tung"
 START_PAGE = 1
 END_PAGE = 5
 
