@@ -69,7 +69,8 @@ class DocumentConsumer:
                 if msg is None:
                     continue
                 if msg.error():
-                    raise KafkaException(msg.error())
+                    logger.warning("Consumer error: %s", msg.error())
+                    continue
 
                 document = json.loads(msg.value().decode("utf-8"))
                 self._save_to_minio(document)

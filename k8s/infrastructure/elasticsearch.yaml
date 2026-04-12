@@ -62,6 +62,13 @@ spec:
               value: "false"
             - name: ES_JAVA_OPTS
               value: "-Xms512m -Xmx512m"
+          readinessProbe:
+            httpGet:
+              path: /_cluster/health
+              port: 9200
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
           volumeMounts:
             - name: es-data
               mountPath: /usr/share/elasticsearch/data
@@ -119,3 +126,40 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
+---
+# es-init: initialize Elasticsearch indices with kNN mappings
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: es-init
+  namespace: law-chatbot
+spec:
+  backoffLimit: 5
+  template:
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        - name: wait-for-es
+          image: curlimages/curl:8.5.0
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Waiting for Elasticsearch..."
+              until curl -sf http://elasticsearch:9200/_cluster/health >/dev/null 2>&1; do
+                echo "ES not ready, retrying in 5s..."
+                sleep 5
+              done
+              echo "Elasticsearch is ready!"
+      containers:
+        - name: es-init
+          image: law-chatbot/backend:latest
+          imagePullPolicy: Never
+          command: ["python", "scripts/init_elasticsearch.py"]
+          env:
+            - name: ELASTICSEARCH_URL
+              value: "http://elasticsearch:9200"
+            - name: ES_INDEX_BATCH
+              value: "phapluat-batch"
+            - name: ES_INDEX_REALTIME
+              value: "phapluat-realtime"
