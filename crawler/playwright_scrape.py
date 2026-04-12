@@ -1,17 +1,20 @@
 from playwright.sync_api import sync_playwright
 import re
 import csv
-from datetime import datetime
+from datetime import datetime, timezone
 import time
 import random
+import argparse
 
 import os
+from bs4 import BeautifulSoup
+from typing import Dict, List
 
 BASEDIR = os.path.dirname(__file__)
-OUTPUT = os.path.join(BASEDIR, "output", "test-data.csv")
-START_URL = "https://thuvienphapluat.vn/hoi-dap-phap-luat/tien-te-ngan-hang"
-START_PAGE = 2
-END_PAGE = 10
+OUTPUT = os.path.join(BASEDIR, "output", "tai-chinh-nha-nuoc.csv")
+START_URL = "https://thuvienphapluat.vn/hoi-dap-phap-luat/tai-chinh-nha-nuoc"
+START_PAGE = 1
+END_PAGE = 5
 
 
 def normalize_text(s: str) -> str:
@@ -36,109 +39,253 @@ def node_text(node):
         return ""
 
 
+def _has_classes(tag, *classes):
+    if not tag:
+        return False
+    cls = tag.get('class') or []
+    return all(c in cls for c in classes)
+
+
+def parse_article(html: str) -> Dict[str, object]:
+    """Parse an article HTML string and return {'question': str, 'answer': List[str]}.
+
+    This follows the path described: tvpl-main -> first div.row -> div.col-md-9 ps-md-0 ->
+    article -> div.row -> div.col-md-9 ct-main pe-md-0. Then extracts header>h1 as question
+    and all <p> / <blockquote> inside section.news-content#news-content as answer paragraphs.
+    Nested tags inside p/blockquote are flattened to text.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+
+    # root container
+    root = soup.find(lambda t: t.name == 'div' and (t.get('class') and 'tvpl-main' in t.get('class')))
+    if not root:
+        root = soup.find('div', class_='tvpl-main')
+    if not root:
+        return {"question": "", "answer": []}
+
+    # first row inside root
+    row1 = root.find('div', class_='row')
+    if not row1:
+        return {"question": "", "answer": []}
+
+    # target column: prefer div with both classes
+    col_main = row1.find(lambda t: t.name == 'div' and _has_classes(t, 'col-md-9', 'ps-md-0'))
+    if not col_main:
+        col_main = row1.find(lambda t: t.name == 'div' and ('col-md-9' in (t.get('class') or [])))
+    if not col_main:
+        return {"question": "", "answer": []}
+
+    article = col_main.find('article') or col_main
+    inner_row = article.find('div', class_='row')
+    if not inner_row:
+        return {"question": "", "answer": []}
+
+    target_col = inner_row.find(lambda t: t.name == 'div' and _has_classes(t, 'col-md-9', 'ct-main', 'pe-md-0'))
+    if not target_col:
+        target_col = inner_row.find(lambda t: t.name == 'div' and ('col-md-9' in (t.get('class') or [])))
+
+    # question from header > h1
+    question = ""
+    if target_col:
+        header = target_col.find('header')
+        if header:
+            h1 = header.find('h1')
+            if h1:
+                question = " ".join([ln.strip() for ln in h1.get_text(separator=" ").splitlines() if ln.strip()])
+
+    # answer: collect p and blockquote inside section.news-content#news-content
+    answer_list: List[str] = []
+    if target_col:
+        section = target_col.find('section', id='news-content') or target_col.find('section', class_='news-content')
+        if section:
+            elems = section.find_all(['p', 'blockquote'])
+            for el in elems:
+                # skip empty
+                txt = " ".join([ln.strip() for ln in el.get_text(separator=" ").splitlines() if ln.strip()])
+                if txt:
+                    answer_list.append(txt)
+
+    return {"question": question, "answer": answer_list}
+
+
 def extract_from_detail(page, url):
-    # wait for main detail container
+    # Wait for the main detail container
     try:
-        page.wait_for_selector("div.wap-page-detail", timeout=5000)
+        page.wait_for_selector("div.tvpl-main.container.pt-3.pb-3.wap-page-detail", timeout=5000)
     except Exception:
         pass
 
-    # select the detail container
-    detail = page.query_selector("div.wap-page-detail") or page.query_selector("div.tvpl-main.container.pt-3.pb-3.wap-page-detail") or page
+    # Locate detail container and prefer article inside it
+    detail = page.query_selector("div.tvpl-main.container.pt-3.pb-3.wap-page-detail") or page.query_selector("div.wap-page-detail") or page
 
-    # id
+    # Remove non-article top-level divs inside the detail container to avoid breadcrumbs/ads
+    try:
+        page.eval_on_selector("div.tvpl-main.container.pt-3.pb-3.wap-page-detail", "(container) => { Array.from(container.querySelectorAll(':scope > div')).forEach(d=>{ if(!d.querySelector('article')) d.remove(); }); }")
+    except Exception:
+        # ignore if selector not present
+        pass
+
+    # prefer article element for the answer/content
+    article = detail.query_selector("article") or detail
+
+    # id from URL
     m = re.search(r"-(\d+)\.html$", url)
     doc_id = m.group(1) if m else ""
 
-    # title
-    title_el = detail.query_selector("h1")
-    title = normalize_text(node_text(title_el)) if title_el else ""
+    # title: first h1.h3.fw-bold.title inside header (within article if present)
+    title = ""
+    try:
+        header = article.query_selector("header") or article
+        t = header.query_selector("h1.h3.fw-bold.title")
+        if t:
+            title = normalize_text(t.inner_text())
+    except Exception:
+        title = ""
 
-    # answer/content: try common selectors
-    answer_selectors = [
-        "div.answer",
-        "div.post-content",
-        "div.content",
-        "div.article-content",
-        "div.news-detail",
-        "div.entry-content",
-        "div#toanvancontent",
-        "div.content1",
-    ]
+    # Try parsing the raw HTML with BeautifulSoup (more robust); do this before any
+    # destructive JS evaluation that removes inner divs. We will use the parsed
+    # result as a fallback if Playwright-based extraction yields no answer.
+    parsed = {"question": "", "answer": []}
+    try:
+        html = page.content()
+        parsed = parse_article(html)
+    except Exception:
+        parsed = {"question": "", "answer": []}
+
+    # Remove inner divs inside the big detail/article to avoid sidebar/menu text
+    try:
+        article.evaluate("node => { Array.from(node.querySelectorAll('div')).forEach(d=>d.remove()); Array.from(node.querySelectorAll('script, style, .ads, .sidebar, .related-questions, .social-share')).forEach(e=>e.remove()); }")
+    except Exception:
+        pass
+
+    # answer: ONLY gather <p> and <blockquote> inside section.news-content#news-content (skip <p> that contain <img>)
     answer = ""
-    for sel in answer_selectors:
-        el = detail.query_selector(sel)
-        if el:
-            answer = normalize_text(el.inner_text())
-            if answer:
-                break
-    if not answer:
-        answer = normalize_text(node_text(detail))
-
-    # category from breadcrumb
-    cat = ""
-    bc = page.query_selector_all("nav.breadcrumb a")
-    if bc:
-        try:
-            cat = normalize_text(bc[-1].inner_text())
-        except Exception:
-            cat = ""
-
-    # author
-    author = ""
-    for sel in [".author", ".post-author", ".author-name", ".post-meta .author"]:
-        el = detail.query_selector(sel)
-        if el:
-            author = normalize_text(el.inner_text())
-            break
-
-    # published date
-    pub = ""
-    for sel in [".date", ".post-date", ".publish-date", ".meta time"]:
-        el = detail.query_selector(sel)
-        if el:
+    try:
+        section = article.query_selector('section.news-content#news-content') or article.query_selector('section#news-content')
+        parts = []
+        if section:
+            # 1) collect h2 headings (if any)
             try:
-                pub = normalize_text(el.get_attribute('datetime') or el.inner_text())
+                h2s = section.query_selector_all('h2')
+                for h in h2s:
+                    t = normalize_text(h.inner_text())
+                    if t:
+                        parts.append(t)
             except Exception:
-                pub = normalize_text(el.inner_text())
-            break
-    # try to parse to YYYY-MM-DD
+                pass
+            # 2) collect p tags (skip those that contain images)
+            try:
+                ps = section.query_selector_all('p')
+                for p in ps:
+                    try:
+                        has_img = p.eval_on_selector('img', 'el => el !== null')
+                    except Exception:
+                        has_img = False
+                    if has_img:
+                        continue
+                    t = normalize_text(p.inner_text())
+                    if t:
+                        parts.append(t)
+            except Exception:
+                pass
+            # 3) collect blockquotes
+            try:
+                bq = section.query_selector_all('blockquote')
+                for b in bq:
+                    t = normalize_text(b.inner_text())
+                    if t:
+                        parts.append(t)
+            except Exception:
+                pass
+            if parts:
+                answer = "\n\n".join(parts)
+            else:
+                answer = ""
+        else:
+            # No section found: do not take fallback from other parts — keep answer empty
+            answer = ""
+    except Exception:
+        answer = ""
+
+    # If Playwright extraction failed to find answer, fall back to BeautifulSoup parse
+    try:
+        if (not answer or answer.strip() == "") and parsed and parsed.get('answer'):
+            answer = "\n\n".join(parsed.get('answer'))
+        # also prefer parsed question/title when Playwright didn't find a title
+        if (not title or title.strip() == "") and parsed and parsed.get('question'):
+            title = parsed.get('question')
+    except Exception:
+        pass
+
+    # published date: from breadcrumb container span.news-time
     published_date = ""
-    if pub:
-        for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y", "%Y/%m/%d"):
-            try:
-                dt = datetime.strptime(pub.strip(), fmt)
-                published_date = dt.strftime("%Y-%m-%d")
+    try:
+        pub_el = page.query_selector("div.d-flex.justify-content-between.align-items-baseline.tvpl-breadcrumb-container span.news-time") or page.query_selector("span.news-time")
+        pub = normalize_text(pub_el.inner_text()) if pub_el else ""
+        if pub:
+            for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y", "%Y/%m/%d", "%H:%M | %d/%m/%Y"):
+                try:
+                    dt = datetime.strptime(pub.strip(), fmt)
+                    published_date = dt.strftime("%Y-%m-%d")
+                    break
+                except Exception:
+                    continue
+    except Exception:
+        published_date = ""
+
+    # category from breadcrumb (fallback)
+    cat = ""
+    try:
+        bc = page.query_selector_all("nav.breadcrumb a")
+        if bc:
+            cat = normalize_text(bc[-1].inner_text())
+    except Exception:
+        cat = ""
+
+    # author (fallback)
+    author = ""
+    try:
+        for sel in [".author", ".post-author", ".author-name", ".post-meta .author"]:
+            el = article.query_selector(sel) or detail.query_selector(sel)
+            if el:
+                author = normalize_text(el.inner_text())
                 break
-            except Exception:
-                continue
+    except Exception:
+        author = ""
 
-    # legal refs and tags
+    # legal refs and tags (fallback)
     legal_refs = []
-    for sel in [".legal-ref", ".ref-list", ".refs", ".post-meta .refs"]:
-        els = detail.query_selector_all(sel)
-        for e in els:
-            text = normalize_text(e.inner_text())
-            if text:
-                legal_refs.append(text)
-    # tags
-    tags = []
-    for sel in [".tags a", ".tag-list a", ".post-tags a"]:
-        els = detail.query_selector_all(sel)
-        for e in els:
-            t = normalize_text(e.inner_text())
-            if t:
-                tags.append(t)
+    try:
+        for sel in [".legal-ref", ".ref-list", ".refs", ".post-meta .refs"]:
+            els = article.query_selector_all(sel) or detail.query_selector_all(sel)
+            for e in els:
+                text = normalize_text(e.inner_text())
+                if text:
+                    legal_refs.append(text)
+    except Exception:
+        legal_refs = []
 
-    # views
+    tags = []
+    try:
+        for sel in [".tags a", ".tag-list a", ".post-tags a"]:
+            els = article.query_selector_all(sel) or detail.query_selector_all(sel)
+            for e in els:
+                t = normalize_text(e.inner_text())
+                if t:
+                    tags.append(t)
+    except Exception:
+        tags = []
+
+    # views (fallback)
     views = ""
-    for sel in [".views", ".post-views"]:
-        el = detail.query_selector(sel)
+    try:
+        el = article.query_selector('.views') or detail.query_selector('.views')
         if el:
             v = re.search(r"(\d[\d,]*)", el.inner_text())
             if v:
                 views = v.group(1).replace(',', '')
-                break
+    except Exception:
+        views = ""
 
     return {
         "id": doc_id,
@@ -149,12 +296,94 @@ def extract_from_detail(page, url):
         "published_date": published_date,
         "legal_refs": ";".join(legal_refs),
         "tags": ";".join(tags),
-        "views": int(views) if views.isdigit() else 0,
+        "views": int(views) if isinstance(views, str) and views.isdigit() else 0,
         "url": url,
     }
 
 
-def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0):
+def safe_goto(page, url, retries=3, timeout=20000):
+    """Navigate with retries and exponential backoff. Returns True on success, False on final failure."""
+    attempt = 0
+    while attempt <= retries:
+        try:
+            page.goto(url, wait_until="domcontentloaded", timeout=timeout)
+            return True
+        except Exception as e:
+            attempt += 1
+            if attempt > retries:
+                print(f"Failed to goto {url} after {retries} retries: {e}")
+                return False
+            backoff = (2 ** (attempt - 1)) + random.uniform(0.5, 1.5)
+            print(f"Goto failed ({attempt}/{retries}) for {url}: {e}; retrying after {backoff:.1f}s")
+            time.sleep(backoff)
+
+
+def collect_links(start_page=START_PAGE, end_page=END_PAGE):
+    """Collect article links from START_URL?page=start_page..end_page and print counts."""
+    with sync_playwright() as pw:
+        browser = pw.chromium.launch(headless=True, args=["--disable-blink-features=AutomationControlled"])
+        page = browser.new_page()
+        all_links = []
+        for p in range(start_page, end_page + 1):
+            list_url = f"{START_URL}?page={p}"
+            try:
+                page.goto(list_url, wait_until="domcontentloaded", timeout=20000)
+            except Exception as e:
+                print(f"Failed to open {list_url}: {e}")
+                continue
+
+            try:
+                page.wait_for_selector("div.tvpl-main.container.pt-3.pb-3", timeout=5000)
+            except Exception:
+                pass
+
+            links = []
+            try:
+                container = page.query_selector("div.tvpl-main.container.pt-3.pb-3") or page
+                row = container.query_selector("div.row") or container
+                col = row.query_selector("div.col-md-9") or row
+                section = col.query_selector("section") or col
+                articles = section.query_selector_all("article.news-card") if section else []
+                if not articles:
+                    articles = page.query_selector_all("article.news-card")
+                for a in articles:
+                    anchor = a.query_selector("a")
+                    if anchor:
+                        href = anchor.get_attribute("href")
+                        if href and href.startswith("/"):
+                            href = "https://thuvienphapluat.vn" + href
+                        if href and href.startswith("http"):
+                            links.append(href)
+            except Exception as e:
+                print(f"Error parsing list page {list_url}: {e}")
+                for a in page.query_selector_all("a"):
+                    href = a.get_attribute("href")
+                    if href and "/hoi-dap-phap-luat/" in href and href.endswith('.html'):
+                        if href.startswith('/'):
+                            href = 'https://thuvienphapluat.vn' + href
+                        links.append(href)
+
+            # dedupe per page
+            seen = set()
+            deduped = []
+            for l in links:
+                if l not in seen:
+                    seen.add(l)
+                    deduped.append(l)
+
+            print(f"Page {p}: found {len(deduped)} links")
+            all_links.extend(deduped)
+            time.sleep(random.uniform(0.5, 1.0))
+
+        unique = list(dict.fromkeys(all_links))
+        print(f"Total unique links collected: {len(unique)}")
+        for i, u in enumerate(unique, 1):
+            print(f"{i}: {u}")
+
+        browser.close()
+
+
+def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0, delay_min=1.0, delay_max=2.0, retries=3):
     with sync_playwright() as pw:
         browser = pw.chromium.launch(headless=True, args=["--disable-blink-features=AutomationControlled"])
         context = browser.new_context(user_agent=(
@@ -168,7 +397,9 @@ def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0):
             list_url = f"{START_URL}?page={p}"
             print(f"Fetching list page: {list_url}")
             try:
-                page.goto(list_url, wait_until="domcontentloaded", timeout=20000)
+                ok = safe_goto(page, list_url, retries=retries, timeout=20000)
+                if not ok:
+                    continue
             except Exception as e:
                 print(f"Failed to load list page {list_url}: {e}")
                 continue
@@ -179,21 +410,26 @@ def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0):
             except Exception:
                 pass
 
-            # collect article links from articles inside container
+            # traverse path: body -> div.tvpl-main.container.pt-3.pb-3 -> div.row -> div.col-md-9 -> section -> article.news-card
             links = []
-            articles = page.query_selector_all("div.tvpl-main.container.pt-3.pb-3 article")
-            if not articles:
-                articles = page.query_selector_all("article")
-            for a in articles:
-                el = a.query_selector("a")
-                if el:
-                    href = el.get_attribute("href")
-                    if href and href.startswith("/"):
-                        href = "https://thuvienphapluat.vn" + href
-                    if href and href.startswith("http"):
-                        links.append(href)
-            # fallback: look for article links on page
-            if not links:
+            try:
+                container = page.query_selector("div.tvpl-main.container.pt-3.pb-3") or page
+                row = container.query_selector("div.row") or container
+                col = row.query_selector("div.col-md-9") or row
+                section = col.query_selector("section") or col
+                articles = section.query_selector_all("article.news-card") if section else []
+                if not articles:
+                    articles = page.query_selector_all("article.news-card")
+                for a in articles:
+                    anchor = a.query_selector("a")
+                    if anchor:
+                        href = anchor.get_attribute("href")
+                        if href and href.startswith("/"):
+                            href = "https://thuvienphapluat.vn" + href
+                        if href and href.startswith("http"):
+                            links.append(href)
+            except Exception:
+                # fallback: scan page for links matching pattern
                 for a in page.query_selector_all("a"):
                     href = a.get_attribute("href")
                     if href and "/hoi-dap-phap-luat/" in href and href.endswith('.html'):
@@ -246,7 +482,7 @@ def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0):
         with open(OUTPUT, "a", encoding="utf-8", newline='') as f:
             writer = csv.writer(f, delimiter=",", quoting=csv.QUOTE_ALL)
             if write_header:
-                writer.writerow(["id","question","answer","category","author","published_date","legal_refs","tags","views","url"])
+                writer.writerow(["id","question","answer","category","author","published_date","legal_refs","tags","views","url","crawled_at"])
 
             to_process = [l for l in links_to_process if l not in existing_urls]
             print(f"New links to process (excluding already-present): {len(to_process)}")
@@ -254,22 +490,33 @@ def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0):
             for idx, link in enumerate(to_process, 1):
                 print(f"Processing {idx}/{len(to_process)}: {link}")
                 try:
-                    page.goto(link, wait_until="domcontentloaded", timeout=20000)
+                    ok = safe_goto(page, link, retries=retries, timeout=20000)
+                    if not ok:
+                        print(f"Skipping {link} due to repeated navigation failures")
+                        continue
                     item = extract_from_detail(page, link)
                     writer.writerow([
                         item.get('id', ''), item.get('question', ''), item.get('answer', ''),
                         item.get('category', ''), item.get('author', ''), item.get('published_date', ''),
-                        item.get('legal_refs', ''), item.get('tags', ''), item.get('views', 0), item.get('url', '')
+                        item.get('legal_refs', ''), item.get('tags', ''), item.get('views', 0), item.get('url', ''), datetime.now(timezone.utc).isoformat()
                     ])
                 except Exception as e:
                     print(f"Error fetching {link}: {e}")
 
                 # polite delay between articles
-                time.sleep(random.uniform(1.0, 2.0))
+                time.sleep(random.uniform(delay_min, delay_max))
 
         context.close()
         browser.close()
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description='Playwright scraper for thuvienphapluat')
+    parser.add_argument('--start', type=int, default=START_PAGE, help='start page')
+    parser.add_argument('--end', type=int, default=END_PAGE, help='end page')
+    parser.add_argument('--limit', type=int, default=0, help='limit total articles per run (0 = all)')
+    parser.add_argument('--delay-min', type=float, default=1.0, help='minimum per-request delay')
+    parser.add_argument('--delay-max', type=float, default=2.0, help='maximum per-request delay')
+    parser.add_argument('--retries', type=int, default=3, help='navigation retry attempts')
+    args = parser.parse_args()
+    main(start_page=args.start, end_page=args.end, per_page_limit=args.limit, delay_min=args.delay_min, delay_max=args.delay_max, retries=args.retries)
