@@ -88,6 +88,15 @@ spec:
               value: "1"
             - name: KAFKA_LOG_RETENTION_HOURS
               value: "168"
+          readinessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - kafka-topics --bootstrap-server localhost:9092 --list
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
           resources:
             requests:
               memory: "512Mi"
@@ -95,3 +104,41 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "500m"
+---
+# kafka-init: pre-create topic before spark-job starts
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kafka-init
+  namespace: law-chatbot
+spec:
+  backoffLimit: 5
+  template:
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        - name: wait-for-kafka
+          image: confluentinc/cp-kafka:7.6.0
+          command:
+            - /bin/bash
+            - -c
+            - |
+              echo "Waiting for Kafka to be ready..."
+              until kafka-topics --bootstrap-server kafka:9092 --list >/dev/null 2>&1; do
+                echo "Kafka not ready, retrying in 5s..."
+                sleep 5
+              done
+              echo "Kafka is ready!"
+      containers:
+        - name: kafka-init
+          image: confluentinc/cp-kafka:7.6.0
+          command:
+            - /bin/bash
+            - -c
+            - |
+              kafka-topics --bootstrap-server kafka:9092 \
+                --create --if-not-exists \
+                --topic van-ban-phap-luat \
+                --partitions 1 \
+                --replication-factor 1 && \
+              echo "Kafka topic 'van-ban-phap-luat' created successfully"

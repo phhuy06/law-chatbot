@@ -10,7 +10,15 @@ export default function ChatMessage({ message }: ChatMessageProps) {
   return (
     <div className={`message-wrapper ${isUser ? "user" : "assistant"}`}>
       <div className={`message ${isUser ? "user-message" : "assistant-message"}`}>
-        <div className="message-content">{message.content}</div>
+        {message.isLoading ? (
+          <div className="loading-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        ) : (
+          <div className="message-content">{message.content}</div>
+        )}
         
         {message.sources && message.sources.length > 0 && (
           <div className="sources">
