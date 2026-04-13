@@ -30,10 +30,13 @@ def run_streaming_pipeline():
 
     kafka_schema = StructType([
         StructField("id", StringType(), True),
-        StructField("question", StringType(), True),
-        StructField("answer", StringType(), True),
+        StructField("title", StringType(), True),
+        StructField("content", StringType(), True),
         StructField("category", StringType(), True),
-        StructField("author", StringType(), True),
+        StructField("doc_type", StringType(), True),
+        StructField("doc_number", StringType(), True),
+        StructField("agency", StringType(), True),
+        StructField("published_date", StringType(), True),
         StructField("url", StringType(), True),
         StructField("crawled_at", StringType(), True)
     ])
@@ -49,18 +52,21 @@ def run_streaming_pipeline():
         from_json(col("value").cast("string"), kafka_schema).alias("data")
     ).select("data.*")
 
-    df_clean = df_parsed.withColumn("clean_text", clean_text(col("answer")))
+    df_clean = df_parsed.withColumn("clean_text", clean_text(col("content")))
     df_chunks = df_clean.withColumn("chunks", chunk_text(col("clean_text")))
     df_exploded = df_chunks.withColumn("chunk_text", explode("chunks"))
     df_embedded = df_exploded.withColumn("embedding", embed_text(col("chunk_text")))
 
     df_final = df_embedded.select(
+        col("id").alias("doc_id"),
         col("chunk_text"),
-        col("question").alias("title"),
+        col("title"),
         col("url"),
-        col("category").alias("doc_type"),
-        col("id").alias("doc_number"),
-        col("author").alias("agency"),
+        col("category"),
+        col("doc_type"),
+        col("doc_number"),
+        col("agency"),
+        col("published_date"),
         col("embedding")
     )
 
@@ -77,17 +83,23 @@ def run_streaming_pipeline():
             print(f"Đang ghi Micro-Batch {batch_id} ({len(rows)} dòng) vào Elasticsearch...")
             
             from elasticsearch import Elasticsearch, helpers
-            es = Elasticsearch("http://localhost:9200")
+            import hashlib
+            
+            es = Elasticsearch(es_url)
             
             actions = []
             for row in rows:
                 doc = row.asDict()
                 if "embedding" in doc and doc["embedding"] is not None:
                     doc["embedding"] = list(doc["embedding"])
+                doc_id = doc.get("doc_id", "")
+                chunk_text = doc.get("chunk_text", "")
+                chunk_hash = hashlib.md5(chunk_text.encode('utf-8')).hexdigest()[:8]
+                unique_id = f"{doc_id}_{chunk_hash}"
                 
                 actions.append({
-                    "_index": "phapluat-realtime",
-                    "_id": doc.get("doc_number"), 
+                    "_index": es_index_realtime,
+                    "_id": unique_id,
                     "_source": doc
                 })
 
