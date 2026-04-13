@@ -7,6 +7,13 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   background-color: #f5f5f5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
 }
 
 .app {
@@ -17,6 +24,8 @@ body {
   margin: 0 auto;
   background-color: white;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
 }
 
 /* Header */
@@ -26,6 +35,8 @@ body {
   padding: 20px;
   text-align: center;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  z-index: 10;
 }
 
 .app-header h1 {
@@ -37,10 +48,12 @@ body {
 .messages-container {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .welcome-message {
@@ -79,6 +92,8 @@ body {
   padding: 12px 16px;
   border-radius: 12px;
   word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .user-message {
@@ -96,6 +111,45 @@ body {
 .message-content {
   line-height: 1.5;
   white-space: pre-wrap;
+}
+
+/* Loading dots */
+.loading-dots {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.loading-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #888;
+  animation: dot-bounce 1.4s infinite ease-in-out both;
+}
+
+.loading-dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes dot-bounce {
+  0%, 80%, 100% {
+    transform: scale(0.4);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* Sources */
@@ -144,6 +198,8 @@ body {
   border-top: 1px solid #e0e0e0;
   padding: 16px;
   background-color: white;
+  flex-shrink: 0;
+  z-index: 10;
 }
 
 /* Chat Input */
@@ -220,20 +276,133 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
-  .message {
-    max-width: 85%;
+  .app {
+    max-width: 100%;
+    box-shadow: none;
+  }
+
+  .app-header {
+    padding: 16px;
   }
 
   .app-header h1 {
+    font-size: 18px;
+  }
+
+  .messages-container {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .welcome-message {
+    margin-top: 50px;
+    padding: 0 20px;
+  }
+
+  .welcome-message h2 {
     font-size: 20px;
   }
 
+  .welcome-message p {
+    font-size: 14px;
+  }
+
+  .message {
+    max-width: 85%;
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  .sources {
+    margin-top: 10px;
+    padding-top: 10px;
+  }
+
+  .sources-title {
+    font-size: 13px;
+  }
+
+  .sources-list li {
+    font-size: 13px;
+  }
+
+  .app-footer {
+    padding: 12px;
+  }
+
   .chat-input-container {
-    flex-direction: column;
-    align-items: stretch;
+    gap: 8px;
+  }
+
+  .chat-input {
+    padding: 10px;
+    font-size: 14px;
+    min-height: 44px;
   }
 
   .send-button {
-    width: 100%;
+    padding: 10px 20px;
+    font-size: 14px;
+    min-height: 44px;
+  }
+
+  /* Hide scrollbar on mobile for cleaner look */
+  .messages-container::-webkit-scrollbar {
+    width: 4px;
+  }
+}
+
+/* Extra small devices (phones in portrait, less than 576px) */
+@media (max-width: 576px) {
+  .app-header h1 {
+    font-size: 16px;
+  }
+
+  .messages-container {
+    padding: 10px;
+  }
+
+  .message {
+    max-width: 90%;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .chat-input {
+    font-size: 13px;
+  }
+
+  .send-button {
+    font-size: 13px;
+  }
+}
+
+/* Landscape mode on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .app-header {
+    padding: 12px;
+  }
+
+  .app-header h1 {
+    font-size: 16px;
+  }
+
+  .messages-container {
+    padding: 10px;
+  }
+
+  .welcome-message {
+    margin-top: 30px;
+  }
+}
+
+/* Tablet devices */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .app {
+    max-width: 100%;
+  }
+
+  .message {
+    max-width: 75%;
   }
 }
