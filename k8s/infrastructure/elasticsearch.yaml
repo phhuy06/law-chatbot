@@ -159,7 +159,5 @@ spec:
           env:
             - name: ELASTICSEARCH_URL
               value: "http://elasticsearch:9200"
-            - name: ES_INDEX_BATCH
-              value: "phapluat-batch"
-            - name: ES_INDEX_REALTIME
-              value: "phapluat-realtime"
+            - name: ES_INDEX
+              value: "phapluat"

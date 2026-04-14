@@ -27,7 +27,7 @@ export default function ChatMessage({ message }: ChatMessageProps) {
               {message.sources.map((source, index) => (
                 <li key={index}>
                   <a href={source.url} target="_blank" rel="noopener noreferrer">
-                    {source.title} ({source.doc_number})
+                    {source.title}
                   </a>
                 </li>
               ))}

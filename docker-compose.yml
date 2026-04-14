@@ -49,7 +49,9 @@ services:
       - minio-data:/data
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.2
+    build:
+      context: ./elasticsearch
+      dockerfile: Dockerfile
     ports:
       - "9200:9200"
     environment:
@@ -73,18 +75,31 @@ services:
     environment:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
 
+  kibana-init:
+    image: python:3.11-slim
+    depends_on:
+      - kibana
+    volumes:
+      - ./kibana:/kibana-export:ro
+    entrypoint: ["/bin/bash", "/kibana-export/init-kibana.sh"]
+    environment:
+      KIBANA_URL: http://kibana:5601
+    restart: "no"
+
   es-init:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
+    image: python:3.11-slim
     depends_on:
       elasticsearch:
         condition: service_healthy
+    volumes:
+      - ./scripts:/app/scripts:ro
+    working_dir: /app
     environment:
       ELASTICSEARCH_URL: http://elasticsearch:9200
-      ES_INDEX_BATCH: phapluat-batch
-      ES_INDEX_REALTIME: phapluat-realtime
-    command: ["python", "scripts/init_elasticsearch.py"]
+      ES_INDEX: phapluat
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - "pip install -q elasticsearch && python scripts/init_elasticsearch.py"
     restart: "no"
 
   redis:
@@ -136,6 +151,7 @@ services:
       SPARK_MASTER_URL: spark://spark-master:7077
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       ELASTICSEARCH_URL: http://elasticsearch:9200
+      ES_INDEX: phapluat
       MINIO_ENDPOINT: minio:9000
 
   # --- Kafka Workers ---
@@ -154,28 +170,17 @@ services:
       - .env
     restart: on-failure
 
-  csv-to-kafka:
-    build:
-      context: .
-      dockerfile: kafka/Dockerfile
-    depends_on:
-      - kafka
-    env_file:
-      - .env
-    volumes:
-      - ./crawler/output:/app/crawler/output:ro
-    command: ["python", "csv_to_kafka.py", "--csv", "/app/crawler/output/demo-data.csv"]
-    restart: "no"
-    profiles:
-      - seed
-
   data-ingest:
     build:
       context: .
       dockerfile: kafka/Dockerfile
     depends_on:
-      - kafka
-      - minio
+      kafka:
+        condition: service_healthy
+      kafka-init:
+        condition: service_completed_successfully
+      minio:
+        condition: service_started
     env_file:
       - .env
     command: ["python", "minio_ingest.py"]

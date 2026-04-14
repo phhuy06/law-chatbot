@@ -24,7 +24,7 @@ class ChatRequest(BaseModel):
 class Source(BaseModel):
     title: str
     url: str
-    doc_number: str
+    doc_id: str
 
 
 class ChatResponse(BaseModel):
@@ -54,9 +54,9 @@ async def chat(req: ChatRequest):
             detail="Failed to generate embedding for the question. Please try again later.",
         )
 
-    # 3. Search ES (kNN + full-text, both indices)
+    # 3. Hybrid search (kNN + full-text)
     try:
-        chunks = await search_service.hybrid_search(question, vector, top_k=5)
+        chunks = await search_service.hybrid_search(question, vector, top_k=10)
     except Exception as exc:
         logger.error("Elasticsearch search failed: %s", exc)
         raise HTTPException(
@@ -64,9 +64,9 @@ async def chat(req: ChatRequest):
             detail="Search service is currently unavailable. Please try again later.",
         )
 
-    # 4. Generate answer with GPT
+    # 4. Generate answer — GPT returns answer + which chunks it used
     try:
-        answer = await llm_service.generate(question, chunks)
+        answer, used_indices = await llm_service.generate(question, chunks)
     except Exception as exc:
         logger.error("LLM generation failed: %s", exc)
         raise HTTPException(
@@ -74,17 +74,27 @@ async def chat(req: ChatRequest):
             detail="Language model service is currently unavailable. Please try again later.",
         )
 
-    # 5. Build sources (deduplicate by URL)
-    seen_urls = set()
+    # 5. Build sources — only from chunks GPT actually used (deduplicate by URL)
+    no_info = "không tìm thấy thông tin" in answer.lower()
+
+    seen_urls: set[str] = set()
     sources = []
-    for chunk in chunks:
+    if no_info:
+        used_chunks = []
+    elif used_indices:
+        used_chunks = [chunks[i] for i in used_indices if i < len(chunks)]
+    else:
+        # GPT answered but forgot to list sources — use top 3
+        used_chunks = chunks[:3]
+
+    for chunk in used_chunks:
         url = chunk.get("url", "")
         if url and url not in seen_urls:
             seen_urls.add(url)
             sources.append({
                 "title": chunk.get("title", ""),
                 "url": url,
-                "doc_number": chunk.get("doc_number", ""),
+                "doc_id": chunk.get("doc_id", ""),
             })
 
     response = {"answer": answer, "sources": sources}
