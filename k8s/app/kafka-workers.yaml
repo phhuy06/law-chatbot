@@ -1,0 +1,56 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-worker-config
+  namespace: law-chatbot
+data:
+  KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+  KAFKA_TOPIC: "van-ban-phap-luat"
+  MINIO_ENDPOINT: "minio:9000"
+  MINIO_ACCESS_KEY: "minioadmin"
+  MINIO_SECRET_KEY: "minioadmin"
+  MINIO_BUCKET: "phapluat"
+---
+# kafka-consumer: consumes messages and stores to MinIO
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-consumer
+  namespace: law-chatbot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-consumer
+  template:
+    metadata:
+      labels:
+        app: kafka-consumer
+    spec:
+      initContainers:
+        - name: wait-for-kafka
+          image: confluentinc/cp-kafka:7.6.0
+          command:
+            - /bin/bash
+            - -c
+            - |
+              until kafka-topics --bootstrap-server kafka:9092 --list >/dev/null 2>&1; do
+                echo "Waiting for Kafka..."
+                sleep 5
+              done
+      containers:
+        - name: kafka-consumer
+          image: law-chatbot/kafka:latest
+          imagePullPolicy: Never
+          command: ["python", "entrypoint_consumer.py"]
+          envFrom:
+            - configMapRef:
+                name: kafka-worker-config
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "300m"

@@ -6,8 +6,7 @@ metadata:
   namespace: law-chatbot
 data:
   ELASTICSEARCH_URL: "http://elasticsearch:9200"
-  ES_INDEX_BATCH: "phapluat-batch"
-  ES_INDEX_REALTIME: "phapluat-realtime"
+  ES_INDEX: "phapluat"
   REDIS_URL: "redis://redis:6379/0"
   REDIS_CACHE_TTL: "3600"
 ---

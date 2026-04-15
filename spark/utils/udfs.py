@@ -16,7 +16,7 @@ def clean_text_udf(html_content: str) -> str:
     return text
 
 
-def chunk_text_udf(text: str, max_length: int = 500, overlap: int = 50) -> list[str]:
+def chunk_text_udf(text: str, max_length: int = 1000, overlap: int = 100) -> list[str]:
     if not text or len(text) < 50:
         return [text] if text else []
     sentences = re.split(r'(?<=[.!?])\s+|\n+', text)
@@ -68,42 +68,29 @@ def chunk_text_udf(text: str, max_length: int = 500, overlap: int = 50) -> list[
 clean_text = udf(clean_text_udf, StringType())
 chunk_text = udf(chunk_text_udf, ArrayType(StringType()))
 
-"""def get_embedding_udf(text: str) -> list[float]:
-
-    if not text:
-        return []
-        
-    api_key = os.environ.get("OPENAI_API_KEY")
-    if not api_key:
-        print("Cảnh báo: Chưa set biến môi trường OPENAI_API_KEY")
-        return []
-        
-    try:
-        client = OpenAI(api_key=api_key)
-        response = client.embeddings.create(
-            model="text-embedding-3-small",
-            input=text
-        )
-        return response.data[0].embedding
-    except Exception as e:
-        print(f"Lỗi khi nhúng text: {e}")
-        return []
-embed_text = udf(get_embedding_udf, ArrayType(FloatType()))"""
+_embed_counter = 0
 
 def get_embedding_udf(text: str) -> list[float]:
+    global _embed_counter
+    _embed_counter += 1
+    preview = text[:80].replace("\n", " ") if text else "(empty)"
+
     api_key = os.environ.get("OPENAI_API_KEY", "api_key_chua_co")
     if api_key == "api_key_chua_co":
+        print(f"[embed #{_embed_counter}] SKIP (no API key): {preview}...")
         return [0.01] * 1536
-        
+
     try:
+        print(f"[embed #{_embed_counter}] Calling OpenAI for: {preview}...")
         client = OpenAI(api_key=api_key)
         response = client.embeddings.create(
             model="text-embedding-3-small",
             input=text
         )
+        print(f"[embed #{_embed_counter}] OK (1536 dims)")
         return response.data[0].embedding
     except Exception as e:
-        print(f"Lỗi khi nhúng text: {e}")
+        print(f"[embed #{_embed_counter}] ERROR: {e}")
         return [0.01] * 1536
 
 embed_text = udf(get_embedding_udf, ArrayType(FloatType()))

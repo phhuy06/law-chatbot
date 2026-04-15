@@ -1,0 +1,1825 @@
+"id","title","content","category","doc_type","doc_number","agency","published_date","url","crawled_at"
+"138086712","Mã định danh thửa đất là gì? Một thửa đất có bao nhiêu mã định danh?","Căn cứ Mục 1 Phụ lục 1 Xây dựng mã định danh thửa đất ban hành kèm theo  Thông tư 19/2026/TT-BTNMT  quy định cụ thể như sau:
+
+I. Nguyên tắc về Mã định danh thửa đất theo vị trí địa lý
+
+Mã định danh thửa đất là một mã được gán cho từng thửa đất và có tính duy nhất trên toàn quốc. Một thửa đất cụ thể chỉ có 01 mã định danh và là duy nhất.
+
+Mã định danh thửa đất là chuỗi gồm 12 ký tự được mã hóa theo vị trí địa lý trong hệ tọa độ địa lý quốc tế WGS84 của thửa đất.
+
+Mã định danh thửa đất được mã hóa từ vị trí địa lý của thửa đất theo thuật toán GeoHash. Thuật toán GeoHash là một thuật toán mã hóa một tọa độ địa lý (vĩ độ và kinh độ) thành một chuỗi ký tự chữ và số ngắn gọn.
+
+Như vậy, Mã định danh thửa đất là một mã được gán cho từng thửa đất và có tính duy nhất trên toàn quốc. Một thửa đất cụ thể chỉ có 01 mã định danh và là duy nhất.
+
+Bên cạnh đó, mã định danh thửa đất là chuỗi gồm 12 ký tự được mã hóa theo vị trí địa lý trong hệ tọa độ địa lý quốc tế WGS84 của thửa đất.
+
+Mã định danh thửa đất được mã hóa từ vị trí địa lý của thửa đất theo thuật toán GeoHash. Thuật toán GeoHash là một thuật toán mã hóa một tọa độ địa lý (vĩ độ và kinh độ) thành một chuỗi ký tự chữ và số ngắn gọn.
+
+* Trên đây là Thông tin Mã định danh thửa đất là gì? Một thửa đất có bao nhiêu mã định danh?
+
+Mã định danh thửa đất là gì? Một thửa đất có bao nhiêu mã định danh? (Hình từ Internet)
+
+Căn cứ Mục 2 Phụ lục 1 Xây dựng mã định danh thửa đất ban hành kèm theo  Thông tư 19/2026/TT-BTNMT  quy định 04 bước xây dựng Mã định danh thửa đất chi tiết 2026 cụ thể như sau:
+
+Trường Mã thửa đất là mã định danh thửa đất duy nhất trên toàn quốc. Mã định danh thửa đất là chuỗi 12 ký tự được mã hóa theo vị trí địa lý (vĩ độ và kinh độ) của thửa đất. Quy trình tạo Mã định danh thửa đất như sau:
+
+Bước 1: Xác định điểm đặc trưng của thửa đất
+
+Trên lớp dữ liệu không gian của thửa đất, xác định tọa độ vị trí (X, Y) của điểm đặc trưng của thửa đất trong Hệ tọa độ VN2000 theo kinh tuyến trục của từng địa phương.
+
+Điểm đặc trưng của thửa đất là một điểm nằm trong ranh giới thửa đất, được xác định từ tọa độ các đình thửa theo thuật toán Polygonlabel, đảm bảo các yếu tố là điểm nằm sâu trong ranh giới thửa đất, cách xa các cạnh thửa đất.
+
+Bước 2: Tính chuyển vị trí từ hệ tọa độ VN2000 của Việt Nam sang hệ tọa độ quốc tế WGS84
+
+Tính chuyển vị trí điểm đặc trưng của thửa đất trong hệ tọa độ VN2000 sang tọa độ địa lý (vĩ độ và kinh độ) trong hệ tọa độ địa lý WGS84 toàn cầu. Công thức tính chuyển từ hệ tọa độ VN2000 sang hệ tọa độ quốc tế WGS84 thực hiện theo quy định hiện hành.
+
+Bước 3: Mã hóa vị trí điểm đặc trưng của thửa đất
+
+Mã hóa vị trí điểm đặc trưng của thửa đất: Sử dụng thuật toán GeoHash để mã hóa tọa độ địa lý (vĩ độ và kinh độ) thành một chuỗi ký tự với độ dài chuỗi là 12 ký tự chữ và số. Mã định danh của thửa đất là chuỗi ký tự sau khi mã hóa.
+
+Bước 4: Cập nhật Mã định danh của thửa đất vào cơ sở dữ liệu địa chính
+
+Cập nhật Mã định danh của thửa đất vào tr ường Mã thửa đất của các bảng dữ liệu liên quan đến thửa đất trong nhóm dữ liệu không gian địa chính, nhóm dữ liệu thuộc tính địa chính của cơ sở dữ liệu địa chính.
+
+Tại Điều 6  Thông tư 19/2026/TT-BTNMT  quy định về lồng ghép nội dung xử lý nội nghiệp của kết quả đo đạc lập bản đồ địa chính với lập hồ sơ địa chính và xây dựng cơ sở dữ liệu địa chính như sau:
+
+Đơn vị thi công thực hiện các nội dung công việc sau:
+
+- Số liệu đo đạc của thửa đất được xử lý nội nghiệp ngay trong ngày, cập nhật dữ liệu đo đạc thửa đất vào tệp định dạng DGN theo từng mảnh bản đồ, biên tập mảnh bản đồ địa chính, xây dựng dữ liệu không gian địa chính của thửa đất, tạo lập Mã định danh thửa đất theo hướng dẫn tại Phụ lục I ban hành kèm theo Thông tư này.
+
+- Xây dựng dữ liệu thuộc tính địa chính thửa đất từ các hồ sơ, tài liệu đã thu thập theo quy định.
+
+- Xây dựng dữ liệu phi cấu trúc cho thửa đất theo quy định; xuất sổ địa chính đối với thửa đất đã đăng ký, đã cấp Giấy chứng nhận và chuyển Văn phòng đăng ký đất đai để đối soát, ký số.
+
+- Xây dựng, chỉnh lý dữ liệu không gian đất đai nền từ bản đồ địa chính.
+
+- Hoàn thiện dữ liệu địa chính và xây dựng siêu dữ liệu địa chính.
+
+- Tổ chức kiểm tra chất lượng sản phẩm cấp đơn vị thi công ngay đối với các nội dung tại các khoản 1, 2, 3, 4 và 5 Điều 6  Thông tư 19/2026/TT-BTNMT  theo quy định về cơ chế giám sát, đánh giá, kiểm định chất lượng và quy chế kiểm tra, nghiệm thu sản phẩm của địa phương và chuyển sản phẩm để chủ đầu tư thực hiện kiểm tra theo quy định.
+
+- Hoàn thiện sản phẩm theo ý kiến kiểm tra cấp chủ đầu tư theo quy định.","","","","","2026-04-12","https://thuvienphapluat.vn/hoi-dap-phap-luat/ma-dinh-danh-thua-dat-la-gi-mot-thua-dat-co-bao-nhieu-ma-dinh-danh-138086712.html","2026-04-13T04:51:26.200166+00:00"
+"138084245","Điều kiện về thu nhập mua nhà ở cho lực lượng vũ trang mới nhất như thế nào?","Ngày 07/4/2026 Chính phủ ban hành  Nghị định 136/2026/NĐ-CP  sửa đổi, bổ sung một số điều của  Nghị định 100/2024/NĐ-CP  về nhà ở xã hội.
+
+Trong đó Điều 67  Nghị định 100/2024/NĐ-CP  được sửa đổi bởi khoản 2 Điều 1  Nghị định 136/2026/NĐ-CP  quy định về điều kiện thu nhập mua nhà ở cho lực lượng vũ trang nhân dân như sau:
+
+(1) Trường hợp người đứng đơn là người độc thân
+
+Thu nhập hàng tháng thực nhận không quá tổng thu nhập của sỹ quan có cấp bậc hàm Đại tá (gồm lương cơ bản và phụ cấp theo quy định, bao gồm cả phụ cấp khu vực tại các địa bàn vùng sâu, vùng xa, biên giới, hải đảo có điều kiện khó khăn) được cơ quan, đơn vị nơi công tác, quản lý xác nhận.
+
+(2) Trường hợp người đứng đơn đã kết hôn theo quy định của pháp luật:
+
+- Người đứng đơn và vợ (chồng) của người đó đều thuộc đối tượng quy định tại khoản 7 Điều 76  Luật Nhà ở 2023  thì có tổng thu nhập hàng tháng thực nhận không quá 2,0 lần tổng thu nhập của sỹ quan có cấp bậc hàm Đại tá (gồm lương cơ bản và phụ cấp theo quy định, bao gồm cả phụ cấp khu vực tại các địa bàn vùng sâu, vùng xa, biên giới, hải đảo có điều kiện khó khăn) được cơ quan, đơn vị nơi công tác, quản lý xác nhận;
+
+- Vợ (chồng) của người đứng đơn không thuộc đối tượng quy định tại khoản 7 Điều 76  Luật Nhà ở 2023  thì có tổng thu nhập hàng tháng thực nhận không quá tổng thu nhập của sỹ quan có cấp bậc hàm Đại tá (gồm lương cơ bản và phụ cấp theo quy định, bao gồm cả phụ cấp khu vực tại các địa bàn vùng sâu, vùng xa, biên giới, hải đảo có điều kiện khó khăn) cộng với mức lương quy định tại điểm a khoản 1 Điều 30  Nghị định 100/2024/NĐ-CP ) được cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+- Trường hợp vợ (chồng) của người đứng đơn thuộc đối tượng quy định tại khoản 5 Điều 76  Luật Nhà ở 2023  trong trường hợp không có Hợp đồng lao động thì thực hiện việc xác nhận điều kiện về thu nhập theo quy định tại khoản 2 Điều 30  Nghị định 100/2024/NĐ-CP .
+
+(3) Thời gian xác nhận điều kiện về thu nhập trong 01 năm liền kề, tính từ thời điểm nộp hồ sơ mua, thuê mua nhà ở cho lực lượng vũ trang nhân dân.
+
+Điều kiện về thu nhập mua nhà ở cho lực lượng vũ trang mới nhất như thế nào? (Hình từ Internet)
+
+Theo Điều 68  Nghị định 100/2024/NĐ-CP  được sửa đổi bởi Điều 37  Nghị định 54/2026/NĐ-CP  quy định về trình tự, thủ tục bán nhà ở cho lực lượng vũ trang nhân dân như sau:
+
+- Sau thời gian 30 ngày kể từ ngày khởi công, chủ đầu tư dự án đầu tư xây dựng nhà ở cho lực lượng vũ trang nhân dân có trách nhiệm cung cấp các thông tin liên quan đến dự án (tên dự án; chủ đầu tư dự án; địa điểm xây dựng dự án; địa chỉ liên lạc; tiến độ thực hiện dự án; quy mô dự án; số lượng căn hộ (trong đó bao gồm: tổng số căn hộ của dự án; diện tích căn hộ; giá bán (tạm tính) đối với từng loại căn hộ; thời gian bắt đầu và kết thúc nhận đơn đăng ký và các nội dung khác có liên quan) đến cơ quan chuyên môn về nhà ở của Bộ Quốc phòng, Bộ Công an.
+
+Trường hợp hệ thống thông tin, cơ sở dữ liệu về nhà ở và thị trường bất động sản đã được kết nối, khai thác thì thực hiện công khai thông tin về dự án đầu tư xây dựng nhà ở cho lực lượng vũ trang nhân dân trên hệ thống này theo quy định của pháp luật về xây dựng và quản lý hệ thống thông tin, cơ sở dữ liệu về nhà ở và thị trường bất động sản;
+
+- Trước thời điểm bắt đầu tiếp nhận hồ sơ đăng ký mua nhà ở cho lực lượng vũ trang nhân dân thì chủ đầu tư phải gửi thông tin về thời điểm bắt đầu tiếp nhận, kết thúc tiếp nhận hồ sơ đăng ký mua, số căn hộ/căn nhà để bán, diện tích căn hộ, giá bán nhà ở cho lực lượng vũ trang nhân dân trên hệ thống thông tin về nhà ở và thị trường bất động sản và được gửi đến cơ quan chuyên môn về nhà ở trực thuộc Bộ Quốc phòng, Bộ Công an.
+
+Thời gian nộp, tiếp nhận hồ sơ do chủ đầu tư quyết định nhưng tối thiểu là 30 ngày kể từ ngày bắt đầu tiếp nhận hồ sơ;
+
+- Bộ Quốc phòng, Bộ Công an có trách nhiệm giao cơ quan chuyên môn về nhà ở trực thuộc hoặc đơn vị trực thuộc cấp tỉnh tại địa phương nơi có dự án gửi thông tin dự án tới các đơn vị thuộc lực lượng vũ trang nhân dân trên địa bàn để thông báo cho đối tượng được hưởng chính sách hỗ trợ về nhà ở cho lực lượng vũ trang nhân dân đăng ký.
+
+Cá nhân có nhu cầu đăng ký mua nhà ở cho lực lượng vũ trang nhân dân nộp đơn đăng ký mua nhà ở cho lực lượng vũ trang nhân dân theo Mẫu số 03 tại Phụ lục II của Nghị định này và các giấy tờ chứng minh đối tượng, điều kiện được mua nhà ở cho lực lượng vũ trang nhân dân về đơn vị nơi cá nhân đang công tác để tổng hợp, gửi cơ quan chuyên môn trực thuộc Bộ Quốc phòng, Bộ Công an;
+
+- Căn cứ số lượng đăng ký của các đơn vị, Bộ Quốc phòng, Bộ Công an tổ chức phân bổ số lượng căn hộ tại dự án cho các đơn vị trực thuộc đóng quân trên địa bàn cấp tỉnh nơi có dự án theo tỷ lệ hồ sơ đăng ký và các điều kiện đặc thù của lực lượng vũ trang. Việc phân bổ có thể thực hiện theo một hoặc nhiều đợt, bảo đảm phù hợp với số lượng căn hộ, hồ sơ đăng ký và tình hình triển khai thực tế của dự án.
+
+Căn cứ số lượng căn hộ được phân bổ, các đơn vị trực thuộc Bộ Quốc phòng, Bộ Công an tổ chức xét duyệt, lập Danh sách các đối tượng thuộc phạm vi quản lý dự kiến mua nhà ở cho lực lượng vũ trang nhân dân kèm theo hồ sơ chứng minh đối tượng và điều kiện được hưởng chính sách hỗ trợ về nhà ở xã hội theo quy định để gửi về cơ quan chuyên môn về nhà ở trực thuộc Bộ Quốc phòng, Bộ Công an.
+
+Người đăng ký mua nhà ở cho lực lượng vũ trang nhân dân phải cam kết chưa được hưởng chính sách hỗ trợ về nhà ở, chưa được mua nhà ở cho lực lượng vũ trang nhân dân và chịu trách nhiệm về việc bảo đảm đối tượng, điều kiện được hưởng chính sách hỗ trợ về nhà ở cho lực lượng vũ trang nhân dân tại thời điểm ký hợp đồng mua bán;
+
+- Cơ quan chuyên môn về nhà ở trực thuộc Bộ Quốc phòng, Bộ Công an có trách nhiệm tổng hợp Danh sách dự kiến mua nhà ở cho lực lượng vũ trang nhân dân, trong đó thể hiện thông tin cá nhân của người đăng ký và các thành viên trong hộ gia đình được khai tại Đơn đăng ký mua nhà ở cho lực lượng vũ trang nhân dân; gửi Sở Xây dựng địa phương nơi có dự án để kiểm tra người đăng ký mua nhà ở cho lực lượng vũ trang nhân dân đã được hưởng hoặc chưa được hưởng chính sách hỗ trợ về nhà ở theo quy định của pháp luật về nhà ở. Sở Xây dựng có trách nhiệm trả lời bằng văn bản trong thời hạn 10 ngày kể từ ngày nhận được Danh sách;
+
+- Cơ quan chuyên môn về nhà ở trực thuộc Bộ Quốc phòng, Bộ Công an có trách nhiệm rà soát, đánh giá, tổng hợp ý kiến của Sở Xây dựng và đối chiếu với các quy định của pháp luật về nhà ở để xác định hồ sơ đáp ứng điều kiện được hưởng chính sách hỗ trợ về nhà ở cho lực lượng vũ trang nhân dân, tổng hợp Danh sách đủ điều kiện mua nhà ở cho lực lượng vũ trang nhân dân, trình lãnh đạo Bộ Quốc phòng, Bộ Công an phê duyệt Danh sách và thông báo cho chủ đầu tư dự án, đối tượng được mua nhà ở tại dự án.
+
+Đối với hồ sơ không đáp ứng đủ điều kiện thì gửi trả lại và nêu rõ lý do trong thời hạn 15 ngày kể từ ngày phê duyệt Danh sách.
+
+Trường hợp người có nhu cầu mua nhà ở cho lực lượng vũ trang nhân dân đáp ứng đúng đối tượng, đủ điều kiện theo quy định và đã được phê duyệt trong Danh sách, nhưng không còn nhu cầu mua nhà ở thì báo cáo đơn vị đang công tác để gửi về Bộ Quốc phòng, Bộ Công an đưa ra khỏi Danh sách;
+
+- Sau khi nhà ở đủ điều kiện được bán theo quy định của pháp luật về kinh doanh bất động sản, chủ đầu tư thực hiện ký kết Hợp đồng mua bán nhà ở cho lực lượng vũ trang nhân dân với khách hàng; đồng thời cập nhật thông tin về giao dịch, đối tượng đã mua nhà ở cho lực lượng vũ trang nhân dân theo quy định của pháp luật nhà ở, pháp luật về xây dựng và quản lý hệ thống thông tin, cơ sở dữ liệu về nhà ở và thị trường bất động sản.
+
+Chủ đầu tư dự án có trách nhiệm công bố công khai Danh sách các khách hàng đã ký hợp đồng mua bán nhà ở cho lực lượng vũ trang nhân dân (bao gồm cả các thành viên trong hộ gia đình) tại trụ sở làm việc của chủ đầu tư, tại địa điểm thực hiện dự án và tại Sàn giao dịch bất động sản (nếu có) hoặc trang thông tin điện tử về nhà ở cho lực lượng vũ trang nhân dân của chủ đầu tư (nếu có) và gửi về cơ quan chuyên môn về nhà ở trực thuộc Bộ Quốc phòng, Bộ Công an để lưu trữ và phục vụ cho công tác quản lý, kiểm tra.
+
+Căn cứ khoản 7 Điều 76  Luật Nhà ở 2023  có quy định:
+
+Điều 76. Đối tượng được hưởng chính sách hỗ trợ về nhà ở xã hội
+
+[...]
+
+7. Sĩ quan, quân nhân chuyên nghiệp, hạ sĩ quan thuộc lực lượng vũ trang nhân dân, công nhân công an, công chức, công nhân và viên chức quốc phòng đang phục vụ tại ngũ; người làm công tác cơ yếu, người làm công tác khác trong tổ chức cơ yếu hưởng lương từ ngân sách nhà nước đang công tác.
+
+Đồng thời tại Điều 77  Luật Nhà ở 2023  được sửa đổi bởi điểm b khoản 3 Điều 29  Luật Dân số 2025  quy định Hỗ trợ giải quyết bán, cho thuê mua, cho thuê nhà ở xã hội cho đối tượng khoản 7 Điều 76 của Luật này chưa được hưởng chính sách hỗ trợ về nhà ở cho lực lượng vũ trang nhân dân.
+
+Theo đó trường hợp sỹ quan chưa được hưởng chính sách hỗ trợ về nhà ở cho lực lượng vũ trang nhân dân thì được mua nhà ở xã hội.","","","","","2026-04-10","https://thuvienphapluat.vn/hoi-dap-phap-luat/dieu-kien-ve-thu-nhap-mua-nha-o-cho-luc-luong-vu-trang-moi-nhat-nhu-the-nao-138084245.html","2026-04-13T04:51:30.317364+00:00"
+"138086598","Điều kiện về thu nhập mua nhà ở xã hội trên cả nước từ 07/4/2026 chi tiết như thế nào?","Ngày 07/4/2026 Chính phủ ban hành Nghị định 136 2026 NĐ CP sửa đổi, bổ sung một số điều của  Nghị định 100/2024/NĐ-CP  ngày 26/7/2024 của Chính phủ quy định chi tiết một số điều của Luật Nhà ở về phát triển và quản lý nhà ở xã hội (đã được sửa đổi, bổ sung tại  Nghị định 261/2025/NĐ-CP  và  Nghị định 54/2026/NĐ-CP ).
+
+XEM TOÀN VĂN   Nghị định 136 2026 NĐ CP:   Tải về
+
+Theo đó khoản 1 Điều 1 Nghị định 136/2026/NĐ-CP sửa đổi, bổ sung khoản 1 Điều 30  Nghị định 100/2024/NĐ-CP  về điều kiện thu nhập như sau:
+
+Điều 30. Điều kiện về thu nhập
+
+1. Đối với các đối tượng quy định tại các khoản 5, 6 và 8 Điều 76 của Luật Nhà ở thì phải đảm bảo điều kiện về thu nhập như sau:
+
+a) Trường hợp người đứng đơn là người chưa kết hôn hoặc được xác nhận là độc thân thì có thu nhập bình quân hàng tháng thực nhận không quá 25 triệu đồng tính theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+Trường hợp ngườiđứng đơn là người chưa kết hôn hoặc được xác nhận là độc thân đang nuôi con dưới tuổi thành niên thì thu nhập bình quân hàng tháng thực nhận không quá 35 triệu đồng tính theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+b) Trường hợp người đứng đơn đã kết hôn theo quy định của pháp luật thì người đứng đơn và vợ (chồng) của người đó có tổng thu nhập bình quân hàng tháng thực nhận không quá 50 triệu đồng tính theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+c) Thờigian xácđịnh điềukiện vềthu nhậptheo quyđịnh tạiđiểm a,điểm b khoản này là trong 12 tháng liền kề, tính từ thời điểm cơ quan có thẩm quyền thực hiện xác nhận.
+
+d) Căn cứ điều kiện, mức thu nhập của từng khu vực trên địa bàn, chính sách ưu đãi về nhà ở cho cán bộ, công chức, viên chức, số lượng người phụ thuộc theo quy định của pháp luật, Ủy ban nhân dân cấp tỉnh được quyết định hệ số điều chỉnh mức thu nhập quy định tại điểm a, điểm b khoản này nhưng không vượt quá tỷ lệ giữa thu nhập bình quân đầu ngườitại địa phương so với thu nhập bình quân đầu người của cả nước;quyết định chínhsách khuyến khích tiếp cận nhà ở xã hội đối với đối tượngđược hưởng chínhsách hỗ trợ về nhà ở xã hội có từ ba (03) người phụ thuộc trở lên trong cùng một hộ gia đình.”
+
+[...]
+
+Theo đó, Chính phủ đã chính thức điều chỉnh tăng mức thu nhập làm căn cứ xét mua, thuê mua nhà ở xã hội, trong đó mức 25 triệu đồng/tháng được áp dụng trên phạm vi cả nước đối với người độc thân.
+
+Đồng thời, còn quy định các mức thu nhập khác tương ứng với từng trường hợp như: 35 triệu đồng/tháng đối với người độc thân nuôi con và 50 triệu đồng/tháng đối với hộ gia đình (vợ chồng).
+
+Bên cạnh đó, Ủy ban nhân dân cấp tỉnh còn được phép điều chỉnh mức thu nhập này theo điều kiện thực tế của địa phương trong phạm vi cho phép.
+
+Lưu ý:  Mức thu nhập nêu trên tính theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+Thời gian xác định điều kiện về thu nhập theo này là trong 12 tháng liền kề, tính từ thời điểm cơ quan có thẩm quyền thực hiện xác nhận.
+
+Ngày 24/03/2026 Bộ xây dựng đã có  Văn bản hợp nhất 17/VBHN-BXD năm 2026  hợp nhất các  Thông tư 05/2024/TT-BXD ,  Thông tư 09/2025/TT-BXD ,  Thông tư 32/2025/TT-BXD ,  Thông tư 08/2026/TT-BXD .
+
+Cụ thể tại Phụ lục I của băn bản hướng dẫn về toàn bộ 08 mẫu giấy tờ nhà ở xã hội gồm có:
+
+(1) Mẫu số 01
+
+- Giấy tờ chứng minh đối tượng được hưởng chính sách hỗ trợ về nhà ở xã hội (áp dụng cho các đối tượng quy định tại các khoản 9, 10, 11 Điều 76  Luật Nhà ở 2023 )
+
+- Tải Mẫu số 01:   Tải về
+
+- CCPL: Mẫu này được thay thế theo quy định tại điểm a khoản 2 Điều 1  Thông tư 08/2026/TT-BXD .
+
+- Mẫu này có giá trị trong thời hạn 12 tháng, kể từ ngày được cơ quan có thẩm quyền xác nhận theo quy định tại Điều 3  Thông tư08/2026/TT-BXD .
+
+(2) Mẫu số 01a
+
+- Giấy tờ chứng minh đối tượng, thu nhập để được hưởng chính sách hỗ trợ về nhà ở xã hội (áp dụng cho các đối tượng quy định tại các khoản 5, 6, 8 Điều 76  Luật Nhà ở 2023 , trừ đối tượng quy định tại khoản 5 Điều 76  Luật Nhà ở 2023  không có hợp đồng lao động, không được hưởng lương hưu do cơ quan Bảo hiểm xã hội chi trả)
+
+- Tải Mẫu số 01a:   Tải về
+
+- CCPL: Mẫu này được bổ sung theo quy định tại khoản 3 Điều 1  Thông tư 32/2025/TT-BXD  sửa đổi, bổ sung một số điều của  Thông tư 05/2024/TT-BXD .
+
+- Mẫu này có giá trị trong thời hạn 12 tháng, kể từ ngày được cơ quan có thẩm quyền xác nhận theo quy định tại Điều 3  Thông tư 08/2026/TT-BXD .
+
+(3) Mẫu số 02
+
+- Giấy tờ chứng minh điều kiện về nhà ở để được mua, thuê mua nhà ở xã hội/nhà ở cho lực lượng vũ trang nhân dân (trường hợp chưa có nhà ở thuộc sở hữu của mình, hoặc không có tên hoặc không có nội dung thông tin về nhà ở trong Giấy chứng nhận quyền sử dụng đất, quyền sở hữu tài sản gắn liền với đất)
+
+- Tải Mẫu số 02:   Tải về
+
+- CCPL: Mẫu này được thay thế theo quy định tại điểm b khoản 2 Điều 1  Thông tư 08/2026/TT-BXD .
+
+- Mẫu này có giá trị trong thời hạn 12 tháng, kể từ ngày được cơ quan có thẩm quyền xác nhận theo quy định tại Điều 3  Thông tư 08/2026/TT-BXD .
+
+(4) Mẫu số 03
+
+- Giấy tờ chứng minh điều kiện về nhà ở để được mua, thuê mua nhà ở xã hội/nhà ở cho lực lượng vũ trang nhân dân đối với trường hợp có nhà ở nhưng diện tích nhà ở bình quân đầu người thấp hơn 15m2 sàn/người
+
+- Tải Mẫu số 03:   Tải về
+
+- CCPL: Mẫu này được quy định tại Phụ lục I  Thông tư 05/2024/TT-BXD .
+
+- Mẫu này có giá trị trong thời hạn 12 tháng, kể từ ngày được cơ quan có thẩm quyền xác nhận theo quy định tại Điều 3  Thông tư 08/2026/TT-BXD .
+
+(5) Mẫu số 04
+
+- Giấy tờ chứng minh điều kiện về thu nhập để được mua, thuê mua nhà ở xã hội (áp dụng cho đối tượng quy định tại khoản 7 Điều 76  Luật Nhà ở 2023 )
+
+- Tải Mẫu số 04:   Tải về
+
+- CCPL: Mẫu này được thay thế theo quy định tại khoản 3 Điều 1  Thông tư 32/2025/TT-BXD  sửa đổi, bổ sung một số điều của  Thông tư 05/2024/TT-BXD
+
+- Mẫu này có giá trị trong thời hạn 12 tháng, kể từ ngày được cơ quan có thẩm quyền xác nhận theo quy định tại Điều 3  Thông tư 08/2026/TT-BXD
+
+(6) Mẫu số 05
+
+- Giấy tờ chứng minh đối tượng, thu nhập để được mua, thuê mua nhà ở xã hội (áp dụng cho đối tượng quy định tại khoản 5 Điều 76  Luật Nhà ở 2023  không có hợp đồng lao động, không được hưởng lương hưu do cơ quan Bảo hiểm xã hội chi trả).
+
+- Tải Mẫu số 05:   Tải về
+
+- CCPL: Mẫu này được thay thế theo quy định tại điểm c khoản 2 Điều 1  Thông tư 08/2026/TT-BXD
+
+- Mẫu này có giá trị trong thời hạn 12 tháng, kể từ ngày được cơ quan có thẩm quyền xác nhận theo quy định tại Điều 3  Thông tư 08/2026/TT-BXD .
+
+(7) Mẫu số 06
+
+- Giấy tờ chứng minh điều kiện vay vốn ưu đãi của Nhà nước thông qua Ngân hàng Chính sách xã hội để hộ gia đình, cá nhân tự xây dựng hoặc cải tạo, sửa chữa nhà ở
+
+- Tải Mẫu số 06:   Tải về
+
+(8) Mẫu số 07
+
+- Giấy tờ chứng minh điều kiện vay vốn ưu đãi của Nhà nước tại tổ chức tín dụng do Nhà nước chỉ định để hộ gia đình, cá nhân tự xây dựng hoặc cải tạo, sửa chữa nhà ở.
+
+- Tải Mẫu số 07:   Tải về
+
+Điều kiện về thu nhập mua nhà ở xã hội trên cả nước từ 07/4/2026 chi tiết như thế nào? (Hình từ Internet)
+
+Tại điểm a khoản 3 Điều 29  Luật Dân số 2025  Luật số 113/2025/QH15 (có hiệu lực từ 01/7/2026) bổ sung khoản 13 vào sau khoản 12 Điều 76  Luật Nhà ở 2023 , chính thức bổ sung thêm đối tượng Người có từ 02 con đẻ trở lên được mua nhà ở xã hội khi đáp ứng các điều kiện theo quy định Luật Nhà ở 2023.
+
+Theo quy định tại Điều 76 và khoản 1 Điều 77  Luật Nhà ở 2023  được bổ sung bởi điểm a khoản 3 Điều 29  Luật Dân số 2025  Luật số 113/2025/QH15, chính thức 11 đối tượng được mua nhà ở xã hội từ 01/7/2026 bao gồm:
+
+STT
+
+Cụ thể
+
+Đối tượng 1
+
+Người có công với cách mạng, thân nhân liệt sĩ thuộc trường hợp được hỗ trợ cải thiện nhà ở theo quy định của  Pháp lệnh Ưu đãi người có công với cách mạng 2020 .
+
+Đối tượng 2
+
+Hộ gia đình nghèo, cận nghèo tại khu vực nông thôn.
+
+Đối tượng 3
+
+Hộ gia đình nghèo, cận nghèo tại khu vực nông thôn thuộc vùng thường xuyên bị ảnh hưởng bởi thiên tai, biến đổi khí hậu.
+
+Đối tượng 4
+
+Hộ gia đình nghèo, cận nghèo tại khu vực đô thị.
+
+Đối tượng 5
+
+Người thu nhập thấp tại khu vực đô thị.
+
+Đối tượng 6
+
+Công nhân, người lao động đang làm việc tại doanh nghiệp, hợp tác xã, liên hiệp hợp tác xã trong và ngoài khu công nghiệp.
+
+Đối tượng 7
+
+Sĩ quan, quân nhân chuyên nghiệp, hạ sĩ quan thuộc lực lượng vũ trang nhân dân, công nhân công an, công chức, công nhân và viên chức quốc phòng đang phục vụ tại ngũ; người làm công tác cơ yếu, người làm công tác khác trong tổ chức cơ yếu hưởng lương từ ngân sách nhà nước đang công tác. (Thuộc trường hợp chưa được hưởng chính sách hỗ trợ về nhà ở cho lực lượng vũ trang nhân dân.)
+
+Đối tượng 8
+
+Cán bộ, công chức, viên chức theo quy định của pháp luật về cán bộ, công chức, viên chức.
+
+Đối tượng 9
+
+Đối tượng đã trả lại nhà ở công vụ theo quy định tại khoản 4 Điều 125  Luật Nhà ở 2023 , trừ trường hợp bị thu hồi nhà ở công vụ do vi phạm quy định Luật Nhà ở 2023.
+
+Đối tượng 10
+
+Hộ gia đình, cá nhân thuộc trường hợp bị thu hồi đất và phải giải tỏa, phá dỡ nhà ở theo quy định của pháp luật mà chưa được Nhà nước bồi thường bằng nhà ở, đất ở.
+
+Đối tượng 11
+
+Người có từ 02 con đẻ trở lên (áp dụng từ 01/07/2026)
+
+Lưu ý các đối tượng nêu trên được mua nhà ở xã hội khi đáp ứng các điều kiện về thu nhập và nhà ở theo quy định  Luật Nhà ở 2023 .
+
+Trường hợp một đối tượng được hưởng nhiều chính sách hỗ trợ khác nhau thì được hưởng một chính sách hỗ trợ mức cao nhất; trường hợp các đối tượng có cùng tiêu chuẩn và điều kiện thì thực hiện hỗ trợ theo thứ tự ưu tiên trước đối với: người có công với cách mạng, thân nhân liệt sĩ, người khuyết tật, người được bố trí tái định cư theo hình thức mua, thuê mua nhà ở xã hội, người có từ 02 con đẻ trở lên, nữ giới.","","","","","2026-04-10","https://thuvienphapluat.vn/hoi-dap-phap-luat/dieu-kien-ve-thu-nhap-mua-nha-o-xa-hoi-tren-ca-nuoc-tu-0742026-chi-tiet-nhu-the-nao-138086598.html","2026-04-13T04:51:34.199348+00:00"
+"138086434","Mẫu Đơn đăng ký mua nhà ở xã hội năm 2026 là mẫu nào?","Mẫu Đơn đăng ký mua nhà ở xã hội là Mẫu quy định tại Phụ lục ban hành kèm theo  Nghị định 136/2026/NĐ-CP  .
+
+Mẫu Đơn đăng ký mua nhà ở xã hội năm 2026 có dạng như sau:
+
+Tải mẫu Đơn đăng ký mua nhà ở xã hội năm 2026
+
+Tải về
+
+Cách viết Mẫu Đơn đăng ký mua nhà ở xã hội năm 2026 như sau::
+
+1 - Đánh dấu vào ô mà người viết đơn có nhu cầu đăng ký.
+
+2 - Ghi tên chủ đầu tư xây dựng nhà ở xã hội.
+
+3 - Nếu đang làm việc tại cơ quan, tổ chức thì ghi rõ nghề nghiệp, nếu là lao động tự do thì ghi là lao động tự do, nếu đã nghỉ hưu thì ghi đã nghỉ hưu...
+
+4 - Nếu đang làm việc thì mới ghi vào mục này, trừ đối tượng là sĩ quan, quân nhân chuyên nghiệp, hạ sĩ quan thuộc lực lượng vũ trang nhân dân, công nhân công an, công chức, công nhân và viên chức quốc phòng đang phục vụ tại ngũ; người làm công tác cơ yếu, người làm công tác khác trong tổ chức cơ yếu hưởng lương từ ngân sách nhà nước đang công tác.
+
+5 - Ghi rõ người có đơn thuộc đối tượng theo quy định được hỗ trợ nhà ở xã hội.
+
+6 - Đối với trường hợp độc thân: diện tích nhà ở bình quân đầu người đối với người đó. Đối với trường hợp hộ gia đình: diện tích nhà ở bình quân đầu người đối với người đề nghị xác nhận, vợ/chồng người đề nghị xác nhận (nếu có), cha, mẹ của người đề nghị xác nhận bao gồmcả cha, mẹ vợ/chồng của người đó (nếu có) và các con của người đề nghị xác nhận (nếu có).
+
+7 - Người thu nhập thấp tại khu vực đô thị (khoản 5 Điều 76); công nhân, người lao động đang làm việc tại doanh nghiệp, hợp tác xã, liên hiệp hợp tác xã trong và ngoài khu công nghiệp (khoản 6 Điều 76); cán bộ, công chức, viên chức theo quy định của pháp luật về cán bộ, công chức, viên chức (khoản 8 Điều 76).
+
+8 - Trường hợp đối tượng là người thu nhập thấp khu vực đô thị không có hợp đồng lao động, nếu là người chưa kết hôn hoặc được xác nhận là độc thân thì có thu nhập bình quân hàng tháng thực nhận không quá 25 triệu đồng. Cơ quan Công an cấp xã nơi thường trú/tạm trú hoặc nơi ở tại thời điểm đối tượng đề nghị xác nhận xác nhận điều kiện về thu nhập.
+
+9 - Trường hợp đối tượng là người thu nhập thấp khu vực đô thị kh ông có hợp đồng lao động, nếu là người chưa kết hôn hoặc được xác nhận là độc thân đang nuôi con dưới tuổi thành niên thì thu nhập bình quân hàng tháng thực nhận không quá 35 triệu đồng. Cơ quan Công an cấp xã nơi thường trú/tạmtrú hoặc nơi ở tại thời điểm đối tượng đề nghị xác nhận xác nhận điều kiện về thu nhập.
+
+10 - Trường hợp đối tượng là người thu nhập thấp khu vực đô thị không có hợp đồng lao động, nếu đã kết hôn theo quy định của pháp luật thì tổng thu nhập bình quân hàng tháng thực nhận không quá 50 triệu đồng. Công an cấp xã nơi thường trú/tạmtrú hoặc nơi ở tại thời điểm đối tượng đề nghị xác nhận xác nhận điều kiện về thu nhập.
+
+11 - Sỹ quan, quân nhân chuyên nghiệp, hạ sỹ quan thuộc lực lượng vũ trang nhân dân, công nhân công an, công chức, công nhân và viên chức quốc phòng đang phục vụ tại ngũ; người làm công tác cơ yếu, người làm công tác khác trong tổ chức cơ yếu hưởng lương từ ngân sách nhà nước đang công tác (khoản 7 Điều 76).
+
+12 - Ghi rõ hình thức được giải quyết chính sách hỗ trợ về nhà ở xã hội (mua, thuê mua, thuê).
+
+*Trên đây là thông tin Mẫu Đơn đăng ký mua nhà ở xã hội năm 2026 là mẫu nào?
+
+Mẫu Đơn đăng ký mua nhà ở xã hội năm 2026 là mẫu nào? (Hình từ Internet)
+
+Căn cứ theo Điều 80  Luật Nhà ở 2023  quy định hình thức phát triển nhà ở xã hội như sau:
+
+- Nhà nước đầu tư xây dựng nhà ở xã hội bằng vốn đầu tư công để cho thuê, cho thuê mua.
+
+- Nhà nước đầu tư xây dựng nhà ở xã hội bằng nguồn vốn quy định tại điểm b khoản 1 Điều 113  Luật Nhà ở 2023  để bán, cho thuê mua, cho thuê.
+
+- Doanh nghiệp, hợp tác xã, liên hiệp hợp tác xã bỏ vốn đầu tư xây dựng nhà ở xã hội để bán, cho thuê mua, cho thuê cho đối tượng quy định tại khoản 1 Điều 77  Luật Nhà ở 2023 .
+
+- Tổng Liên đoàn Lao động Việt Nam là cơ quan chủ quản dự án đầu tư xây dựng nhà ở xã hội bằng nguồn tài chính công đoàn cho công nhân, người lao động thuộc đối tượng được hưởng chính sách nhà ở xã hội thuê.
+
+- Tổ chức kinh tế có vốn đầu tư nước ngoài tham gia đầu tư phát triển nhà ở xã hội thông qua hình thức đầu tư vốn hoặc thực hiện đầu tư xây dựng nhà ở xã hội hoặc hợp tác kinh doanh với doanh nghiệp, hợp tác xã, liên hiệp hợp tác xã trong nước để cùng thực hiện dự án đầu tư xây dựng nhà ở xã hội để bán, cho thuê mua, cho thuê theo quy định của  Luật Nhà ở 2023 , pháp luật về đất đai, pháp luật về kinh doanh bất động sản và quy định khác của pháp luật có liên quan.
+
+- Cá nhân xây dựng nhà ở xã hội để cho đối tượng quy định tại khoản 1 Điều 77  Luật Nhà ở 2023  thuê.
+
+Căn cứ theo khoản 2 Điều 88  Luật Nhà ở 2023  quy định như sau:
+
+Điều 88. Nguyên tắc bán, cho thuê mua, cho thuê nhà ở xã hội
+
+1. Việc bán, cho thuê mua, cho thuê nhà ở xã hội phải đúng quy định của Luật này.
+
+2. Chủ đầu tư dự án đầu tư xây dựng nhà ở xã hội được lựa chọn hình thức bán, cho thuê mua nhà ở hình thành trong tương lai hoặc bán, cho thuê mua, cho thuê nhà ở có sẵn.  Chủ đầu tư dự án đầu tư xây dựng nhà ở xã hội khi bán, cho thuê mua nhà ở không phải thực hiện nghĩa vụ bảo lãnh nhà ở hình thành trong tương lai và không phải thông qua sàn giao dịch bất động sản.
+
+[...]
+
+Theo đó, chủ đầu tư dự án đầu tư xây dựng nhà ở xã hội khi bán không phải thực hiện nghĩa vụ bảo lãnh nhà ở hình thành trong tương lai và không phải thông qua sàn giao dịch bất động sản.","","","","","2026-04-09","https://thuvienphapluat.vn/hoi-dap-phap-luat/mau-don-dang-ky-mua-nha-o-xa-hoi-nam-2026-la-mau-nao-138086434.html","2026-04-13T04:51:38.678721+00:00"
+"138086666","Thu nhập 2 vợ chồng không quá 50 triệu đồng được mua nhà ở xã hội từ 07/4/2026 đúng không?","Căn cứ theo điểm a khoản 1 Điều 30  Nghị định 100/2024/NĐ-CP  được sửa đổi, bổ sung bởi khoản 1 Điều 1  Nghị định 136/2026/NĐ-CP  có hiệu lực thi hành từ 07/4/2026 quy định như sau:
+
+Điều 30. Điều kiện về thu nhập
+
+1. Đối với các đối tượng quy định tại các khoản 5, 6 và 8 Điều 76 của Luật Nhà ở thì phải đảm bảo điều kiện về thu nhập như sau:
+
+a) Trường hợp người đứng đơn là người chưa kết hôn hoặc được xác nhận là độc thân thì có thu nhập bình quân hàng tháng thực nhận không quá 25 triệu đồng tính theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+Trường hợp người đứng đơn là người chưa kết hôn hoặc được xác nhận là độc thân đang nuôi con dưới tuổi thành niên thì thu nhập bình quân hàng tháng thực nhận không quá 35 triệu đồng tính theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+b) Trường hợp người đứng đơn đã kết hôn theo quy định của pháp luật thì người đứng đơn và vợ (chồng) của người đó có tổng thu nhập bình quân hàng tháng thực nhận  không quá 50 triệu đồng  tính theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+c) Thời gian xác định điều kiện về thu nhập theo quy định tại điểm a, điểm b khoản này là trong 12 tháng liền kề, tính từ thời điểm cơ quan có thẩm quyền thực hiện xác nhận.
+
+[...]
+
+Theo đó, từ 07/4/2026, thu nhập 2 vợ chồng  không quá 50 triệu đồng/tháng được mua nhà ở xã hội.
+
+Lưu ý:  Tổng thu nhập bình quân hàng tháng thực nhận tính theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+*Trên đây là thông tin Thu nhập 2 vợ chồng không quá 50 triệu đồng được mua nhà ở xã hội từ 07/4/2026 đúng không?
+
+Thu nhập 2 vợ chồng không quá 50 triệu đồng được mua nhà ở xã hội từ 07/4/2026 đúng không? (Hình từ Internet)
+
+Căn cứ theo khoản 1 Điều 79  Luật Nhà ở 2023  được sửa đổi bởi điểm h khoản 3 Điều 29  Luật Dân số 2025  quy định nguyên tắc thực hiện chính sách hỗ trợ về nhà ở xã hội như sau;
+
+- Nhà nước có chính sách phát triển nhà ở, tạo điều kiện để mọi người có chỗ ở;
+
+- Có sự kết hợp giữa Nhà nước, doanh nghiệp, cộng đồng dân cư, dòng họ và đối tượng được hỗ trợ trong việc thực hiện chính sách;
+
+- Bảo đảm công khai, minh bạch, có sự kiểm tra, giám sát chặt chẽ của cơ quan nhà nước có thẩm quyền, cộng đồng dân cư và Mặt trận Tổ quốc Việt Nam;
+
+- Bảo đảm đúng đối tượng, đủ điều kiện theo quy định của Luật này;
+
+- Trường hợp một đối tượng được hưởng nhiều chính sách hỗ trợ khác nhau thì được hưởng một chính sách hỗ trợ mức cao nhất; trường hợp các đối tượng có cùng tiêu chuẩn và điều kiện thì thực hiện hỗ trợ theo thứ tự ưu tiên trước đối với: người có công với cách mạng, thân nhân liệt sĩ, người khuyết tật, người được bố trí tái định cư theo hình thức mua, thuê mua nhà ở xã hội, người có từ 02 con đẻ trở lên, nữ giới;
+
+- Trường hợp hộ gia đình có nhiều đối tượng được hưởng nhiều chính sách hỗ trợ thì chỉ áp dụng một chính sách hỗ trợ cho cả hộ gia đình.
+
+Căn cứ theo Điều 8  Luật Kinh doanh bất động sản 2023  quy định các hành vi bị nghiêm cấm trong kinh doanh bất động sản như sau:
+
+- Kinh doanh bất động sản không đủ điều kiện theo quy định của  Luật Kinh doanh bất động sản 2023
+
+- Giả mạo tài liệu, cố ý làm sai lệch thông tin về bất động sản, dự án bất động sản đưa vào kinh doanh.
+
+- Không công khai thông tin về bất động sản, dự án bất động sản đưa vào kinh doanh theo quy định của pháp luật về kinh doanh bất động sản.
+
+- Gian lận, lừa dối, lừa đảo trong kinh doanh bất động sản.
+
+- Thu tiền trong bán, cho thuê mua nhà ở, công trình xây dựng, phần diện tích sàn xây dựng trong công trình xây dựng hình thành trong tương lai không đúng quy định của  Luật Kinh doanh bất động sản 2023 ; sử dụng tiền thu từ bên mua, thuê mua nhà ở, công trình xây dựng, phần diện tích sàn xây dựng trong công trình xây dựng hình thành trong tương lai trái quy định của pháp luật.
+
+- Không thực hiện hoặc thực hiện không đầy đủ nghĩa vụ tài chính đối với Nhà nước.
+
+- Cấp chứng chỉ hành nghề môi giới bất động sản, sử dụng chứng chỉ hành nghề môi giới bất động sản không đúng quy định của pháp luật về kinh doanh bất động sản.
+
+- Thu, quản lý, sử dụng phí, lệ phí và các khoản tiền liên quan đến kinh doanh bất động sản trái quy định của pháp luật.","","","","","2026-04-09","https://thuvienphapluat.vn/hoi-dap-phap-luat/thu-nhap-2-vo-chong-khong-qua-50-trieu-dong-duoc-mua-nha-o-xa-hoi-tu-0742026-dung-khong-138086666.html","2026-04-13T04:51:42.696495+00:00"
+"138086452","Mẫu Phiếu đo đạc chỉnh lý thửa đất mới nhất 2026 là mẫu nào?","Tại Phụ lục ban hành kèm theo  Nghị định 49/2026/NĐ-CP  có quy định mẫu số 03/CLBĐ Phiếu đo đạc chỉnh lý thửa đất mới nhất 2026.
+
+Sau đây là mẫu số 03/CLBĐ Phiếu đo đạc chỉnh lý thửa đất mới nhất 2026:
+
+Tải về mẫu số 03/CLBĐ Phiếu đo đạc chỉnh lý thửa đất mới nhất 2026
+
+Tải về
+
+Tại Điều 50  Luật Đất đai 2024  có quy định về đo đạc lập bản đồ địa chính như sau:
+
+Điều 50. Đo đạc lập bản đồ địa chính
+
+1. Bản đồ địa chính là cơ sở để phục vụ công tác quản lý nhà nước về đất đai và xây dựng cơ sở dữ liệu quốc gia về đất đai. Việc đo đạc lập bản đồ địa chính được thực hiện chi tiết đến từng thửa đất theo đơn vị hành chính cấp xã; nơi không thành lập đơn vị hành chính cấp xã thì được lập theo đơn vị hành chính cấp huyện.
+
+2. Bản đồ địa chính phải được chỉnh lý khi có sự thay đổi về hình dạng, kích thước, diện tích thửa đất và các yếu tố khác có liên quan đến nội dung bản đồ địa chính và đồng thời được cập nhật vào cơ sở dữ liệu quốc gia về đất đai.
+
+3. Ủy ban nhân dân cấp tỉnh có trách nhiệm tổ chức thực hiện việc đo đạc lập, chỉnh lý, quản lý bản đồ địa chính ở địa phương và cập nhật vào cơ sở dữ liệu quốc gia về đất đai.
+
+4. Chính phủ quy định chi tiết Điều này.
+
+Như vậy, bản đồ địa chính phải được chỉnh lý khi có sự thay đổi về hình dạng, kích thước, diện tích thửa đất và các yếu tố khác có liên quan đến nội dung bản đồ địa chính và đồng thời được cập nhật vào cơ sở dữ liệu quốc gia về đất đai.
+
+Bản đồ địa chính là cơ sở để phục vụ công tác quản lý nhà nước về đất đai và xây dựng cơ sở dữ liệu quốc gia về đất đai.
+
+Việc đo đạc lập bản đồ địa chính được thực hiện chi tiết đến từng thửa đất theo đơn vị hành chính cấp xã; nơi không thành lập đơn vị hành chính cấp xã thì được lập theo đơn vị hành chính cấp huyện.
+
+Mẫu Phiếu đo đạc chỉnh lý thửa đất mới nhất 2026 là mẫu nào? (Hình từ Internet)
+
+Tại Điều 20  Luật Đất đai 2024  có quy định về nội dung quản lý nhà nước về đất đai như sau:
+
+Điều 20. Nội dung quản lý nhà nước về đất đai
+
+1. Ban hành và tổ chức thực hiện các văn bản quy phạm pháp luật về quản lý, sử dụng đất đai.
+
+2. Tuyên truyền, phổ biến, giáo dục, đào tạo, nghiên cứu khoa học, phát triển công nghệ, hợp tác quốc tế trong quản lý, sử dụng đất đai.
+
+3. Xác định địa giới đơn vị hành chính, lập và quản lý hồ sơ địa giới đơn vị hành chính.
+
+4. Đo đạc, chỉnh lý, lập bản đồ địa chính, bản đồ hiện trạng sử dụng đất, bản đồ quy hoạch sử dụng đất và các bản đồ chuyên ngành về quản lý, sử dụng đất.
+
+5. Điều tra, đánh giá và bảo vệ, cải tạo, phục hồi đất đai.
+
+6. Lập, điều chỉnh, quản lý quy hoạch, kế hoạch sử dụng đất.
+
+7. Giao đất, cho thuê đất, thu hồi đất, công nhận quyền sử dụng đất, trưng dụng đất, chuyển mục đích sử dụng đất.
+
+8. Điều tra, xây dựng bảng giá đất, giá đất cụ thể, quản lý giá đất.
+
+9. Quản lý tài chính về đất đai.
+
+10. Bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất, trưng dụng đất.
+
+11. Phát triển, quản lý và khai thác quỹ đất.
+
+12. Đăng ký đất đai, lập và quản lý hồ sơ địa chính; cấp, đính chính, thu hồi, hủy giấy chứng nhận.
+
+13. Thống kê, kiểm kê đất đai.
+
+14. Xây dựng, quản lý, vận hành, khai thác Hệ thống thông tin quốc gia về đất đai.
+
+15. Quản lý, giám sát việc thực hiện quyền và nghĩa vụ của người sử dụng đất.
+
+16. Giải quyết tranh chấp đất đai; giải quyết khiếu nại, tố cáo về đất đai.
+
+17. Cung cấp, quản lý hoạt động dịch vụ công về đất đai.
+
+18. Thanh tra, kiểm tra, giám sát, theo dõi, đánh giá việc chấp hành quy định của pháp luật về đất đai và xử lý vi phạm pháp luật về đất đai.
+
+Như vậy, đo đạc chỉnh lý thửa đất là một trong những nội dung quản lý nhà nước về đất đai.","","","","","2026-04-09","https://thuvienphapluat.vn/hoi-dap-phap-luat/mau-phieu-do-dac-chinh-ly-thua-dat-moi-nhat-2026-la-mau-nao-138086452.html","2026-04-13T04:51:47.150530+00:00"
+"138086606","Chính thức nâng mức trần thu nhập mua nhà ở xã hội lên 25 triệu đồng từ 07/4/2026 đúng không?","Ngày 07/4/2026, Chính phủ ban hành Nghị định 136/2026/NĐ-CP sửa đổi, bổ sung một số điều của  Nghị định 100/2024/NĐ-CP  ngày 26/7/2024 của Chính phủ quy định chi tiết một số điều của Luật Nhà ở về phát triển và quản lý nhà ở xã hội đã được sửa đổi, bổ sung tại  Nghị định 261/2025/NĐ-CP  và Nghị định số 54/2026/NĐ-CP.   Tải về
+
+Trong đó, căn cứ theo điểm a khoản 1 Điều 30  Nghị định 100/2024/NĐ-CP  được sửa đổi, bổ sung bởi khoản 1 Điều 1 Nghị định 136/2026/NĐ-CP có hiệu lực thi hành từ 07/4/2026 như sau:
+
+Điều 30. Điều kiện về thu nhập
+
+1. Đối với các đối tượng quy định tại các khoản 5, 6 và 8 Điều 76 của Luật Nhà ở thì phải đảm bảo điều kiện về thu nhập như sau:
+
+a) Trường hợp người đứng đơn là người chưa kết hôn hoặc được xác nhận là độc thân thì có thu nhập bình quân hàng tháng thực nhận  không quá 25 triệu đồng tính  theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+Trường hợp người đứng đơn là người chưa kết hôn hoặc được xác nhận là độc thân đang nuôi con dưới tuổi thành niên thì thu nhập bình quân hàng tháng thực nhận không quá 35 triệu đồng tính theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+b) Trường hợp người đứng đơn đã kết hôn theo quy định của pháp luật thì người đứng đơn và vợ (chồng) của người đó có tổng thu nhập bình quân hàng tháng thực nhận không quá 50 triệu đồng tính theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+c) Thời gian xác định điều kiện về thu nhập theo quy định tại điểm a, điểm b khoản này là trong 12 tháng liền kề, tính từ thời điểm cơ quan có thẩm quyền thực hiện xác nhận.
+
+[...]
+
+Theo đó, từ 07/4/2026, chính thức nâng mức trần thu nhập mua nhà ở xã hội lên  25 triệu đồng/tháng  đối với người đứng đơn là người chưa kết hôn hoặc được xác nhận là độc thân.
+
+Trường hợp người đứng đơn là người chưa kết hôn hoặc được xác nhận là độc thân đang nuôi con dưới tuổi thành niên thì mức trần thu nhập mua nhà ở xã hội không quá  35 triệu đồng/tháng.
+
+Trường hợp người đứng đơn đã kết hôn theo quy định của pháp luật thì mức trần thu nhập mua nhà ở xã hội không quá  50 triệu đồng/tháng .
+
+*Trên đây là thông tin Chính thức nâng mức trần thu nhập mua nhà ở xã hội lên 25 triệu đồng từ 07/4/2026 đúng không?
+
+Chính thức nâng mức trần thu nhập mua nhà ở xã hội lên 25 triệu đồng từ 07/4/2026 đúng không? (Hình từ Internet)
+
+Căn cứ theo khoản 1 Điều 82  Luật Nhà ở 2023  có cụm từ bị thay thế bởi điểm h khoản 5 Điều 57  Luật Quy hoạch đô thị và nông thôn 2024  quy định loại nhà và tiêu chuẩn diện tích nhà ở xã hội được quy định như sau:
+
+- Nhà ở xã hội là nhà chung cư, được đầu tư xây dựng theo dự án, phù hợp với quy hoạch chi tiết theo pháp luật về quy hoạch đô thị và nông thôn đã được phê duyệt.
+
+Trường hợp dự án đầu tư xây dựng nhà ở xã hội được đầu tư xây dựng tại xã thuộc vùng đồng bào dân tộc thiểu số và miền núi theo quy định của Thủ tướng Chính phủ thì được xây dựng nhà ở riêng lẻ;
+
+- Trường hợp nhà ở xã hội là nhà chung cư thì căn hộ phải được thiết kế, xây dựng theo quy chuẩn kỹ thuật quốc gia về nhà chung cư và tiêu chuẩn diện tích nhà ở xã hội;
+
+- Trường hợp nhà ở xã hội là nhà ở riêng lẻ thì phải được thiết kế, xây dựng theo quy định của pháp luật về xây dựng và tiêu chuẩn diện tích nhà ở xã hội;
+
+- Trường hợp cá nhân xây dựng nhà ở xã hội theo quy định tại khoản 6 Điều 80  Luật Nhà ở 2023  thì có thể xây dựng nhà ở nhiều tầng nhiều căn hộ hoặc nhà ở riêng lẻ theo quy định của  Luật Nhà ở 2023 .
+
+Căn cứ theo khoản 3 Điều 90  Luật Nhà ở 2023  quy định như sau:
+
+Điều 90. Quản lý vận hành nhà ở xã hội
+
+[...]
+
+3. Hoạt động quản lý vận hành nhà ở xã hội được hưởng cơ chế ưu đãi như đối với dịch vụ công ích.
+
+4. Đơn vị quản lý vận hành nhà ở xã hội được quyền kinh doanh các dịch vụ khác trong khu nhà ở xã hội mà không bị luật cấm để giảm giá dịch vụ quản lý vận hành nhà ở.
+
+Theo đó, hoạt động quản lý vận hành nhà ở xã hội được hưởng cơ chế ưu đãi như đối với dịch vụ công ích.","","","","","2026-04-09","https://thuvienphapluat.vn/hoi-dap-phap-luat/chinh-thuc-nang-muc-tran-thu-nhap-mua-nha-o-xa-hoi-len-25-trieu-dong-tu-0742026-dung-khong-138086606.html","2026-04-13T04:51:50.963512+00:00"
+"138086334","Thời‍ điểm‍ tính‍ tiền‍ sử‍ dụng‍ đất‍ khi‍ công‍ nhận‍ quyền‍ sử‍ dụng‍ đất‍ là‍ khi‍ nào?","Tại khoản 3 Điều 155  Luật Đất đai 2024  có quy định về căn cứ tính tiền sử dụng đất, tiền thuê đất; thời điểm định giá đất, thời‍ điểm‍ tính‍ tiền‍ sử‍ dụng‍ đất‍, tiền thuê đất như sau:
+
+Điều 155. Căn cứ tính tiền sử dụng đất, tiền thuê đất; thời điểm định giá đất, thời điểm tính tiền sử dụng đất, tiền thuê đất
+
+[...]
+
+3. Thời điểm định giá đất, thời điểm tính tiền sử dụng đất, tiền thuê đất được quy định như sau:
+
+a) Đối với trường hợp Nhà nước giao đất, cho thuê đất, cho phép chuyển mục đích sử dụng đất, gia hạn sử dụng đất, điều chỉnh thời hạn sử dụng đất, chuyển hình thức sử dụng đất, là thời điểm Nhà nước ban hành quyết định giao đất, cho thuê đất, cho phép chuyển mục đích sử dụng đất, gia hạn sử dụng đất, điều chỉnh thời hạn sử dụng đất, chuyển hình thức sử dụng đất, trừ trường hợp quy định tại khoản 7 Điều 124 của Luật này;
+
+b) Đối với trường hợp công nhận quyền sử dụng đất, là thời điểm người sử dụng đất, chủ sở hữu tài sản gắn liền với đất hoặc người đại diện cho người sử dụng đất, chủ sở hữu tài sản gắn liền với đất nộp đủ hồ sơ hợp lệ theo quy định của pháp luật;
+
+c) Đối với trường hợp cơ quan nhà nước có thẩm quyền điều chỉnh quyết định giao đất, cho thuê đất mà làm thay đổi diện tích, mục đích sử dụng đất, thời hạn sử dụng đất, là thời điểm cơ quan nhà nước có thẩm quyền điều chỉnh quyết định giao đất, cho thuê đất;
+
+d) Đối với trường hợp cơ quan nhà nước có thẩm quyền quyết định điều chỉnh quy hoạch chi tiết theo quy định của pháp luật về xây dựng mà phải xác định lại giá đất, là thời điểm cơ quan nhà nước có thẩm quyền quyết định điều chỉnh quy hoạch chi tiết.
+
+Như vậy, đối với trường hợp công‍ nhận‍ quyền‍ sử‍ dụng‍ đất‍ thì thời‍ điểm‍ tính‍ tiền‍ sử‍ dụng‍ đất‍ là thời điểm người sử dụng đất, chủ sở hữu tài sản gắn liền với đất hoặc người đại diện cho người sử dụng đất, chủ sở hữu tài sản gắn liền với đất nộp đủ hồ sơ hợp lệ.
+
+Thời‍ điểm‍ tính‍ tiền‍ sử‍ dụng‍ đất‍ khi‍ công‍ nhận‍ quyền‍ sử‍ dụng‍ đất‍ là‍ khi‍ nào? (Hình từ Internet)
+
+Tại khoản 3 Điều 157  Luật Đất đai 2024  có quy định về miễn, giảm tiền sử dụng đất, tiền thuê đất như sau:
+
+Điều 157. Miễn, giảm tiền sử dụng đất, tiền thuê đất
+
+[...]
+
+2. Chính phủ quy định các trường hợp khác được miễn, giảm tiền sử dụng đất, tiền thuê đất chưa được quy định tại khoản 1 Điều này sau khi được sự đồng ý của Ủy ban Thường vụ Quốc hội.
+
+3. Đối với trường hợp được miễn tiền sử dụng đất, tiền thuê đất thì không phải thực hiện thủ tục xác định giá đất, tính tiền sử dụng đất, tiền thuê đất được miễn. Người sử dụng đất được miễn tiền sử dụng đất, tiền thuê đất không phải thực hiện thủ tục đề nghị miễn tiền sử dụng đất, tiền thuê đất.
+
+4. Chính phủ quy định chi tiết Điều này.
+
+Như vậy, người được miễn tiền sử dụng đất không phải làm thủ tục đề nghị miễn tiền sử dụng đất.
+
+Tại Điều 118  Luật Đất đai 2024  có quy định các trường hợp giao đất không thu tiền sử dụng đất bao gồm:
+
+(1) Cá nhân trực tiếp sản xuất nông nghiệp được giao đất nông nghiệp trong hạn mức quy định.
+
+(2) Đất xây dựng trụ sở cơ quan Đảng Cộng sản Việt Nam, cơ quan nhà nước, Mặt trận Tổ quốc Việt Nam, tổ chức chính trị - xã hội; tổ chức chính trị xã hội - nghề nghiệp, tổ chức xã hội - nghề nghiệp, tổ chức xã hội, tổ chức khác được thành lập theo quy định của pháp luật và được Nhà nước giao nhiệm vụ, hỗ trợ kinh phí hoạt động thường xuyên; đất quốc phòng, an ninh; đất sử dụng vào mục đích công cộng không nhằm mục đích kinh doanh; đất nghĩa trang, nhà tang lễ, cơ sở hỏa táng, đất cơ sở lưu giữ tro cốt không thuộc trường hợp quy định tại khoản 2 Điều 119  Luật Đất đai 2024 ; đất tín ngưỡng để bồi thường cho trường hợp Nhà nước thu hồi đất tín ngưỡng.
+
+(3) Người sử dụng đất rừng đặc dụng, đất rừng phòng hộ, đất rừng sản xuất.
+
+(4) Đơn vị sự nghiệp công lập sử dụng đất xây dựng công trình sự nghiệp.
+
+(5) Cộng đồng dân cư sử dụng đất nông nghiệp; tổ chức tôn giáo, tổ chức tôn giáo trực thuộc sử dụng đất quy định tại khoản 2 Điều 213  Luật Đất đai 2024 .
+
+(6) Cơ quan, tổ chức sử dụng đất để thực hiện dự án đầu tư xây dựng nhà ở công vụ theo quy định của pháp luật về nhà ở.
+
+(7) Đồng bào dân tộc thiểu số không phải là cá nhân trực tiếp sản xuất nông nghiệp nhưng thuộc đối tượng giao đất không thu tiền sử dụng đất theo chính sách.
+
+(8) Tổ chức sử dụng đất để xây dựng nhà ở phục vụ tái định cư theo dự án của Nhà nước.
+
+(9) Việc giao đất được thực hiện theo quy định tại Điều 124  Luật Đất đai 2024 .","","","","","2026-04-08","https://thuvienphapluat.vn/hoi-dap-phap-luat/thoi-diem-tinh-tien-su-dung-dat-khi-cong-nhan-quyen-su-dung-dat-la-khi-nao-138086334.html","2026-04-13T04:51:55.529706+00:00"
+"138086611","Toàn bộ điểm mới Nghị định 136/2026/NĐ-CP về nhà ở xã hội gồm những gì?","Ngày 07/4/2026 Chính phủ ban hành Nghị định 136 2026 NĐ CP sửa đổi, bổ sung một số điều của  Nghị định 100/2024/NĐ-CP  ngày 26/7/2024 của Chính phủ quy định chi tiết một số điều của Luật Nhà ở về phát triển và quản lý nhà ở xã hội (đã được sửa đổi, bổ sung tại  Nghị định 261/2025/NĐ-CP  và  Nghị định 54/2026/NĐ-CP ).
+
+XEM TOÀN VĂN   Nghị định 136 2026 NĐ CP:   Tải về
+
+Dưới đây là toàn bộ điểm mới Nghị định 136/2026/NĐ-CP so với  Nghị định 100/2024/NĐ-CP  quy định chi tiết một số điều của Luật Nhà ở về phát triển và quản lý nhà ở xã hội:
+
+[1] Sửa đổi điều kiện về thu nhập mua, thuê mua nhà ở xã hội
+
+Tại khoản 1 Điều 1 Nghị định 136/2026/NĐ-CP đã sửa đổi, bổ sung khoản 1 Điều 30  Nghị định 100/2024/NĐ-CP  về điều kiện thu nhập, trong đó đáng chú ý gồm:
+
+- Điều chỉnh tăng mức thu nhập làm căn cứ xét mua, thuê mua nhà ở xã hội, trong đó mức 25 triệu đồng/tháng được áp dụng trên phạm vi cả nước đối với người độc thân.
+
+- Đồng thời, còn quy định các mức thu nhập khác tương ứng với từng trường hợp như: 35 triệu đồng/tháng đối với người độc thân nuôi con và 50 triệu đồng/tháng đối với hộ gia đình (vợ chồng).
+
+[2] Sửa đổi điều kiện về thu nhập cho lực lượng vũ trang
+
+Sửa đổi khoản 1, khoản 2 Điều 67  Nghị định 100/2024/NĐ-CP , có một số nội dung đáng chú ý sau:
+
+- Bổ sung các loại phụ cấp vào tổng thu nhập (phụ cấp theo quy định, bao gồm cả phụ cấp khu vực tại các địa bàn vùng sâu, vùng xa, biên giới, hải đảo có điều kiện khó khăn)
+
+- Thay đổi công thức tính thu nhập cho cặp vợ chồng, có 1 người không thuộc lực lượng vũ trang. Mức trần thu nhập mới: Tổng thu nhập của hai vợ chồng không quá: (Thu nhập Đại tá + Phụ cấp khu vực) + 25 triệu đồng.
+
+[3] Sửa đổi bổ sung mẫu đơn đăng ký mua, thuê mua, thuê nhà ở xã hội
+
+Trong đó sửa đổi, bổ sung Mẫu số 01 tại Phụ lục II  Nghị định 100/2024/NĐ-CP  (đơn đăng ký mua, thuê mua, thuê nhà ở xã hội).
+
+Chi tiết các điểm mới xem tại Nghị định 136 2026 NĐ CP
+
+* Trên đây là Toàn bộ điểm mới Nghị định 136/2026/NĐ-CP về nhà ở xã hội.
+
+Toàn bộ điểm mới Nghị định 136/2026/NĐ-CP về nhà ở xã hội gồm những gì? (Hình từ Internet)
+
+Tại điểm a khoản 3 Điều 29  Luật Dân số 2025  Luật số 113/2025/QH15 (có hiệu lực từ 01/7/2026) bổ sung khoản 13 vào sau khoản 12 Điều 76  Luật Nhà ở 2023 , chính thức bổ sung thêm đối tượng Người có từ 02 con đẻ trở lên được mua nhà ở xã hội khi đáp ứng các điều kiện theo quy định Luật Nhà ở 2023.
+
+Theo quy định tại Điều 76 và khoản 1 Điều 77  Luật Nhà ở 2023  được bổ sung bởi điểm a khoản 3 Điều 29  Luật Dân số 2025  Luật số 113/2025/QH15, chính thức 11 đối tượng được mua nhà ở xã hội từ 01/7/2026 bao gồm:
+
+STT
+
+Cụ thể
+
+Đối tượng 1
+
+Người có công với cách mạng, thân nhân liệt sĩ thuộc trường hợp được hỗ trợ cải thiện nhà ở theo quy định của  Pháp lệnh Ưu đãi người có công với cách mạng 2020 .
+
+Đối tượng 2
+
+Hộ gia đình nghèo, cận nghèo tại khu vực nông thôn.
+
+Đối tượng 3
+
+Hộ gia đình nghèo, cận nghèo tại khu vực nông thôn thuộc vùng thường xuyên bị ảnh hưởng bởi thiên tai, biến đổi khí hậu.
+
+Đối tượng 4
+
+Hộ gia đình nghèo, cận nghèo tại khu vực đô thị.
+
+Đối tượng 5
+
+Người thu nhập thấp tại khu vực đô thị.
+
+Đối tượng 6
+
+Công nhân, người lao động đang làm việc tại doanh nghiệp, hợp tác xã, liên hiệp hợp tác xã trong và ngoài khu công nghiệp.
+
+Đối tượng 7
+
+Sĩ quan, quân nhân chuyên nghiệp, hạ sĩ quan thuộc lực lượng vũ trang nhân dân, công nhân công an, công chức, công nhân và viên chức quốc phòng đang phục vụ tại ngũ; người làm công tác cơ yếu, người làm công tác khác trong tổ chức cơ yếu hưởng lương từ ngân sách nhà nước đang công tác. (Thuộc trường hợp chưa được hưởng chính sách hỗ trợ về nhà ở cho lực lượng vũ trang nhân dân.)
+
+Đối tượng 8
+
+Cán bộ, công chức, viên chức theo quy định của pháp luật về cán bộ, công chức, viên chức.
+
+Đối tượng 9
+
+Đối tượng đã trả lại nhà ở công vụ theo quy định tại khoản 4 Điều 125  Luật Nhà ở 2023 , trừ trường hợp bị thu hồi nhà ở công vụ do vi phạm quy định Luật Nhà ở 2023.
+
+Đối tượng 10
+
+Hộ gia đình, cá nhân thuộc trường hợp bị thu hồi đất và phải giải tỏa, phá dỡ nhà ở theo quy định của pháp luật mà chưa được Nhà nước bồi thường bằng nhà ở, đất ở.
+
+Đối tượng 11
+
+Người có từ 02 con đẻ trở lên (áp dụng từ 01/07/2026)
+
+Lưu ý các đối tượng nêu trên được mua nhà ở xã hội khi đáp ứng các điều kiện về thu nhập và nhà ở theo quy định  Luật Nhà ở 2023 .
+
+Trường hợp một đối tượng được hưởng nhiều chính sách hỗ trợ khác nhau thì được hưởng một chính sách hỗ trợ mức cao nhất; trường hợp các đối tượng có cùng tiêu chuẩn và điều kiện thì thực hiện hỗ trợ theo thứ tự ưu tiên trước đối với: người có công với cách mạng, thân nhân liệt sĩ, người khuyết tật, người được bố trí tái định cư theo hình thức mua, thuê mua nhà ở xã hội, người có từ 02 con đẻ trở lên, nữ giới.
+
+Căn cứ điểm c khoản 2 Điều 1  Thông tư 08/2026/TT-BXD  quy định thay thế Mẫu 05  Thông tư 05/2024/TT-BXD  bằng Mẫu 05  Thông tư 08/2026/TT-BXD  giấy tờ chứng minh đối tượng, thu nhập để được mua, thuê mua nhà ở xã hội (áp dụng cho đối tượng không có hợp đồng lao động, không được hưởng lương hưu do cơ quan Bảo hiểm xã hội chi trả).
+
+Theo đó Mẫu 05 Giấy xác nhận về điều kiện thu nhập mới nhất cho lao động tự do mới nhất áp dụng từ 15/02/2026 có dạng như sau:
+
+Tải Mẫu 05 Thông tư 08/2026/TT-BXD:
+
+- Bản Word:   Tải về
+
+- Bản PDF:    Tải về
+
+Hướng dẫn điền đơn:
+
+(10) Cơ quan Công an cấp xã nơi thường trú hoặc tạm trú hoặc nơi ở hiện tại.
+
+(11) Là nơi thường trú hoặc nơi tạm trú; trường hợp không có nơi thường trú, nơi tạm trú thì nơi ở hiện tại là nơi người kê khai đang thực tế sinh sống.
+
+(12) Ghi rõ người kê khai là đối tượng: người thu nhập thấp tại khu vực đô thị không có hợp đồng lao động, không được hưởng lương hưu do cơ quan Bảo hiểm xã hội chi trả.
+
+(13) Cơ quan công an cấp xã nơi thường trú hoặc tạm trú hoặc nơi ở hiện tại có trách nhiệm xác nhận theo quy định tại khoản 2 Điều 30  Nghị định 100/2024/NĐ-CP  đã được sửa đổi, bổ sung tại  Nghị định 261/2025/NĐCP  và  Nghị định 54/2026/NĐ-CP .
+
+* Các số thứ tự trong phần hướng dẫn tương ứng với số đã đánh dấu tại các mục trong biểu mẫu.","","","","","2026-04-08","https://thuvienphapluat.vn/hoi-dap-phap-luat/toan-bo-diem-moi-nghi-dinh-1362026ndcp-ve-nha-o-xa-hoi-gom-nhung-gi-138086611.html","2026-04-13T04:51:59.331142+00:00"
+"138086603","Cách viết Mẫu 01 đơn đăng ký mua nhà ở xã hội Nghị định 136 2026 mới nhất như thế nào?","Ngày 07/4/2026 Chính phủ ban hành Nghị định 136 2026 NĐ CP sửa đổi, bổ sung một số điều của  Nghị định 100/2024/NĐ-CP  ngày 26/7/2024 của Chính phủ quy định chi tiết một số điều của Luật Nhà ở về phát triển và quản lý nhà ở xã hội (đã được sửa đổi, bổ sung tại  Nghị định 261/2025/NĐ-CP  và  Nghị định 54/2026/NĐ-CP ).
+
+XEM TOÀN VĂN   Nghị định 136 2026 NĐ CP:   Tải về
+
+Trong đó sửa đổi, bổ sung Mẫu số 01 tại Phụ lục II (đơn đăng ký mua, thuê mua, thuê nhà ở xã hội).
+
+Theo đó Mẫu 01 đơn đăng ký mua nhà ở xã hội mới Nghị định 136/2026/NĐ-CP như sau:
+
+Tải Mẫu 01 đăng ký mua nhà ở xã hội mới Nghị định 136/2026/NĐ-CP:
+
+- Word:   Tải về
+
+- PDF:   Tải về
+
+Cách viết Mẫu 01 đơn đăng ký mua nhà ở xã hội Nghị định 136 2026:
+
+1 - Đánh dấu vào ô mà người viết đơn có nhu cầu đăng ký.
+
+2 - Ghi tên chủ đầu tư xây dựng nhà ở xã hội.
+
+3 - Nếu đang làm việc tại cơ quan, tổ chức thì ghi rõ nghề nghiệp, nếu là lao động tự do thì ghi là lao động tự do, nếu đã nghỉ hưu thì ghi đã nghỉ hưu...
+
+4 - Nếu đang làm việc thì mới ghi vào mục này, trừ đối tượng là sĩ quan, quân nhân chuyên nghiệp, hạ sĩ quan thuộc lực lượng vũ trang nhân dân, công nhân công an, công chức, công nhân và viên chức quốc phòng đang phục vụ tại ngũ; người làm công tác cơ yếu, người làm công tác khác trong tổ chức cơ yếu hưởng lương từ ngân sách nhà nước đang công tác.
+
+5 - Ghi rõ người có đơn thuộc đối tượng theo quy định được hỗ trợ nhà ở xã hội.
+
+6 - Đối với trường hợp độc thân: diện tích nhà ở bình quân đầu người đối với người đó.  Đối với trường hợp hộ gia đình: diện tích nhà ở bình quân đầu người đối với người đề nghị xác nhận, vợ/chồng người đề nghị xác nhận (nếu có), cha, mẹ của người đề nghị xác nhận bao gồmcả cha, mẹ vợ/chồng của người đó (nếu có) và các con của người đề nghị xác nhận (nếu có).
+
+7 - Người thu nhập thấp tại khu vực đô thị (khoản 5 Điều 76); công nhân, người lao động đang làm việc tại doanh nghiệp, hợp tác xã, liên hiệp hợp tác xã trong và ngoài khu công nghiệp (khoản 6 Điều 76); cán bộ, công chức, viên chức theo quy định của pháp luật về cán bộ, công chức, viên chức (khoản 8 Điều 76).
+
+8 - Trường hợp đối tượng là người thu nhập thấp khu vực đô thị không có hợp đồng lao động, nếu là người chưa kết hôn hoặc được xác nhận là độc thân thì có thu nhập bình quân hàng tháng thực nhận không quá 25 triệu đồng. Cơ quan Công an cấp xã nơi thường trú/tạm trú hoặc nơi ở tại thời điểm đối tượng đề nghị xác nhận xác nhận điều kiện về thu nhập.
+
+9 - Trường hợp đối tượng là người thu nhập thấp khu vực đô thị kh ông có hợp đồng lao động, nếu là người chưa kết hôn hoặc được xác nhận là độc thân đang nuôi con dưới tuổi thành niên thì thu nhập bình quân hàng tháng thực nhận không quá 35 triệu đồng. Cơ quan Công an cấp xã nơi thường trú/tạmtrú hoặc nơi ở tại thời điểm đối tượng đề nghị xác nhận xác nhận điều kiện về thu nhập.
+
+10 - Trường hợp đối tượng là người thu nhập thấp khu vực đô thị không có hợp đồng lao động, nếu đã kết hôn theo quy định của pháp luật thì tổng thu nhập bình quân hàng tháng thực nhận không quá 50 triệu đồng. Công an cấp xã nơi thường trú/tạmtrú hoặc nơi ở tại thời điểm đối tượng đề nghị xác nhận xác nhận điều kiện về thu nhập.
+
+11 - Sỹ quan, quân nhân chuyên nghiệp, hạ sỹ quan thuộc lực lượng vũ trang nhân dân, công nhân công an, công chức, công nhân và viên chức quốc phòng đang phục vụ tại ngũ; người làm công tác cơ yếu, người làm công tác khác trong tổ chức cơ yếu hưởng lương từ ngân sách nhà nước đang công tác (khoản 7 Điều 76).
+
+12 - Ghi rõ hình thức được giải quyết chính sách hỗ trợ về nhà ở xã hội (mua, thuê mua, thuê).
+
+* Trên đây là toàn bộ nội dung về Cách viết Mẫu 01 đơn đăng ký mua nhà ở xã hội Nghị định 136 2026.
+
+Cách viết Mẫu 01 đơn đăng ký mua nhà ở xã hội Nghị định 136 2026 mới nhất như thế nào? (Hình từ Internet)
+
+Theo đó khoản 1 Điều 1 Nghị định 136/2026/NĐ-CP sửa đổi, bổ sung khoản 1 Điều 30  Nghị định 100/2024/NĐ-CP  về điều kiện thu nhập như sau:
+
+Điều 30. Điều kiện về thu nhập
+
+1. Đối với các đối tượng quy định tại các khoản 5, 6 và 8 Điều 76 của Luật Nhà ở thì phải đảm bảo điều kiện về thu nhập như sau:
+
+a) Trường hợp người đứng đơn là người chưa kết hôn hoặc được xác nhận là độc thân thì có thu nhập bình quân hàng tháng thực nhận không quá 25 triệu đồng tính theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+Trường hợp ngườiđứng đơn là người chưa kết hôn hoặc được xác nhận là độc thân đang nuôi con dưới tuổi thành niên thì thu nhập bình quân hàng tháng thực nhận không quá 35 triệu đồng tính theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+b) Trường hợp người đứng đơn đã kết hôn theo quy định của pháp luật thì người đứng đơn và vợ (chồng) của người đó có tổng thu nhập bình quân hàng tháng thực nhận không quá 50 triệu đồng tính theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+c) Thờigian xácđịnh điềukiện vềthu nhậptheo quyđịnh tạiđiểm a,điểm b khoản này là trong 12 tháng liền kề, tính từ thời điểm cơ quan có thẩm quyền thực hiện xác nhận.
+
+d) Căn cứ điều kiện, mức thu nhập của từng khu vực trên địa bàn, chính sách ưu đãi về nhà ở cho cán bộ, công chức, viên chức, số lượng người phụ thuộc theo quy định của pháp luật, Ủy ban nhân dân cấp tỉnh được quyết định hệ số điều chỉnh mức thu nhập quy định tại điểm a, điểm b khoản này nhưng không vượt quá tỷ lệ giữa thu nhập bình quân đầu ngườitại địa phương so với thu nhập bình quân đầu người của cả nước;quyết định chínhsách khuyến khích tiếp cận nhà ở xã hội đối với đối tượngđược hưởng chínhsách hỗ trợ về nhà ở xã hội có từ ba (03) người phụ thuộc trở lên trong cùng một hộ gia đình.”
+
+[...]
+
+Theo đó, Chính phủ đã chính thức điều chỉnh tăng mức thu nhập làm căn cứ xét mua, thuê mua nhà ở xã hội, trong đó mức 25 triệu đồng/tháng được áp dụng trên phạm vi cả nước đối với người độc thân.
+
+Đồng thời, còn quy định các mức thu nhập khác tương ứng với từng trường hợp như: 35 triệu đồng/tháng đối với người độc thân nuôi con và 50 triệu đồng/tháng đối với hộ gia đình (vợ chồng).
+
+Bên cạnh đó, Ủy ban nhân dân cấp tỉnh còn được phép điều chỉnh mức thu nhập này theo điều kiện thực tế của địa phương trong phạm vi cho phép.
+
+Lưu ý:  Mức thu nhập nêu trên tính theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+Thời gian xác định điều kiện về thu nhập theo này là trong 12 tháng liền kề, tính từ thời điểm cơ quan có thẩm quyền thực hiện xác nhận.
+
+Ngày 24/03/2026 Bộ xây dựng đã có  Văn bản hợp nhất 17/VBHN-BXD năm 2026  hợp nhất các  Thông tư 05/2024/TT-BXD ,  Thông tư 09/2025/TT-BXD ,  Thông tư 32/2025/TT-BXD ,  Thông tư 08/2026/TT-BXD .
+
+Cụ thể tại Phụ lục I của băn bản hướng dẫn về toàn bộ 08 mẫu giấy tờ nhà ở xã hội gồm có:
+
+(1) Mẫu số 01
+
+- Giấy tờ chứng minh đối tượng được hưởng chính sách hỗ trợ về nhà ở xã hội (áp dụng cho các đối tượng quy định tại các khoản 9, 10, 11 Điều 76  Luật Nhà ở 2023 )
+
+- Tải Mẫu số 01:   Tải về
+
+- CCPL: Mẫu này được thay thế theo quy định tại điểm a khoản 2 Điều 1  Thông tư 08/2026/TT-BXD .
+
+- Mẫu này có giá trị trong thời hạn 12 tháng, kể từ ngày được cơ quan có thẩm quyền xác nhận theo quy định tại Điều 3  Thông tư08/2026/TT-BXD .
+
+(2) Mẫu số 01a
+
+- Giấy tờ chứng minh đối tượng, thu nhập để được hưởng chính sách hỗ trợ về nhà ở xã hội (áp dụng cho các đối tượng quy định tại các khoản 5, 6, 8 Điều 76  Luật Nhà ở 2023 , trừ đối tượng quy định tại khoản 5 Điều 76  Luật Nhà ở 2023  không có hợp đồng lao động, không được hưởng lương hưu do cơ quan Bảo hiểm xã hội chi trả)
+
+- Tải Mẫu số 01a:   Tải về
+
+- CCPL: Mẫu này được bổ sung theo quy định tại khoản 3 Điều 1  Thông tư 32/2025/TT-BXD  sửa đổi, bổ sung một số điều của  Thông tư 05/2024/TT-BXD .
+
+- Mẫu này có giá trị trong thời hạn 12 tháng, kể từ ngày được cơ quan có thẩm quyền xác nhận theo quy định tại Điều 3  Thông tư 08/2026/TT-BXD .
+
+(3) Mẫu số 02
+
+- Giấy tờ chứng minh điều kiện về nhà ở để được mua, thuê mua nhà ở xã hội/nhà ở cho lực lượng vũ trang nhân dân (trường hợp chưa có nhà ở thuộc sở hữu của mình, hoặc không có tên hoặc không có nội dung thông tin về nhà ở trong Giấy chứng nhận quyền sử dụng đất, quyền sở hữu tài sản gắn liền với đất)
+
+- Tải Mẫu số 02:   Tải về
+
+- CCPL: Mẫu này được thay thế theo quy định tại điểm b khoản 2 Điều 1  Thông tư 08/2026/TT-BXD .
+
+- Mẫu này có giá trị trong thời hạn 12 tháng, kể từ ngày được cơ quan có thẩm quyền xác nhận theo quy định tại Điều 3  Thông tư 08/2026/TT-BXD .
+
+(4) Mẫu số 03
+
+- Giấy tờ chứng minh điều kiện về nhà ở để được mua, thuê mua nhà ở xã hội/nhà ở cho lực lượng vũ trang nhân dân đối với trường hợp có nhà ở nhưng diện tích nhà ở bình quân đầu người thấp hơn 15m2 sàn/người
+
+- Tải Mẫu số 03:   Tải về
+
+- CCPL: Mẫu này được quy định tại Phụ lục I  Thông tư 05/2024/TT-BXD .
+
+- Mẫu này có giá trị trong thời hạn 12 tháng, kể từ ngày được cơ quan có thẩm quyền xác nhận theo quy định tại Điều 3  Thông tư 08/2026/TT-BXD .
+
+(5) Mẫu số 04
+
+- Giấy tờ chứng minh điều kiện về thu nhập để được mua, thuê mua nhà ở xã hội (áp dụng cho đối tượng quy định tại khoản 7 Điều 76  Luật Nhà ở 2023 )
+
+- Tải Mẫu số 04:   Tải về
+
+- CCPL: Mẫu này được thay thế theo quy định tại khoản 3 Điều 1  Thông tư 32/2025/TT-BXD  sửa đổi, bổ sung một số điều của  Thông tư 05/2024/TT-BXD
+
+- Mẫu này có giá trị trong thời hạn 12 tháng, kể từ ngày được cơ quan có thẩm quyền xác nhận theo quy định tại Điều 3  Thông tư 08/2026/TT-BXD
+
+(6) Mẫu số 05
+
+- Giấy tờ chứng minh đối tượng, thu nhập để được mua, thuê mua nhà ở xã hội (áp dụng cho đối tượng quy định tại khoản 5 Điều 76  Luật Nhà ở 2023  không có hợp đồng lao động, không được hưởng lương hưu do cơ quan Bảo hiểm xã hội chi trả).
+
+- Tải Mẫu số 05:   Tải về
+
+- CCPL: Mẫu này được thay thế theo quy định tại điểm c khoản 2 Điều 1  Thông tư 08/2026/TT-BXD
+
+- Mẫu này có giá trị trong thời hạn 12 tháng, kể từ ngày được cơ quan có thẩm quyền xác nhận theo quy định tại Điều 3  Thông tư 08/2026/TT-BXD .
+
+(7) Mẫu số 06
+
+- Giấy tờ chứng minh điều kiện vay vốn ưu đãi của Nhà nước thông qua Ngân hàng Chính sách xã hội để hộ gia đình, cá nhân tự xây dựng hoặc cải tạo, sửa chữa nhà ở
+
+- Tải Mẫu số 06:   Tải về
+
+(8) Mẫu số 07
+
+- Giấy tờ chứng minh điều kiện vay vốn ưu đãi của Nhà nước tại tổ chức tín dụng do Nhà nước chỉ định để hộ gia đình, cá nhân tự xây dựng hoặc cải tạo, sửa chữa nhà ở.
+
+- Tải Mẫu số 07:   Tải về","","","","","2026-04-08","https://thuvienphapluat.vn/hoi-dap-phap-luat/cach-viet-mau-01-don-dang-ky-mua-nha-o-xa-hoi-nghi-dinh-136-2026-moi-nhat-nhu-the-nao-138086603.html","2026-04-13T04:52:03.662763+00:00"
+"138086601","Toàn bộ 3 mức trần thu nhập mua nhà ở xã hội theo Nghị định 136/2026/NĐ-CP là bao nhiêu?","Ngày 07/4/2026 Chính phủ ban hành Nghị định 136 2026 NĐ CP sửa đổi, bổ sung một số điều của  Nghị định 100/2024/NĐ-CP  ngày 26/7/2024 của Chính phủ quy định chi tiết một số điều của Luật Nhà ở về phát triển và quản lý nhà ở xã hội (đã được sửa đổi, bổ sung tại  Nghị định 261/2025/NĐ-CP  và  Nghị định 54/2026/NĐ-CP ).
+
+XEM TOÀN VĂN   Nghị định 136 2026 NĐ CP:   Tải về
+
+Theo đó khoản 1 Điều 1 Nghị định 136/2026/NĐ-CP sửa đổi, bổ sung khoản 1 Điều 30  Nghị định 100/2024/NĐ-CP  như sau:
+
+Điều 30. Điều kiện về thu nhập
+
+1. Đối với các đối tượng quy định tại các khoản 5, 6 và 8 Điều 76 của Luật Nhà ở thì phải đảm bảo điều kiện về thu nhập như sau:
+
+a) Trường hợp người đứng đơn là người chưa kết hôn hoặc được xác nhận là độc thân thì có thu nhập bình quân hàng tháng thực nhận không quá 25 triệu đồng tính theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+Trường hợp người đứng đơn là người chưa kết hôn hoặc được xác nhận là độc thân đang nuôi con dưới tuổi thành niên thì thu nhập bình quân hàng tháng thực nhận không quá 35 triệu đồng tính theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+b) Trường hợp người đứng đơn đã kết hôn theo quy định của pháp luật thì người đứng đơn và vợ (chồng) của người đó có tổng thu nhập bình quân hàng tháng thực nhận không quá 50 triệu đồng tính theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+c) Thời gian xác định điều kiện về thu nhập theo quy định tại điểm a, điểm b khoản này là trong 12 tháng liền kề, tính từ thời điểm cơ quan có thẩm quyền thực hiện xác nhận.
+
+d) Căn cứ điều kiện, mức thu nhập của từng khu vực trên địa bàn, chính sách ưu đãi về nhà ở cho cán bộ, công chức, viên chức, số lượng người phụ thuộc theo quy định của pháp luật, Ủy ban nhân dân cấp tỉnh được quyết định hệ số điều chỉnh mức thu nhập quy định tại điểm a, điểm b khoản này nhưng không vượt quá tỷ lệ giữa thu nhập bình quân đầu người tại địa phương so với thu nhập bình quân đầu người của cả nước; quyết định chính sách khuyến khích tiếp cận nhà ở xã hội đối với đối tượngđược hưởng chính sách hỗ trợ về nhà ở xã hội có từ ba (03) người phụ thuộc trở lên trong cùng một hộ gia đình.”
+
+[...]
+
+Theo đó mức trần thu nhập mua nhà ở xã hội theo Nghị định 136/2026/NĐ-CP như sau:
+
+STT
+
+Đối tượng
+
+Mức thu nhập bình quân/tháng (tối đa)
+
+Ghi chú
+
+1
+
+Người độc thân
+
+Không quá 25 triệu đồng
+
+Tính theo thu nhập thực nhận
+
+2
+
+Người độc thân nuôi con dưới tuổi thành niên
+
+Không quá 35 triệu đồng
+
+Phải có xác nhận nuôi con
+
+3
+
+Người đã kết hôn (vợ/chồng)
+
+Không quá 50 triệu đồng (tổng thu nhập 2 vợ chồng)
+
+Tính tổng thu nhập thực nhận
+
+Lưu ý:  Mức thu nhập nêu trên tính theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+Thời gian xác định điều kiện về thu nhập là trong 12 tháng liền kề, tính từ thời điểm cơ quan có thẩm quyền thực hiện xác nhận.
+
+* Trên đây là toàn bộ 3 mức trần thu nhập mua nhà ở xã hội theo Nghị định 136 2026 NĐ CP
+
+Toàn bộ 3 mức trần thu nhập mua nhà ở xã hội theo Nghị định 136/2026/NĐ-CP là bao nhiêu? (Hình từ Internet)
+
+Ngày 24/03/2026 Bộ xây dựng đã có  Văn bản hợp nhất 17/VBHN-BXD năm 2026  hợp nhất các  Thông tư 05/2024/TT-BXD ,  Thông tư 09/2025/TT-BXD ,  Thông tư 32/2025/TT-BXD ,  Thông tư 08/2026/TT-BXD .
+
+Theo đó tại Phụ lụ I của băn bản hướng dẫn về toàn bộ mẫu giấy tờ chứng minh đối tượng và điều kiện được hưởng chính sách nhà ở xã hội như sau:
+
+Mẫu
+
+Tên mẫu
+
+File tải về
+
+Mẫu số 01  [1]
+
+Giấy tờ chứng minh đối tượng được hưởng chính sách hỗ trợ về nhà ở xã hội (áp dụng cho các đối tượng quy định tại các khoản 9, 10, 11 Điều 76  Luật Nhà ở 2023 )
+
+Tải về
+
+Mẫu số 01a  [2]
+
+Giấy tờ chứng minh đối tượng, thu nhập để được hưởng chính sách hỗ trợ về nhà ở xã hội (áp dụng cho các đối tượng quy định tại các khoản 5, 6, 8 Điều 76 của Luật Nhà ở, trừ đối tượng quy định tại khoản 5 Điều 76 của Luật Nhà ở không có hợp đồng lao động, không được hưởng lương hưu do cơ quan Bảo hiểm xã hội chi trả)
+
+Tải về
+
+Mẫu số 02  [3]
+
+Giấy tờ chứng minh điều kiện về nhà ở để được mua, thuê mua nhà ở xã hội/nhà ở cho lực lượng vũ trang nhân dân (trường hợp chưa có nhà ở thuộc sở hữu của mình, hoặc không có tên hoặc không có nội dung thông tin về nhà ở trong Giấy chứng nhận quyền sử dụng đất, quyền sở hữu tài sản gắn liền với đất)
+
+Tải về
+
+Mẫu số 03  [4]
+
+Giấy tờ chứng minh điều kiện về nhà ở để được mua, thuê mua nhà ở xã hội/nhà ở cho lực lượng vũ trang nhân dân đối với trường hợp có nhà ở nhưng diện tích nhà ở bình quân đầu người thấp hơn 15m2 sàn/người
+
+Tải về
+
+Mẫu số 04  [5]
+
+Giấy tờ chứng minh điều kiện về thu nhập để được mua, thuê mua nhà ở xã hội (áp dụng cho đối tượng quy định tại khoản 7 Điều 76 của Luật Nhà ở)
+
+Tải về
+
+Mẫu số 05  [6]
+
+Giấy tờ chứng minh đối tượng, thu nhập để được mua, thuê mua nhà ở xã hội (áp dụng cho đối tượng quy định tại khoản 5 Điều 76 của Luật Nhà ở không có hợp đồng lao động, không được hưởng lương hưu do cơ quan Bảo hiểm xã hội chi trả).
+
+Tải về
+
+Mẫu số 06
+
+Giấy tờ chứng minh điều kiện vay vốn ưu đãi của Nhà nước thông qua Ngân hàng Chính sách xã hội để hộ gia đình, cá nhân tự xây dựng hoặc cải tạo, sửa chữa nhà ở
+
+Tải về
+
+Mẫu số 07
+
+Giấy tờ chứng minh điều kiện vay vốn ưu đãi của Nhà nước tại tổ chức tín dụng do Nhà nước chỉ định để hộ gia đình, cá nhân tự xây dựng hoặc cải tạo, sửa chữa nhà ở
+
+Tải về
+
+Ghi chú:
+
+[1]  Mẫu này được thay thế theo quy định tại điểm a khoản 2 Điều 1  Thông tư 08/2026/TT-BXD  sửa đổi, bổ sung một số điều của các Thông tư trong lĩnh vực nhà ở, có hiệu lực kể từ ngày 15 tháng 02 năm 2026.
+
+- Mẫu này có giá trị trong thời hạn 12 tháng, kể từ ngày được cơ quan có thẩm quyền xác nhận theo quy định tại Điều 3  Thông tư08/2026/TT-BXD  sửa đổi, bổ sung một số điều của các Thông tư trong lĩnh vực nhà ở, có hiệu lực kể từ ngày 15 tháng 02 năm 2026.
+
+[2]  Mẫu này được bổ sung theo quy định tại khoản 3 Điều 1  Thông tư 32/2025/TT-BXD  sửa đổi, bổ sung một số điều của  Thông tư 05/2024/TT-BXD  ngày 31 tháng 7 năm 2024 của Bộ trưởng Bộ Xây dựng quy định chi tiết một số điều của Luật Nhà ở có hiệu lực kể từ ngày 10 tháng 11 năm 2025.
+
+- Mẫu này có giá trị trong thời hạn 12 tháng, kể từ ngày được cơ quan có thẩm quyền xác nhận theo quy định tại Điều 3  Thông tư 08/2026/TT-BXD  sửa đổi, bổ sung một số điều của các Thông tư trong lĩnh vực nhà ở, có hiệu lực kể từ ngày 15 tháng 02 năm 2026.
+
+[3]  Mẫu này được thay thế theo quy định tại điểm b khoản 2 Điều 1  Thông tư 08/2026/TT-BXD  sửa đổi, bổ sung một số điều của các Thông tư trong lĩnh vực nhà ở, có hiệu lực kể từ ngày 15 tháng 02 năm 2026.
+
+- Mẫu này có giá trị trong thời hạn 12 tháng, kể từ ngày được cơ quan có thẩm quyền xác nhận theo quy định tại Điều 3  Thông tư 08/2026/TT-BXD  sửa đổi, bổ sung một số điều của các Thông tư trong lĩnh vực nhà ở, có hiệu lực kể từ ngày 15 tháng 02 năm 2026.
+
+[4] Mẫu này có giá trị trong thời hạn 12 tháng, kể từ ngày được cơ quan có thẩm quyền xác nhận theo quy định tại Điều 3 của Thông tư số 08/2026/TT-BXD sửa đổi, bổ sung một số điều của các Thông tư trong lĩnh vực nhà ở, có hiệu lực kể từ ngày 15 tháng 02 năm 2026.
+
+[5] Mẫu này được thay thế theo quy định tại khoản 3 Điều 1  Thông tư 32/2025/TT-BXD  sửa đổi, bổ sung một số điều của  Thông tư 05/2024/TT-BXD  ngày 31 tháng 7 năm 2024 của Bộ trưởng Bộ Xây dựng quy định chi tiết một số điều của Luật Nhà ở có hiệu lực kể từ ngày 10 tháng 11 năm 2025.
+
+- Mẫu này có giá trị trong thời hạn 12 tháng, kể từ ngày được cơ quan có thẩm quyền xác nhận theo quy định tại Điều 3  Thông tư 08/2026/TT-BXD  sửa đổi, bổ sung một số điều của các Thông tư trong lĩnh vực nhà ở, có hiệu lực kể từ ngày 15 tháng 02 năm 2026.
+
+[6]  Mẫu này được thay thế theo quy định tại điểm c khoản 2 Điều 1  Thông tư 08/2026/TT-BXD  sửa đổi, bổ sung một số điều của các Thông tư trong lĩnh vực nhà ở, có hiệu lực kể từ ngày 15 tháng 02 năm 2026.
+
+- Mẫu này có giá trị trong thời hạn 12 tháng, kể từ ngày được cơ quan có thẩm quyền xác nhận theo quy định tại Điều 3  Thông tư 08/2026/TT-BXD  sửa đổi, bổ sung một số điều của các Thông tư trong lĩnh vực nhà ở, có hiệu lực kể từ ngày 15 tháng 02 năm 2026.
+
+Căn cứ Điều 76  Luật Nhà ở 2023  được bổ sung bởi điểm a khoản 3 Điều 29  Luật Dân số 2025  quy định 13 Nhóm đối tượng được hưởng chính sách hỗ trợ về nhà ở xã hội bao gồm:
+
+(1) Người có công với cách mạng, thân nhân liệt sĩ thuộc trường hợp được hỗ trợ cải thiện nhà ở theo quy định của Pháp lệnh Ưu đãi người có công với cách mạng.
+
+(2) Hộ gia đình nghèo, cận nghèo tại khu vực nông thôn.
+
+(3) Hộ gia đình nghèo, cận nghèo tại khu vực nông thôn thuộc vùng thường xuyên bị ảnh hưởng bởi thiên tai, biến đổi khí hậu.
+
+(4) Hộ gia đình nghèo, cận nghèo tại khu vực đô thị.
+
+(5) Người thu nhập thấp tại khu vực đô thị.
+
+(6) Công nhân, người lao động đang làm việc tại doanh nghiệp, hợp tác xã, liên hiệp hợp tác xã trong và ngoài khu công nghiệp.
+
+(7) Sĩ quan, quân nhân chuyên nghiệp, hạ sĩ quan thuộc lực lượng vũ trang nhân dân, công nhân công an, công chức, công nhân và viên chức quốc phòng đang phục vụ tại ngũ; người làm công tác cơ yếu, người làm công tác khác trong tổ chức cơ yếu hưởng lương từ ngân sách nhà nước đang công tác.
+
+(8) Cán bộ, công chức, viên chức theo quy định của pháp luật về cán bộ, công chức, viên chức.
+
+(9) Đối tượng đã trả lại nhà ở công vụ theo quy định tại khoản 4 Điều 125 của Luật này, trừ trường hợp bị thu hồi nhà ở công vụ do vi phạm quy định của Luật này.
+
+(10) Hộ gia đình, cá nhân thuộc trường hợp bị thu hồi đất và phải giải tỏa, phá dỡ nhà ở theo quy định của pháp luật mà chưa được Nhà nước bồi thường bằng nhà ở, đất ở.
+
+(11) Học sinh, sinh viên đại học, học viện, trường đại học, cao đẳng, dạy nghề, trường chuyên biệt theo quy định của pháp luật; học sinh trường dân tộc nội trú công lập.
+
+(12) Doanh nghiệp, hợp tác xã, liên hiệp hợp tác xã trong khu công nghiệp.
+
+(13) Người có từ 02 con đẻ trở lên.","","","","","2026-04-08","https://thuvienphapluat.vn/hoi-dap-phap-luat/toan-bo-3-muc-tran-thu-nhap-mua-nha-o-xa-hoi-theo-nghi-dinh-1362026ndcp-la-bao-nhieu-138086601.html","2026-04-13T04:52:07.919267+00:00"
+"138086575","Toàn văn Nghị định 136/2026/NĐ-CP sửa đổi Nghị định 100 về phát triển và quản lý nhà ở xã hội ra sao?","Ngày 07/4/2026, Chính phủ ban hành Nghị định 136/2026/NĐ-CP sửa đổi, bổ sung một số điều của  Nghị định 100/2024/NĐ-CP  ngày 26/7/2024 của Chính phủ quy định chi tiết một số điều của Luật Nhà ở về phát triển và quản lý nhà ở xã hội đã được sửa đổi, bổ sung tại  Nghị định 261/2025/NĐ-CP  và Nghị định số 54/2026/NĐ-CP.
+
+Tải về  Nghị định 136/2026/NĐ-CP
+
+Trong đó, căn cứ theo khoản 1 Điều 1Nghị định 136/2026/NĐ-CP sửa đổi, bổ sung khoản 1 Điều 30  Nghị định 100/2024/NĐ-CP  như sau:
+
+Điều 30. Điều kiện về thu nhập
+
+1. Đối với các đối tượng quy định tại các khoản 5, 6 và 8 Điều 76 của Luật Nhà ở thì phải đảm bảo điều kiện về thu nhập như sau:
+
+a) Trường hợp người đứng đơn là người chưa kết hôn hoặc được xác nhận là độc thân thì có thu nhập bình quân hàng tháng thực nhận không quá 25 triệu đồng tính theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+Trường hợp ngườiđứng đơn là người chưa kết hôn hoặc được xác nhận là độc thân đang nuôi con dưới tuổi thành niên thì thu nhập bình quân hàng tháng thực nhận không quá 35 triệu đồng tính theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+b) Trường hợp người đứng đơn đã kết hôn theo quy định của pháp luật thì người đứng đơn và vợ (chồng) của người đó có tổng thu nhập bình quân hàng tháng thực nhận không quá 50 triệu đồng tính theo Bảng tiền công, tiền lương do cơ quan, đơn vị, doanh nghiệp nơi đối tượng làm việc xác nhận.
+
+c) Thờigian xácđịnh điềukiện vềthu nhậptheo quyđịnh tạiđiểm a,điểm b khoản này là trong 12 tháng liền kề, tính từ thời điểm cơ quan có thẩm quyền thực hiện xác nhận.
+
+d) Căn cứ điều kiện, mức thu nhập của từng khu vực trên địa bàn, chính sách ưu đãi về nhà ở cho cán bộ, công chức, viên chức, số lượng người phụ thuộc theo quy định của pháp luật, Ủy ban nhân dân cấp tỉnh được quyết định hệ số điều chỉnh mức thu nhập quy định tại điểm a, điểm b khoản này nhưng không vượt quá tỷ lệ giữa thu nhập bình quân đầu ngườitại địa phương so với thu nhập bình quân đầu người của cả nước;quyết định chínhsách khuyến khích tiếp cận nhà ở xã hội đối với đối tượngđược hưởng chínhsách hỗ trợ về nhà ở xã hội có từ ba (03) người phụ thuộc trở lên trong cùng một hộ gia đình.”
+
+[...]
+
+Xem thêm chi tiết Toàn văn Nghị định 136 2026 NĐ CP sửa đổi Nghị định 100 về phát triển và quản lý nhà ở xã hội
+
+Tải về
+
+*Trên đây là thông tin Toàn văn Nghị định 136 2026 NĐ CP sửa đổi Nghị định 100 về phát triển và quản lý nhà ở xã hội ra sao?
+
+Toàn văn Nghị định 136/2026/NĐ-CP sửa đổi Nghị định 100 về phát triển và quản lý nhà ở xã hội ra sao? (Hình từ Internet)
+
+Căn cứ theo Điều 76  Luật Nhà ở 2023  được bổ sung bởi điểm a khoản 3 Điều 29  Luật Dân số 2025  quy định đối tượng được hưởng chính sách hỗ trợ về nhà ở xã hội bao gồm:
+
+- Người có công với cách mạng, thân nhân liệt sĩ thuộc trường hợp được hỗ trợ cải thiện nhà ở theo quy định của Pháp lệnh Ưu đãi người có công với cách mạng.
+
+- Hộ gia đình nghèo, cận nghèo tại khu vực nông thôn.
+
+- Hộ gia đình nghèo, cận nghèo tại khu vực nông thôn thuộc vùng thường xuyên bị ảnh hưởng bởi thiên tai, biến đổi khí hậu.
+
+- Hộ gia đình nghèo, cận nghèo tại khu vực đô thị.
+
+- Người thu nhập thấp tại khu vực đô thị.
+
+- Công nhân, người lao động đang làm việc tại doanh nghiệp, hợp tác xã, liên hiệp hợp tác xã trong và ngoài khu công nghiệp.
+
+- Sĩ quan, quân nhân chuyên nghiệp, hạ sĩ quan thuộc lực lượng vũ trang nhân dân, công nhân công an, công chức, công nhân và viên chức quốc phòng đang phục vụ tại ngũ; người làm công tác cơ yếu, người làm công tác khác trong tổ chức cơ yếu hưởng lương từ ngân sách nhà nước đang công tác.
+
+- Cán bộ, công chức, viên chức theo quy định của pháp luật về cán bộ, công chức, viên chức.
+
+- Đối tượng đã trả lại nhà ở công vụ theo quy định tại khoản 4 Điều 125  Luật Nhà ở 2023 , trừ trường hợp bị thu hồi nhà ở công vụ do vi phạm quy định của  Luật Nhà ở 2023 .
+
+- Hộ gia đình, cá nhân thuộc trường hợp bị thu hồi đất và phải giải tỏa, phá dỡ nhà ở theo quy định của pháp luật mà chưa được Nhà nước bồi thường bằng nhà ở, đất ở.
+
+- Học sinh, sinh viên đại học, học viện, trường đại học, cao đẳng, dạy nghề, trường chuyên biệt theo quy định của pháp luật; học sinh trường dân tộc nội trú công lập.
+
+- Doanh nghiệp, hợp tác xã, liên hiệp hợp tác xã trong khu công nghiệp.
+
+- Người có từ 02 con đẻ trở lên.
+
+Căn cứ Điều 12  Luật Nhà ở 2023  quy định thời điểm xác lập quyền sở hữu nhà ở như sau:
+
+- Trường hợp trực tiếp đầu tư xây dựng nhà ở thì thời điểm xác lập quyền sở hữu nhà ở là thời điểm đã hoàn thành việc xây dựng nhà ở theo quy định của pháp luật về xây dựng.
+
+- Trường hợp mua bán, thuê mua nhà ở mà không thuộc trường hợp quy định tại khoản 4 Điều 12  Luật Nhà ở 2023  thì thời điểm xác lập quyền sở hữu nhà ở là thời điểm bên mua, bên thuê mua đã thanh toán đủ tiền mua, tiền thuê mua và đã nhận bàn giao nhà ở, trừ trường hợp các bên có thỏa thuận khác.
+
+- Trường hợp góp vốn, tặng cho, đổi nhà ở thì thời điểm xác lập quyền sở hữu nhà ở là thời điểm bên nhận góp vốn, bên nhận tặng cho, bên nhận đổi đã nhận bàn giao nhà ở từ bên góp vốn, bên tặng cho, bên đổi nhà ở, trừ trường hợp các bên có thỏa thuận khác.
+
+- Trường hợp mua bán, thuê mua nhà ở giữa chủ đầu tư dự án đầu tư xây dựng nhà ở với người mua, người thuê mua thì thời điểm xác lập quyền sở hữu nhà ở được thực hiện theo quy định của pháp luật về kinh doanh bất động sản.
+
+- Trường hợp thừa kế nhà ở thì thời điểm xác lập quyền sở hữu nhà ở được thực hiện theo quy định của pháp luật về dân sự.
+
+- Trường hợp khác thực hiện theo quy định của pháp luật có liên quan.
+
+- Giao dịch về nhà ở quy định tại các khoản 2, 3 và 4 Điều 12  Luật Nhà ở 2023  phải tuân thủ điều kiện về giao dịch nhà ở và hợp đồng phải có hiệu lực theo quy định của  Luật Nhà ở 2023.","","","","","2026-04-08","https://thuvienphapluat.vn/hoi-dap-phap-luat/toan-van-nghi-dinh-1362026ndcp-sua-doi-nghi-dinh-100-ve-phat-trien-va-quan-ly-nha-o-xa-hoi-ra-sao-138086575.html","2026-04-13T04:52:12.157065+00:00"
+"138086052","Văn bản hợp nhất Luật Đất đai 2026 số 44/VBHN-VPQH tải về ở đâu?","Ngày 16/3/2026, Văn phòng Quốc hội đã có văn bản hợp nhất 44/VBHN-VPQH về việc hợp nhất Luật Đất đai.
+
+Tải Văn bản hợp nhất Luật Đất đai 2026 số 44/VBHN-VPQH
+
+Tải về
+
+Văn bản hợp nhất 44/VBHN-VPQH hợp nhất Luật Đất đai được hợp nhất từ các văn bản sau:
+
+-  Luật Đất đai 2024  của Quốc hội, có hiệu lực kể từ ngày 01/8/2024;
+
+-  Luật 43/2024/QH15  của Quốc hội sửa đổi, bổ sung một số điều của Luật Đất đai số 31/2024/QH15, Luật Nhà ở số 27/2023/QH15, Luật Kinh doanh bất động sản số 29/2023/QH15 và Luật Các tổ chức tín dụng số 32/2024/QH15, có hiệu lực kể từ ngày 01/8/2024;
+
+-  Luật Quy hoạch đô thị và nông thôn 2024  của Quốc hội, có hiệu lực kể từ ngày 01/7/2025;
+
+-  Luật Đầu tư công 2024  của Quốc hội, có hiệu lực kể từ ngày 01/01/2025;
+
+-  Luật Công nghiệp công nghệ số 2025  của Quốc hội, có hiệu lực kể từ ngày 01/01/2026;
+
+-  Luật Thanh tra 2025  của Quốc hội, có hiệu lực kể từ ngày 01/7/2025;
+
+-  Luật Khoa học, công nghệ và đổi mới sáng tạo 2025  của Quốc hội, có hiệu lực kể từ ngày 01/10/2025;
+
+-  Luật Đường sắt 2025  của Quốc hội, có hiệu lực kể từ ngày 01/01/2026;
+
+-  Luật An ninh mạng 2025  của Quốc hội, có hiệu lực kể từ ngày 01/7/2026;
+
+-  Luật Hàng không dân dụng Việt Nam 2025  của Quốc hội, có hiệu lực kể từ ngày 01/7/2026;
+
+-  Luật Phục hồi, phá sản 2025  của Quốc hội, có hiệu lực kể từ ngày 01/3/2026;
+
+-  Luật số 146/2025/QH15  của Quốc hội sửa đổi, bổ sung một số điều của 15 luật trong lĩnh vực nông nghiệp và môi trường, có hiệu lực kể từ ngày 01/01/2026;
+
+-  Luật số 147/2025/QH15  của Quốc hội sửa đổi, bổ sung một số điều của Luật Địa chất và khoáng sản, có hiệu lực kể từ ngày 01/01/2026.
+
+Trên đây là thông tin về ""Văn bản hợp nhất Luật Đất đai 2026 số 44/VBHN-VPQH tải về ở đâu?"".
+
+Văn bản hợp nhất Luật Đất đai 2026 số 44/VBHN-VPQH tải về ở đâu? (Hình từ Internet)
+
+Theo khoản 1 Điều 121  Luật Đất đai 2024  quy định các trường hợp chuyển mục đích sử dụng đất phải được cơ quan nhà nước có thẩm quyền cho phép bao gồm:
+
+- Chuyển đất trồng lúa, đất rừng đặc dụng, đất rừng phòng hộ, đất rừng sản xuất sang loại đất khác trong nhóm đất nông nghiệp;
+
+- Chuyển đất nông nghiệp sang đất phi nông nghiệp;
+
+- Chuyển các loại đất khác sang đất chăn nuôi tập trung khi thực hiện dự án chăn nuôi tập trung quy mô lớn;
+
+- Chuyển đất phi nông nghiệp được Nhà nước giao đất không thu tiền sử dụng đất sang loại đất phi nông nghiệp khác được Nhà nước giao đất có thu tiền sử dụng đất hoặc cho thuê đất;
+
+- Chuyển đất phi nông nghiệp không phải là đất ở sang đất ở;
+
+- Chuyển đất xây dựng công trình sự nghiệp, đất sử dụng vào mục đích công cộng có mục đích kinh doanh sang đất sản xuất, kinh doanh phi nông nghiệp;
+
+- Chuyển đất sản xuất, kinh doanh phi nông nghiệp không phải là đất thương mại, dịch vụ sang đất thương mại, dịch vụ.
+
+Theo Điều 5  Luật Đất đai 2024  quy định về nguyên tắc sử dụng đất hiện nay như sau:
+
+- Đúng mục đích sử dụng đất.
+
+- Bền vững, tiết kiệm, có hiệu quả đối với đất đai và tài nguyên trên bề mặt, trong lòng đất.
+
+- Bảo vệ đất, bảo vệ môi trường, thích ứng với biến đổi khí hậu, không được lạm dụng thuốc bảo vệ thực vật, phân hóa học làm ô nhiễm, thoái hóa đất.
+
+- Thực hiện quyền và nghĩa vụ của người sử dụng đất trong thời hạn sử dụng đất theo quy định  Luật Đất đai 2024  và quy định khác của pháp luật có liên quan; không xâm phạm quyền, lợi ích hợp pháp của người sử dụng đất liền kề và xung quanh.","","","","","2026-04-08","https://thuvienphapluat.vn/hoi-dap-phap-luat/van-ban-hop-nhat-luat-dat-dai-2026-so-44vbhnvpqh-tai-ve-o-dau-138086052.html","2026-04-13T04:52:15.652520+00:00"
+"138086450","Nhà nước có được thu hồi phần đất còn lại không thỏa thuận được không?","Tại Điều 3  Nghị định 49/2026/NĐ-CP  có quy định về trường hợp Nhà nước thu hồi phần đất còn lại không thỏa thuận được như sau:
+
+Điều 3. Bồi thường, hỗ trợ, tái định cư, thu hồi đất đối với diện tích đất còn lại không thỏa thuận được của dự án sử dụng đất thông qua thỏa thuận nhận quyền sử dụng đất quy định tại điểm b khoản 2 và điểm d khoản 13 Điều 3 của Nghị quyết số 254/2025/QH15
+
+[...]
+
+3. Hội đồng nhân dân cấp tỉnh xem xét, thông qua việc thu hồi phần diện tích đất còn lại không thỏa thuận được quy định tại điểm b khoản 2 và điểm d khoản 13 Điều 3 của Nghị quyết số 254/2025/QH15. Trường hợp dự án thuộc diện phải chấp thuận chủ trương đầu tư hoặc quyết định chủ trương đầu tư hoặc chấp thuận chủ trương đầu tư đồng thời với chấp thuận nhà đầu tư hoặc quyết định chấp thuận nhà đầu tư thì Hội đồng nhân dân cấp tỉnh xem xét việc thu hồi phần diện tích đất còn lại không thỏa thuận được sau khi dự án đã được chấp thuận chủ trương đầu tư hoặc quyết định chủ trương đầu tư hoặc chấp thuận chủ trương đầu tư đồng thời với chấp thuận nhà đầu tư hoặc đã có quyết định chấp thuận nhà đầu tư theo quy định của pháp luật.
+
+4. Quy định về xác định số tiền chênh lệch giữa số tiền trung bình của giá đất đã thỏa thuận trên một đơn vị diện tích đất của loại đất đã thỏa thuận với số tiền theo phương án bồi thường, hỗ trợ, tái định cư tính trên một đơn vị diện tích của loại đất thu hồi trong phạm vi dự án như sau:
+
+[...]
+
+Như vậy, trường hợp  sử dụng đất để thực hiện dự án thông qua thỏa thuận về nhận quyền sử dụng đất đã hết thời hạn phải hoàn thành việc thỏa thuận hoặc hết thời gian gia hạn phải hoàn thành việc thỏa thuận mà đã thoả thuận được trên 75% diện tích đất và trên 75% số lượng người sử dụng đất  thì Hội đồng nhân dân cấp tỉnh xem xét, thông qua việc thu hồi phần diện tích đất còn lại để giao đất, cho thuê đất cho chủ đầu tư.
+
+Trường hợp dự án thuộc diện phải chấp thuận chủ trương đầu tư hoặc quyết định chủ trương đầu tư hoặc chấp thuận chủ trương đầu tư đồng thời với chấp thuận nhà đầu tư hoặc quyết định chấp thuận nhà đầu tư  thì Hội đồng nhân dân cấp tỉnh xem xét việc thu hồi phần đất còn lại không thỏa thuận được sau khi dự án đã được chấp thuận chủ trương đầu tư hoặc quyết định chủ trương đầu tư hoặc chấp thuận chủ trương đầu tư đồng thời với chấp thuận nhà đầu tư hoặc đã có quyết định chấp thuận nhà đầu tư theo quy định của pháp luật.
+
+Trên đây là thông tin ""Nhà nước có được thu hồi phần đất còn lại không thỏa thuận được không?""
+
+Nhà nước có được thu hồi phần đất còn lại không thỏa thuận được không? (Hình từ Internet)
+
+Tại khoản 1 Điều 95  Luật Đất đai 2024  có quy định các đối tượng được bồi thường về đất khi Nhà nước thu hồi đất vì mục đích quốc phòng, an ninh; phát triển kinh tế - xã hội vì lợi ích quốc gia, công cộng bao gồm:
+
+- Hộ gia đình, cá nhân đang sử dụng đất không phải là đất thuê trả tiền thuê đất hằng năm;
+
+- Cộng đồng dân cư đang sử dụng đất có công trình là chùa, đình, đền, miếu, am, nhà thờ họ, công trình tín ngưỡng khác; đất nông nghiệp quy định tại khoản 4 Điều 178  Luật Đất đai 2024  và đất đó không có tranh chấp, được Ủy ban nhân dân cấp xã nơi có đất xác nhận là đất sử dụng chung cho cộng đồng;
+
+- Người gốc Việt Nam định cư ở nước ngoài quy định tại khoản 1 Điều 44  Luật Đất đai 2024 ;
+
+- Tổ chức tôn giáo, tổ chức tôn giáo trực thuộc được Nhà nước cho phép hoạt động đang sử dụng đất mà không phải là đất do Nhà nước giao, cho thuê; không phải là đất nhận chuyển nhượng, nhận tặng cho từ ngày 01 tháng 7 năm 2004 trở về sau;
+
+- Người gốc Việt Nam định cư ở nước ngoài được Nhà nước giao đất có thu tiền sử dụng đất, cho thuê đất trả tiền thuê đất một lần cho cả thời gian thuê; nhận chuyển nhượng quyền sử dụng đất trong khu công nghiệp, cụm công nghiệp, khu công nghệ cao, khu kinh tế;
+
+- Tổ chức được Nhà nước giao đất có thu tiền sử dụng đất, cho thuê đất trả tiền thuê đất một lần cho cả thời gian thuê; nhận thừa kế quyền sử dụng đất, nhận chuyển nhượng quyền sử dụng đất, nhận góp vốn bằng quyền sử dụng đất;
+
+- Tổ chức nước ngoài có chức năng ngoại giao được Nhà nước cho thuê đất trả tiền thuê đất một lần cho cả thời gian thuê;
+
+- Tổ chức kinh tế, người gốc Việt Nam định cư ở nước ngoài, tổ chức kinh tế có vốn đầu tư nước ngoài được Nhà nước giao đất có thu tiền sử dụng đất để thực hiện dự án đầu tư xây dựng nhà ở để bán hoặc để bán kết hợp cho thuê; cho thuê đất trả tiền thuê đất một lần cho cả thời gian thuê.
+
+Tại Điều 81  Luật Đất đai 2024  có quy định về các trường hợp thu hồi đất do vi phạm pháp luật về đất đai như sau:
+
+Điều 81. Các trường hợp thu hồi đất do vi phạm pháp luật về đất đai
+
+1. Sử dụng đất không đúng mục đích đã được Nhà nước giao, cho thuê, công nhận quyền sử dụng đất và đã bị xử phạt vi phạm hành chính về hành vi sử dụng đất không đúng mục đích mà tiếp tục vi phạm.
+
+2. Người sử dụng đất hủy hoại đất và đã bị xử phạt vi phạm hành chính về hành vi hủy hoại đất mà tiếp tục vi phạm.
+
+3. Đất được giao, cho thuê không đúng đối tượng hoặc không đúng thẩm quyền.
+
+4. Đất do nhận chuyển nhượng, nhận tặng cho từ người được Nhà nước giao đất, cho thuê đất mà người được giao đất, cho thuê đất không được chuyển nhượng, tặng cho theo quy định của Luật này.
+
+5. Đất được Nhà nước giao quản lý mà để bị lấn đất, chiếm đất.
+
+6. Người sử dụng đất không thực hiện nghĩa vụ tài chính với Nhà nước.
+
+7. Đất trồng cây hằng năm, đất nuôi trồng thủy sản không được sử dụng trong thời gian 12 tháng liên tục, đất trồng cây lâu năm không được sử dụng trong thời gian 18 tháng liên tục, đất trồng rừng không được sử dụng trong thời gian 24 tháng liên tục và đã bị xử phạt vi phạm hành chính mà không đưa đất vào sử dụng theo thời hạn ghi trong quyết định xử phạt vi phạm hành chính;
+
+8. Đất được Nhà nước giao, cho thuê, cho phép chuyển mục đích sử dụng, công nhận quyền sử dụng đất, nhận chuyển nhượng quyền sử dụng đất để thực hiện dự án đầu tư mà không được sử dụng trong thời hạn 12 tháng liên tục kể từ khi nhận bàn giao đất trên thực địa hoặc tiến độ sử dụng đất chậm 24 tháng so với tiến độ ghi trong dự án đầu tư; trường hợp không đưa đất vào sử dụng hoặc chậm tiến độ sử dụng đất so với tiến độ ghi trong dự án đầu tư thì chủ đầu tư được gia hạn sử dụng không quá 24 tháng và phải nộp bổ sung cho Nhà nước khoản tiền tương ứng với mức tiền sử dụng đất, tiền thuê đất đối với thời gian được gia hạn; hết thời hạn được gia hạn mà chủ đầu tư vẫn chưa đưa đất vào sử dụng thì Nhà nước thu hồi đất mà không bồi thường về đất, tài sản gắn liền với đất và chi phí đầu tư vào đất còn lại.
+
+9. Các trường hợp quy định tại các khoản 6, 7 và 8 Điều này không áp dụng đối với trường hợp bất khả kháng.
+
+10. Chính phủ quy định chi tiết Điều này.
+
+Như vậy, trường hợp cho thuê đất không đúng thẩm quyền thì sẽ bị thu hồi đất do vi phạm pháp luật về đất đai.","","","","","2026-04-07","https://thuvienphapluat.vn/hoi-dap-phap-luat/nha-nuoc-co-duoc-thu-hoi-phan-dat-con-lai-khong-thoa-thuan-duoc-khong-138086450.html","2026-04-13T04:52:19.659641+00:00"
+"138085884","Định mức cho hoạt động trực tiếp lập quy hoạch tổng thể quốc gia chi tiết thế nào?","Căn cứ Phụ lục 1 ban hành kèm theo Thông tư 36/2026/TT-BTC  TẠI ĐÂY   quy định định mức cho hoạt động trực tiếp lập quy hoạch tổng thể quốc gia như sau:
+
+Định mức cho hoạt động trực tiếp lập quy hoạch tổng thể quốc gia
+
+Xem toàn bộ Định mức cho hoạt động trực tiếp lập quy hoạch tổng thể quốc gia   Tải về
+
+Trên đây là thông tin về Định mức cho hoạt động trực tiếp lập quy hoạch tổng thể quốc gia chi tiết thế nào?
+
+Trên đây là thông tin về Định mức cho hoạt động trực tiếp lập quy hoạch tổng thể quốc gia chi tiết thế nào?
+
+Căn cứ theo Điều 10  Luật Quy hoạch 2025  quy định:
+
+Điều 10. Chi phí cho hoạt động quy hoạch
+
+1. Chi phí lập, công bố và điều chỉnh quy hoạch được sử dụng nguồn vốn đầu tư công theo quy định của pháp luật về đầu tư công, nguồn chi thường xuyên theo quy định của pháp luật về ngân sách nhà nước, nguồn lực hỗ trợ của các tổ chức, cá nhân và nguồn vốn hợp pháp khác.
+
+2. Chi phí thẩm định quy hoạch, đánh giá thực hiện quy hoạch sử dụng nguồn chi thường xuyên theo quy định của pháp luật về ngân sách nhà nước, nguồn lực hỗ trợ của các tổ chức, cá nhân và nguồn vốn hợp pháp khác.
+
+3. Chính phủ quy định chi tiết việc huy động và sử dụng nguồn lực của các tổ chức, cá nhân hỗ trợ cho hoạt động quy hoạch.
+
+4. Bộ trưởng Bộ Tài chính hướng dẫn định mức cho hoạt động quy hoạch và việc quản lý, sử dụng chi phí cho hoạt động quy hoạch.
+
+Như vậy, chi phí cho hoạt động quy hoạch cụ thể như sau:
+
+- Chi phí lập, công bố và điều chỉnh quy hoạch được sử dụng nguồn vốn đầu tư công theo quy định của pháp luật về đầu tư công, nguồn chi thường xuyên theo quy định của pháp luật về ngân sách nhà nước, nguồn lực hỗ trợ của các tổ chức, cá nhân và nguồn vốn hợp pháp khác.
+
+- Chi phí thẩm định quy hoạch, đánh giá thực hiện quy hoạch sử dụng nguồn chi thường xuyên theo quy định của pháp luật về ngân sách nhà nước, nguồn lực hỗ trợ của các tổ chức, cá nhân và nguồn vốn hợp pháp khác.
+
+- Chính phủ quy định chi tiết việc huy động và sử dụng nguồn lực của các tổ chức, cá nhân hỗ trợ cho hoạt động quy hoạch.
+
+- Bộ trưởng Bộ Tài chính hướng dẫn định mức cho hoạt động quy hoạch và việc quản lý, sử dụng chi phí cho hoạt động quy hoạch.
+
+Căn cứ khoản 1 Điều 13  Luật Quy hoạch 2025  quy định:
+
+Điều 13. Kiểm tra hoạt động quy hoạch
+
+1. Thẩm quyền kiểm tra hoạt động quy hoạch:
+
+a) Bộ Tài chính tổ chức kiểm tra hoạt động quy hoạch đối với quy hoạch ngành, quy hoạch vùng, quy hoạch tỉnh; báo cáo Thủ tướng Chính phủ kết quả thực hiện;
+
+b) Thẩm quyền kiểm tra hoạt động quy hoạch đối với quy hoạch chi tiết ngành, quy hoạch đô thị và nông thôn thực hiện theo quy định của pháp luật có liên quan.
+
+2. Nội dung kiểm tra hoạt động quy hoạch đối với quy hoạch ngành, quy hoạch vùng, quy hoạch tỉnh bao gồm việc tuân thủ trình tự, thủ tục lập, thẩm định, phê duyệt, công bố, thực hiện, điều chỉnh quy hoạch, nội dung quy hoạch theo quy định của pháp luật về quy hoạch.
+
+3. Chính phủ quy định chi tiết trình tự, thủ tục kiểm tra hoạt động quy hoạch đối với quy hoạch ngành, quy hoạch vùng, quy hoạch tỉnh và trách nhiệm của các cơ quan, tổ chức, cá nhân có liên quan.
+
+Như vậy, cơ quan có thẩm quyền kiểm tra hoạt động quy hoạch bao gồm:
+
+- Bộ Tài chính tổ chức kiểm tra hoạt động quy hoạch đối với quy hoạch ngành, quy hoạch vùng, quy hoạch tỉnh; báo cáo Thủ tướng Chính phủ kết quả thực hiện;
+
+- Thẩm quyền kiểm tra hoạt động quy hoạch đối với quy hoạch chi tiết ngành, quy hoạch đô thị và nông thôn thực hiện theo quy định của pháp luật có liên quan.","","","","","2026-04-07","https://thuvienphapluat.vn/hoi-dap-phap-luat/dinh-muc-cho-hoat-dong-truc-tiep-lap-quy-hoach-tong-the-quoc-gia-chi-tiet-the-nao-138085884.html","2026-04-13T04:52:22.926844+00:00"
+"138086088","","","","","","","","https://thuvienphapluat.vn/hoi-dap-phap-luat/dinh-muc-cho-hoat-dong-truc-tiep-lap-quy-hoach-tinh-chi-tiet-the-nao-138086088.html","2026-04-13T04:52:30.184625+00:00"
+"138085971","Định mức cho hoạt động trực tiếp lập quy hoạch sử dụng đất quốc gia chi tiết thế nào?","Căn cứ Phụ lục 3 ban hành kèm theo Thông tư 36/2026/TT-BTC  TẠI ĐÂY   quy định định mức cho hoạt động trực tiếp lập quy hoạch sử dụng đất quốc gia như sau:
+
+Định mức cho hoạt động trực tiếp lập quy hoạch sử dụng đất quốc gia
+
+Xem toàn bộ Định mức cho hoạt động trực tiếp lập quy hoạch sử dụng đất quốc gia   Tải về
+
+Trên đây là thông tin về Định mức cho hoạt động trực tiếp lập quy hoạch sử dụng đất quốc gia chi tiết thế nào?
+
+Xem thêm:
+
+TOÀN VĂN Thông tư 36/2026/TT-BTC hướng dẫn chi phí và định mức cho hoạt động quy hoạch thế nào?
+
+TOÀN VĂN Thông tư 22/2026/TT-BTC hướng dẫn CSDL và sơ đồ quy hoạch quốc gia, vùng, tỉnh thế nào?
+
+Định mức cho hoạt động trực tiếp lập quy hoạch sử dụng đất quốc gia chi tiết thế nào? (Hình từ Internet)
+
+Căn cứ theo Điều 27  Luật Quy hoạch 2025  có hiệu lực từ 1/3/2026 quy định về nội dung quy hoạch sử dụng đất quốc gia như sau:
+
+Điều 27. Nội dung quy hoạch sử dụng đất quốc gia
+
+1. Quy hoạch sử dụng đất quốc gia bao gồm những nội dung chủ yếu sau đây:
+
+a) Phân tích, đánh giá về điều kiện tự nhiên, nguồn lực, bối cảnh trực tiếp tác động và thực trạng sử dụng đất của các ngành, lĩnh vực;
+
+b) Dự báo xu thế biến động của việc sử dụng đất;
+
+c) Quan điểm, tầm nhìn, mục tiêu sử dụng đất trong thời kỳ quy hoạch;
+
+d) Định hướng sử dụng đất quốc gia, định hướng sử dụng đất của vùng đáp ứng nhu cầu sử dụng đất để phát triển kinh tế - xã hội; bảo đảm quốc phòng, an ninh; bảo vệ môi trường, thích ứng với biến đổi khí hậu;
+
+đ) Xác định các chỉ tiêu sử dụng đất trong thời kỳ quy hoạch đối với nhóm đất nông nghiệp, nhóm đất phi nông nghiệp; trong đó xác định diện tích một số loại đất gồm đất trồng lúa, đất rừng đặc dụng, đất rừng phòng hộ, đất rừng sản xuất là rừng tự nhiên, đất quốc phòng, đất an ninh;
+
+e) Giải pháp, dự kiến nguồn lực thực hiện quy hoạch.
+
+2. Chính phủ quy định chi tiết Điều này.
+
+Như vậy, quy hoạch sử dụng đất quốc gia bao gồm những nội dung chủ yếu sau đây:
+
+- Phân tích, đánh giá về điều kiện tự nhiên, nguồn lực, bối cảnh trực tiếp tác động và thực trạng sử dụng đất của các ngành, lĩnh vực;
+
+- Dự báo xu thế biến động của việc sử dụng đất;
+
+- Quan điểm, tầm nhìn, mục tiêu sử dụng đất trong thời kỳ quy hoạch;
+
+- Định hướng sử dụng đất quốc gia, định hướng sử dụng đất của vùng đáp ứng nhu cầu sử dụng đất để phát triển kinh tế - xã hội; bảo đảm quốc phòng, an ninh; bảo vệ môi trường, thích ứng với biến đổi khí hậu;
+
+- Xác định các chỉ tiêu sử dụng đất trong thời kỳ quy hoạch đối với nhóm đất nông nghiệp, nhóm đất phi nông nghiệp; trong đó xác định diện tích một số loại đất gồm đất trồng lúa, đất rừng đặc dụng, đất rừng phòng hộ, đất rừng sản xuất là rừng tự nhiên, đất quốc phòng, đất an ninh;
+
+- Giải pháp, dự kiến nguồn lực thực hiện quy hoạch.
+
+Căn cứ theo Điều 32  Luật Quy hoạch 2025  có hiệu lực từ 1/3/2026 quy định về thẩm quyền thành lập Hội đồng thẩm định quy hoạch như sau:
+
+Điều 32. Thẩm quyền thành lập Hội đồng thẩm định quy hoạch
+
+1. Thủ tướng Chính phủ thành lập Hội đồng thẩm định quy hoạch  tổng thể quốc gia, quy hoạch không gian biển quốc gia,  quy hoạch sử dụng đất quốc gia  và quy hoạch vùng.
+
+2. Cơ quan, người có thẩm quyền phê duyệt quy hoạch ngành thành lập Hội đồng thẩm định quy hoạch ngành.
+
+3. Chủ tịch Ủy ban nhân dân cấp tỉnh thành lập Hội đồng thẩm định quy hoạch tỉnh.
+
+4. Thẩm quyền thành lập Hội đồng thẩm định quy hoạch chi tiết ngành, quy hoạch đô thị và nông thôn thực hiện theo quy định của pháp luật có liên quan.
+
+Như vậy, thẩm quyền thành lập Hội đồng thẩm định quy hoạch sử dụng đất quốc gia thuộc về Thủ tướng Chính phủ.","","","","","2026-04-07","https://thuvienphapluat.vn/hoi-dap-phap-luat/dinh-muc-cho-hoat-dong-truc-tiep-lap-quy-hoach-su-dung-dat-quoc-gia-chi-tiet-the-nao-138085971.html","2026-04-13T04:52:35.933449+00:00"
+"138086080","Định mức cho hoạt động trực tiếp lập quy hoạch ngành chi tiết thế nào?","Căn cứ Phụ lục 4 ban hành kèm theo Thông tư 36/2026/TT-BTC  TẠI ĐÂY   quy định định mức cho hoạt động trực tiếp lập quy hoạch ngành như sau:
+
+Định mức cho hoạt động trực tiếp lập quy hoạch ngành
+
+Xem toàn bộ Định mức cho hoạt động trực tiếp lập quy hoạch ngành
+
+Tải về
+
+Trên đây là thông tin về Định mức cho hoạt động trực tiếp lập quy hoạch ngành chi tiết thế nào?
+
+Định mức cho hoạt động trực tiếp lập quy hoạch ngành chi tiết thế nào? (Hình từ Internet)
+
+Căn cứ Điều 28  Luật Quy hoạch 2025  có quy định về nội dung quy hoạch ngành như sau:
+
+- Quy hoạch ngành kết cấu hạ tầng bao gồm những nội dung chủ yếu sau đây:
+
++ Phân tích, đánh giá điều kiện tự nhiên, thực trạng phát triển kết cấu hạ tầng cấp quốc gia, mang tính liên vùng, liên tỉnh; hiện trạng phân bố, sử dụng không gian kết cấu hạ tầng; phân tích, dự báo xu thế phát triển trong nước và quốc tế; phân tích, dự báo các nguồn lực phát triển;
+
++ Xác định yêu cầu của phát triển kinh tế - xã hội đối với ngành; những cơ hội và thách thức phát triển của ngành;
+
++ Quan điểm, tầm nhìn, mục tiêu phát triển;
+
++ Định hướng phát triển hệ thống kết cấu hạ tầng quan trọng của quốc gia, mang tính liên ngành, liên vùng, liên tỉnh trên phạm vi cả nước;
+
++ Định hướng bố trí sử dụng đất cho phát triển kết cấu hạ tầng;
+
++ Giải pháp, dự kiến nguồn lực thực hiện quy hoạch.
+
+- Quy hoạch sử dụng đất quốc phòng, quy hoạch sử dụng đất an ninh bao gồm những nội dung chủ yếu sau đây:
+
++ Định hướng sử dụng đất quốc phòng, đất an ninh;
+
++ Xác định nhu cầu sử dụng đất quốc phòng, đất an ninh trong kỳ quy hoạch sử dụng đất phù hợp với quy hoạch tổng thể quốc gia; nhiệm vụ quốc phòng, an ninh và kế hoạch phát triển kinh tế - xã hội của quốc gia;
+
++ Phân kỳ quy hoạch sử dụng đất quốc phòng, đất an ninh cho từng kỳ kế hoạch 05 năm;
+
++ Giải pháp, dự kiến nguồn lực thực hiện quy hoạch.
+
+- Quy hoạch tài nguyên nước, thủy lợi và phòng, chống thiên tai bao gồm những nội dung chủ yếu sau đây:
+
++ Phân tích, đánh giá điều kiện tự nhiên, nguồn lực; điều tra, khảo sát hiện trạng, đánh giá tác động của việc khai thác, sử dụng tài nguyên nước; hiện trạng kết cấu hạ tầng thủy lợi và phòng, chống thiên tai trên địa bàn cả nước;
+
++ Phân tích, đánh giá chủ trương, định hướng phát triển kinh tế - xã hội liên quan đến việc khai thác, sử dụng tài nguyên nước, kết cấu hạ tầng thủy lợi và phòng, chống thiên tai;
+
++ Dự báo xu thế phát triển, các kịch bản phát triển, các tiến bộ khoa học, công nghệ và phát triển kinh tế - xã hội tác động tới việc bảo vệ, khai thác, sử dụng tài nguyên nước, kết cấu hạ tầng thủy lợi và phòng, chống thiên tai trong thời kỳ quy hoạch;
+
++ Đánh giá về liên kết ngành, liên kết vùng; xác định yêu cầu của phát triển kinh tế - xã hội, những cơ hội và thách thức đối với việc phát triển kết cấu hạ tầng thủy lợi và phòng, chống thiên tai;
+
++ Quan điểm, tầm nhìn, mục tiêu điều hòa, phân phối, khai thác, sử dụng tài nguyên nước, phát triển kết cấu hạ tầng thủy lợi, phòng, chống thiên tai phục vụ phát triển kinh tế - xã hội;
+
++ Định hướng điều hòa, phân phối, khai thác, sử dụng, bảo vệ tài nguyên nước và phòng, chống khắc phục hậu quả tác hại do nước gây ra;
+
++ Định hướng phát triển kết cấu hạ tầng thủy lợi và phòng, chống thiên tai trên phạm vi cả nước và các vùng;
+
++ Định hướng bố trí sử dụng đất cho phát triển kết cấu hạ tầng thủy lợi và phòng, chống thiên tai quốc gia;
+
++ Định hướng bảo vệ môi trường và ứng phó với biến đổi khí hậu;
+
++ Giải pháp, dự kiến nguồn lực thực hiện quy hoạch.
+
+- Quy hoạch sử dụng tài nguyên khác bao gồm những nội dung chủ yếu sau đây:
+
++ Phân tích, đánh giá chủ trương, định hướng phát triển kinh tế - xã hội và các quy hoạch có liên quan đến việc bảo vệ, khai thác, sử dụng tài nguyên;
+
++ Đánh giá tác động của việc khai thác, sử dụng tài nguyên;
+
++ Dự báo tiến bộ khoa học, công nghệ và phát triển kinh tế - xã hội tác động tới việc bảo vệ, khai thác, sử dụng tài nguyên trong thời kỳ quy hoạch;
+
++ Quan điểm, tầm nhìn, mục tiêu bảo vệ, khai thác, sử dụng tài nguyên phục vụ phát triển kinh tế - xã hội;
+
++ Xác định khu vực dự kiến khai thác, sử dụng tài nguyên; khu vực cần bảo vệ, quản lý nghiêm ngặt (nếu có);
+
++ Định hướng bảo vệ môi trường, phòng, chống thiên tai và ứng phó với biến đổi khí hậu;
+
++ Giải pháp, dự kiến nguồn lực thực hiện quy hoạch.
+
+- Quy hoạch bảo vệ môi trường bao gồm những nội dung chủ yếu sau đây:
+
++ Đánh giá hiện trạng, diễn biến chất lượng môi trường, cảnh quan thiên nhiên và đa dạng sinh học; tình hình và dự báo phát sinh chất thải; tác động của biến đổi khí hậu; tình hình quản lý và bảo vệ môi trường;
+
++ Quan điểm, tầm nhìn, mục tiêu, nhiệm vụ, giải pháp bảo vệ môi trường;
+
++ Phân vùng môi trường; bảo tồn thiên nhiên và đa dạng sinh học; quản lý chất thải; quan trắc và cảnh báo môi trường;
+
++ Giải pháp, dự kiến nguồn lực thực hiện quy hoạch.
+
+- Quy hoạch bảo tồn đa dạng sinh học bao gồm những nội dung chủ yếu sau đây:
+
++ Đánh giá hiện trạng, diễn biến đa dạng sinh học, tình hình quản lý bảo tồn đa dạng sinh học;
+
++ Quan điểm, tầm nhìn, mục tiêu, nhiệm vụ, giải pháp bảo tồn đa dạng sinh học;
+
++ Khu vực đa dạng sinh học cao; cảnh quan sinh thái quan trọng; khu bảo tồn thiên nhiên; hành lang đa dạng sinh học; cơ sở bảo tồn đa dạng sinh học; vùng đất ngập nước quan trọng;
+
++ Giải pháp, dự kiến nguồn lực thực hiện quy hoạch.
+
+- Quy hoạch mạng lưới trạm khí tượng thủy văn bao gồm những nội dung chủ yếu sau đây:
+
++ Phân tích, đánh giá điều kiện tự nhiên, kinh tế - xã hội và môi trường, hiện trạng hoạt động quan trắc khí tượng thủy văn, ứng phó với biến đổi khí hậu; nhu cầu thông tin, dữ liệu khí tượng thủy văn đối với phát triển kinh tế - xã hội, quốc phòng, an ninh quốc gia, phòng, chống thiên tai, ứng phó với biến đổi khí hậu;
+
++ Đánh giá hiện trạng giám sát biến đổi khí hậu; biến động theo không gian, thời gian của yếu tố khí tượng thủy văn cần quan trắc; tác động của phát triển khoa học và công nghệ; liên kết ngành, liên kết vùng trong việc phát triển mạng lưới trạm khí tượng thủy văn quốc gia;
+
++ Dự báo xu thế phát triển, kịch bản phát triển, biến đổi khí hậu, các tiến bộ khoa học, công nghệ và phát triển kinh tế - xã hội tác động đến mạng lưới trạm khí tượng thủy văn quốc gia;
+
++ Quan điểm, tầm nhìn, mục tiêu, nhiệm vụ, giải pháp phát triển mạng lưới trạm khí tượng thủy văn quốc gia;
+
++ Định hướng phát triển mạng lưới trạm khí tượng thủy văn quốc gia;
+
++ Giải pháp, dự kiến nguồn lực thực hiện quy hoạch.
+
+Căn cứ Khoản 3 Điều 3  Nghị định 70/2026/NĐ-CP  quy định thời gian lập quy hoạch ngành, quy hoạch vùng như sau:
+
+Điều 3. Thời gian lập quy hoạch cấp quốc gia, quy hoạch vùng, quy hoạch tỉnh
+
+[..]
+
+3. Thời gian lập quy hoạch ngành, quy hoạch vùng không quá 18 tháng và phải bảo đảm quy hoạch được trình phê duyệt chậm nhất không quá 03 tháng tính từ ngày quy hoạch tổng thể quốc gia được quyết định.
+
+Như vậy, thời gian lập quy hoạch ngành, quy hoạch vùng không quá 18 tháng.","","","","","2026-04-07","https://thuvienphapluat.vn/hoi-dap-phap-luat/dinh-muc-cho-hoat-dong-truc-tiep-lap-quy-hoach-nganh-chi-tiet-the-nao-138086080.html","2026-04-13T04:52:40.502410+00:00"
+"138086125","Công văn 4548/BXD-QLN 2026 về dịch vụ quản lý vận hành nhà chung cư ra sao?","Ngày 25/3/2026, Bộ Xây dựng ban hành Công văn 4548/BXD-QLN năm 2026 về việc trả lời phản ánh, kiến nghị của công dân.
+
+Xem toàn bộ Công văn 4548 BXD QLN 2026 trả lời phản ánh, kiến nghị của công dân dưới đây:
+
+Tải về
+
+Nội dung kiến nghị như sau:
+
+Ngày 6/2/2026 Chủ tịch UBND phường Dĩ An ra Quyết định 375/QĐUBND về việc công nhận Ban quản trị cụm nhà chung cư Opal Boulevard nhiệm kỳ 2026-2029. Đến ngày 2/3/2026 Ban quản trị nhiệm kỳ cũ chưa bàn giao hồ sơ, tài liệu và con dấu cho Ban quản trị nhiệm kỳ mới hoạt động theo đúng quy định của pháp luật. Tuy nhiên, theo Hợp đồng dịch vụ quản lý vận hành số 01/2021/QLVH, số 01/2021/QLTN/ASAHI-HA ngày 22/3/2021 và Phụ lục hợp đồng số 12 kèm theo hợp đồng này thì thời hạn của Hợp đồng là 12 tháng, và đến ngày 21/3/2026 nếu không gia hạn sẽ tiếp tục thêm 1 năm. Thế nhưng, hiện nay theo đánh giá của cư dân vấn đề quản lý vận hành của công ty CP dịch vụ quản lý tài sản và đầu tư ASAHI JAPAN đang không đáp ứng được nhu cầu của quý cư dân nên cần phải có đơn vị quản lý vận hành mới hoặc là mức phí quản lý vận hành phải thấp hơn hiện tại. Do vậy, Ban quản trị nhiệm kỳ mới mong muốn thay đổi đơn vị quản lý vận hành nhà chung cư và chào thầu lại đơn vị quản lý vận hành nhà chung cư. Thế nhưng, căn cứ theo quy định tại điểm d khoản 1 Điều 16 Quy chế quản lý sử dụng nhà chung cư ban hành kèm theo  Thông tư 05/2024/TT-BXD  quy định: “Ban quản trị đề nghị thay thế đơn vị quản lý vận hành hoặc đề nghị điều chỉnh giá dịch vụ quản lý vận hành nhà chung cư” phải thông qua Hội nghị nhà chung cư. Căn cứ theo quy định tại điểm c khoản 1 Điều 17 Quy chế quản lý sử dụng nhà chung cư ban hành kèm theo  Thông tư 05/2024/TT-BXD  quy định: “Hội nghị nhà chung cư xem xét, quyết định việc tiếp tục ký hợp đồng với đơn vị quản lý vận hành nhà chung cư trong trường hợp hợp đồng có thời hạn 12 tháng”. Căn cứ theo quy định tại khoản 1 Điều 29 Quy chế quản lý sử dụng nhà chung cư ban hành kèm theo  Thông tư 05/2024/TT-BXD  quy định: “Việc quản lý vận hành nhà chung cư phải được thực hiện thông qua hợp đồng dịch vụ quản lý vận hành nhà chung cư ký giữa đơn vị quản lý vận hành Ban quản trị... Hợp đồng dịch vụ quản lý vận hành nhà chung cư có thời hạn tối thiểu 12 tháng, trừ trường hợp quy định tại khoản 3 Điều 19 của Quy chế này. Trường hợp hợp đồng quản lý vận hành có thời hạn 12 tháng thì khi hết thời hạn này, việc tiếp tục ký hoặc không ký tiếp hợp đồng dịch vụ quản lý vận hành do Hội nghị nhà chung cư quyết định trên cơ sở thống nhất với đơn vị quản lý vận hành”. Chính vì vậy, nay tôi đề nghị quý lãnh đạo giải đáp đối với trường hợp quy định nêu trên, thì Ban quản trị chưa tổ chức Hội nghị nhà chung cư thì có được quyền ký Phụ lục hợp đồng gia hạn hoặc ký thông báo chấm dứt đơn vị quản lý vận hành hay không? Hay là phải chờ tổ chức Hội nghị nhà chung cư mới được ký gia hạn hoặc thay đổi? Trong trường hợp không ký gia hạn không ký chấm dứt thay đổi đơn vị quản lý vận hành, thì Hợp đồng sẽ tự nhiên gia hạn thêm 1 năm, vậy khi ra Hội nghị nhà chung cư Ban quản trị có được quyền chấm dứt Hợp đồng quản lý vận hành đã tự động gia hạn hay không? Trên đây là toàn bộ nội dung đề nghị giải đáp của tôi, kính mong quý lãnh đạo sớm giải đáp để Ban quản trị có cơ sở thực hiện theo quy định của pháp luật.
+
+Về kiến nghị này, Bộ Xây dựng trả lời như sau:
+
+Điểm d khoản 3 Điều 145  Luật Nhà ở 2023  quy định Hội nghị nhà chung cư “quyết định lựa chọn đơn vị quản lý vận hành nhà chung cư trong trường hợp không còn chủ đầu tư dự án đầu tư xây dựng nhà ở hoặc chủ đầu tư dự án đầu tư xây dựng nhà ở không có chức năng, năng lực quản lý vận hành nhà chung cư hoặc có chức năng, năng lực quản lý vận hành nhưng không tham gia quản lý vận hành hoặc  tham gia quản lý vận hành nhưng không đáp ứng được các yêu cầu đã thỏa thuận trong hợp đồng cung cấp dịch vụ ký với Ban quản trị nhà chung cư;”
+
+Điểm c khoản 1 Điều 148  Luật Nhà ở 2023  quy định Ban quản trị nhà chung cư có trách nhiệm: “ Ký kết hợp đồng cung cấp dịch vụ quản lý vận hành nhà chung cư  với chủ đầu tư dự án đầu tư xây dựng nhà ở hoặc đơn vị có chức năng, năng lực quản lý vận hành nhà chung cư sau khi đã được Hội nghị nhà chung cư lựa chọn theo quy định tại điểm d khoản 3 Điều 145 của Luật này…”
+
+Khoản 1 Điều 29 Quy chế quản lý, sử dụng nhà chung cư ban hành kèm theo  Thông tư 05/2024/TT-BXD  quy định một số điều của Luật Nhà ở (gọi tắt là Quy chế 05) quy định: “…Hợp đồng dịch vụ quản lý vận hành nhà chung cư có thời hạn tối thiểu 12 tháng, trừ trường hợp quy định tại khoản 2 Điều này và tối đa có thời hạn bằng nhiệm kỳ của Ban quản trị quy định tại khoản 3 Điều 19 của Quy chế này; trường hợp hợp đồng dịch vụ quản lý vận hành có thời hạn 12 tháng thì khi hết thời hạn này, việc tiếp tục ký hoặc không ký tiếp hợp đồng dịch vụ quản lý vận hành do Hội nghị nhà chung cư quyết định trên cơ sở thống nhất với đơn vị quản lý vận hành…”. Đồng thời khoản 4 Điều 29 cũng quy định: “Việc nghiệm thu, thanh toán, quyết toán và thanh lý hợp đồng quản lý vận hành nhà chung cư  được thực hiện theo thỏa thuận trong hợp đồng và theo quy định của pháp luật dân sự.”
+
+Khoản 9 Điều 43 Quy chế 05 quy định đơn vị quản lý vận hành nhà chung cư “thực hiện các quyền và trách nhiệm của đơn vị quản lý vận hành nhà chung cư theo các thỏa thuận trong hợp đồng dịch vụ quản lý vận hành đã ký kết hoặc theo nội dung đã được Hội nghị nhà chung cư thông qua trong trường hợp chưa ký kết hợp đồng dịch vụ quy định tại khoản 1 Điều 29 của Quy chế này; trường hợp Ban quản trị không tuân thủ các thỏa thuận nêu tại khoản này thì đơn vị quản lý vận hành được tiếp tục thực hiện theo các thỏa thuận trong hợp đồng đã ký kết hoặc nội dung đã được Hội nghị nhà chung cư thông qua để bảo vệ quyền và lợi ích hợp pháp của mình;  được tiếp tục thực hiện hợp đồng trong trường hợp được Hội nghị nhà chung cư đánh giá vẫn thực hiện tốt các nội dung trong hợp đồng.”
+
+Do đó, đề nghị công dân nghiên cứu các quy định để thực hiện, trong quá trình thực hiện, nếu có khó khăn, vướng mắc liên quan đến các quy định của pháp luật về quản lý, sử dụng nhà chung cư thì đề nghị Ban quản trị liên hệ với Sở Xây dựng Thành phố Hồ Chí Minh là cơ quan quản lý nhà nước về lĩnh vực nhà ở trên địa bàn Thành phố Hồ Chí Minh để được hướng dẫn, giải quyết theo thẩm quyền.
+
+Trên đây là thông tin: Công văn 4548 BXD QLN về dịch vụ quản lý vận hành nhà chung cư ra sao?
+
+Công văn 4548/BXD-QLN về dịch vụ quản lý vận hành nhà chung cư ra sao? (Hình từ Internet)
+
+Căn cứ tại khoản 1 Điều 147  Luật Nhà ở 2023  quy định Ban quản trị nhà chung cư có nhiều chủ sở hữu có những quyền sau đây:
+
+- Yêu cầu chủ đầu tư dự án đầu tư xây dựng nhà ở bàn giao đầy đủ kinh phí bảo trì sau khi Ban quản trị nhà chung cư được thành lập và có văn bản đề nghị bàn giao; yêu cầu cơ quan có thẩm quyền cưỡng chế bàn giao kinh phí bảo trì;
+
+- Quản lý, sử dụng kinh phí bảo trì theo quy định của Luật này và quyết định của Hội nghị nhà chung cư;
+
+- Đề nghị Hội nghị nhà chung cư thông qua mức giá dịch vụ quản lý vận hành nhà chung cư;
+
+- Được hưởng thù lao trách nhiệm và chi phí khác theo quyết định của Hội nghị nhà chung cư;
+
+- Yêu cầu cơ quan có thẩm quyền công nhận Ban quản trị nhà chung cư;
+
+- Yêu cầu chủ đầu tư dự án đầu tư xây dựng nhà ở bàn giao hồ sơ nhà chung cư; yêu cầu cơ quan có thẩm quyền cưỡng chế bàn giao hồ sơ nhà chung cư;
+
+- Thực hiện công việc khác do Hội nghị nhà chung cư giao mà không trái quy định của pháp luật.
+
+Căn cứ tại khoản 8 Điều 3  Luật Nhà ở 2023  quy định các hành vi trong quản lý, sử dụng nhà chung cư bao gồm:
+
+- Không đóng kinh phí bảo trì phần sở hữu chung của nhà chung cư (sau đây gọi chung là kinh phí bảo trì); quản lý, sử dụng kinh phí quản lý vận hành, kinh phí bảo trì không đúng quy định của pháp luật về nhà ở.
+
+- Cố ý gây thấm dột; gây tiếng ồn, độ rung quá mức quy định; xả rác thải, nước thải, khí thải, chất độc hại không đúng quy định của pháp luật về bảo vệ môi trường hoặc không đúng nội quy quản lý, sử dụng nhà chung cư; sơn, trang trí mặt ngoài căn hộ, nhà chung cư không đúng quy định về thiết kế, kiến trúc; chăn, thả gia súc, gia cầm; giết mổ gia súc trong khu vực nhà chung cư.
+
+- Tự ý chuyển đổi công năng, mục đích sử dụng phần sở hữu chung, sử dụng chung của nhà chung cư; sử dụng căn hộ chung cư vào mục đích không phải để ở; thay đổi, làm hư hại kết cấu chịu lực; chia, tách căn hộ không được cơ quan nhà nước có thẩm quyền cho phép.
+
+- Tự ý sử dụng phần diện tích và trang thiết bị thuộc quyền sở hữu chung, sử dụng chung vào sử dụng riêng; thay đổi mục đích sử dụng phần diện tích làm dịch vụ trong nhà chung cư có mục đích sử dụng hỗn hợp mà không được cơ quan nhà nước có thẩm quyền cho phép chuyển đổi mục đích sử dụng.
+
+- Gây mất trật tự, an toàn, cháy, nổ trong nhà chung cư; kinh doanh vật liệu gây cháy, nổ và ngành, nghề gây nguy hiểm đến tính mạng, tài sản của người sử dụng nhà chung cư theo quy định của pháp luật về phòng cháy, chữa cháy và quy định khác của pháp luật có liên quan.
+
+- Kinh doanh vũ trường, karaoke, quán bar; kinh doanh sửa chữa xe có động cơ; hoạt động kinh doanh dịch vụ gây ô nhiễm khác theo quy định của pháp luật về bảo vệ môi trường; kinh doanh dịch vụ nhà hàng mà không bảo đảm tuân thủ yêu cầu về phòng cháy, chữa cháy, có nơi thoát hiểm và chấp hành các điều kiện kinh doanh khác theo quy định của pháp luật.","","","","","2026-04-06","https://thuvienphapluat.vn/hoi-dap-phap-luat/cong-van-4548bxdqln-2026-ve-dich-vu-quan-ly-van-hanh-nha-chung-cu-ra-sao-138086125.html","2026-04-13T04:52:44.160722+00:00"
+"138086055","","","","","","","","https://thuvienphapluat.vn/hoi-dap-phap-luat/luat-dat-dai-moi-nhat-2026-va-van-ban-huong-dan-thi-hanh-luat-dat-dai-chi-tiet-ra-sao-138086055.html","2026-04-13T04:52:50.878580+00:00"
+"138086062","Nội dung quy hoạch không gian biển quốc gia năm 2026 bao gồm những gì?","Tại Điều 3  Luật Quy hoạch 2025  có quy định về quy hoạch khong gian biển quốc gia như sau:
+
+Quy hoạch không gian biển quốc gia là quy hoạch cấp quốc gia, cụ thể hóa quy hoạch tổng thể quốc gia về định hướng phát triển không gian biển quốc gia bao gồm sắp xếp, phân bố không gian cho các hoạt động kinh tế, xã hội, quốc phòng, an ninh trên vùng đất ven biển, hải đảo, vùng biển thuộc chủ quyền, quyền chủ quyền, quyền tài phán quốc gia của Việt Nam.
+
+Nội dung quy hoạch không gian biển quốc gia năm 2026 bao gồm những gì? (Hình từ Internet)
+
+Căn cứ theo quy định tại Điều 22  Nghị định 70/2026/NĐ-CP , quy hoạch không gian biển quốc gia bao gồm các nội dung chủ yếu sau đây:
+
+- Quy định tại điểm a và điểm b khoản 1 Điều 26  Luật Quy hoạch 2025 .
+
+- Dự báo bối cảnh và các kịch bản phát triển; đánh giá các cơ hội và thách thức đối với các hoạt động sử dụng tài nguyên biển và hải đảo:
+
++ Dự báo xu thế phát triển kinh tế - xã hội, khoa học, công nghệ, quan hệ quốc tế trên thế giới và khu vực tác động tới các hoạt động sử dụng tài nguyên biển và hải đảo;
+
++ Phân tích, đánh giá các yếu tố về bảo đảm quốc phòng, an ninh;
+
++ Phân tích, đánh giá điểm mạnh, điểm yếu, cơ hội và thách thức đối với các hoạt động sử dụng tài nguyên biển và hải đảo;
+
++ Xây dựng các kịch bản phát triển và lựa chọn kịch bản phát triển.
+
+- Xác định quan điểm, tầm nhìn và mục tiêu phát triển:
+
++ Xây dựng quan điểm sử dụng không gian biển, khai thác và sử dụng bền vững tài nguyên biển, bảo vệ môi trường vùng bờ;
+
++ Xác định mục tiêu tổng quát trong thời kỳ quy hoạch 10 năm và cho tầm nhìn 30 năm;
+
++ Xác định mục tiêu cụ thể về sử dụng không gian biển; mục tiêu khai thác, sử dụng tài nguyên trong phạm vi không gian biển trong thời kỳ quy hoạch theo giai đoạn 05 năm;
+
++ Xác định những vấn đề trọng tâm cần giải quyết và các khâu đột phá trong việc khai thác, sử dụng không gian biển trong thời kỳ quy hoạch.
+
+- Phân vùng sử dụng vùng đất ven biển, hải đảo, vùng biển thuộc chủ quyền, quyền chủ quyền, quyền tài phán quốc gia của Việt Nam:
+
++ Xác định vùng cấm khai thác, vùng khai thác có điều kiện, vùng cần bảo vệ đặc biệt cho mục đích quốc phòng, an ninh, bảo vệ môi trường và bảo tồn hệ sinh thái trong vùng đất ven biển, đặc khu, vùng biển thuộc chủ quyền, quyền chủ quyền, quyền tài phán quốc gia của Việt Nam;
+
++ Xác định vùng khuyến khích phát triển trong vùng đất ven biển, đặc khu, vùng biển thuộc chủ quyền, quyền chủ quyền, quyền tài phán quốc gia của Việt Nam;
+
++ Phân vùng sử dụng vùng đất ven biển, vùng biển, các đặc khu.
+
+- Giải pháp, dự kiến nguồn lực thực hiện quy hoạch:
+
++ Giải pháp về cơ chế, chính sách quản lý không gian biển;
+
++ Giải pháp về môi trường;
+
++ Giải pháp về khoa học, công nghệ, đổi mới sáng tạo và chuyển đổi số;
+
++ Giải pháp về tuyên truyền, nâng cao nhận thức;
+
++ Giải pháp về phát triển nguồn nhân lực;
+
++ Giải pháp về huy động vốn đầu tư;
+
++ Giải pháp về hợp tác quốc tế;
+
++ Giải pháp về tổ chức thực hiện quy hoạch;
+
++ Dự kiến nguồn lực thực hiện quy hoạch.
+
+- Xây dựng báo cáo thuyết minh quy hoạch gồm báo cáo tổng hợp và báo cáo tóm tắt; hệ thống sơ đồ quy hoạch và cơ sở dữ liệu về quy hoạch không gian biển quốc gia. Danh mục và tỷ lệ sơ đồ quy hoạch không gian biển quốc gia theo quy định tại mục II Phụ lục IV  Nghị định 70/2026/NĐ-CP .
+
+Tại Mục II Phụ lục I ban hành kèm theo  Thông tư 22/2026/TT-BTC  có quy định như sau:
+
+- Về sơ đồ vị trí địa lý và mối quan hệ giữa không gian biển Việt Nam với khu vực và thế giới, bao gồm vị trí địa lý và mối quan hệ về tự nhiên, kinh tế, xã hội và môi trường giữa Việt Nam với các quốc gia trong khu vực và thế giới; các nội dung được thể hiện trên sơ đồ ở tỷ lệ theo quy định của pháp luật về quy hoạch.
+
+- Các sơ đồ về hiện trạng, bao gồm: hiện trạng điều kiện tự nhiên, hiện trạng sử dụng không gian, tài nguyên biển và hải đảo trong phạm vi không gian biển thuộc chủ quyền, quyền chủ quyền, quyền tài phán quốc gia của Việt Nam. Các nội dung được thể hiện trên nền bản đồ địa hình quốc gia ở tỷ lệ tương ứng với tỷ lệ thành lập sơ đồ quy hoạch.
+
+- Về sơ đồ định hướng phân vùng sử dụng vùng đất ven biển, hải đảo, vùng biển trong phạm vi không gian biển, thể hiện các nội dung chủ yếu sau: sự phân bố không gian vùng cấm khai thác, vùng khai thác có điều kiện, vùng cần bảo vệ đặc biệt cho mục đích quốc phòng, an ninh, bảo vệ môi trường và bảo tồn hệ sinh thái trong vùng đất ven biển, đặc khu, vùng biển thuộc chủ quyền, quyền chủ quyền, quyền tài phán quốc gia của Việt Nam; xác định vùng khuyến khích phát triển trong vùng đất ven biển, đặc khu, vùng biển thuộc chủ quyền, quyền chủ quyền, quyền tài phán quốc gia của Việt Nam; phân vùng sử dụng vùng đất ven biển, vùng biển, các đặc khu; các nội dung được thể hiện trên nền bản đồ địa hình quốc gia ở tỷ lệ tương ứng với tỷ lệ thành lập sơ đồ quy hoạch.","","","","","2026-04-05","https://thuvienphapluat.vn/hoi-dap-phap-luat/noi-dung-quy-hoach-khong-gian-bien-quoc-gia-nam-2026-bao-gom-nhung-gi-138086062.html","2026-04-13T04:52:55.550920+00:00"
+"138086081","Định mức cho hoạt động trực tiếp lập quy hoạch vùng chi tiết thế nào?","Căn cứ Phụ lục 5, 6 ban hành kèm theo Thông tư 36/2026/TT-BTC  TẠI ĐÂY   quy định định mức cho hoạt động trực tiếp lập quy hoạch vùng như sau:
+
+Định mức cho hoạt động trực tiếp lập quy hoạch vùng
+
+Xem toàn bộ Định mức cho hoạt động trực tiếp lập quy hoạch vùng
+
+Tải về
+
+Trên đây là thông tin về Định mức cho hoạt động trực tiếp lập quy hoạch vùng chi tiết thế nào?
+
+Định mức cho hoạt động trực tiếp lập quy hoạch vùng chi tiết thế nào? (Hình từ Internet)
+
+Căn cứ Điều 25  Nghị định 70/2026/NĐ-CP  quy định Quy hoạch vùng bao gồm các nội dung chủ yếu sau đây:
+
+[1]. Phân tích, đánh giá điều kiện tự nhiên, hiện trạng phát triển vùng; phân tích dự báo nguồn lực đặc thù của vùng, xu thế phát triển trong nước và quốc tế tác động đến phát triển của vùng:
+
+- Phân tích, đánh giá vị trí địa lý, điều kiện tự nhiên, xã hội của vùng;
+
+b) Phân tích, đánh giá thực trạng phát triển kinh tế - xã hội; hiện trạng về tổ chức không gian kinh tế - xã hội; hiện trạng phát triển hệ thống đô thị và nông thôn; hiện trạng phát triển các khu chức năng và các khu vực khác; hiện trạng phát triển hạ tầng kỹ thuật của vùng; hiện trạng bảo vệ môi trường và bảo tồn đa dạng sinh học; hiện trạng khai thác, sử dụng, bảo vệ tài nguyên, bao gồm tài nguyên nước lưu vực sông; hiện trạng phòng, chống thiên tai, ứng phó với biến đổi khí hậu trên lãnh thổ vùng;
+
+- Phân tích, đánh giá hiện trạng liên kết nội vùng, liên kết vùng; các nguồn lực của vùng đã và đang được khai thác, các tiềm năng chưa được khai thác; các nguy cơ và tác động của thiên tai, biến đổi khí hậu trên địa bàn vùng;
+
+- Dự báo xu thế phát triển trong nước và quốc tế tác động đến phát triển của vùng;
+
+- Phân tích, đánh giá các yếu tố về bảo đảm quốc phòng, an ninh;
+
+- Xác định vị thế, vai trò của vùng đối với quốc gia.
+
+[2]. Xây dựng các kịch bản phát triển và lựa chọn kịch bản phát triển:
+
+- Xây dựng các kịch bản phát triển;
+
+- Phân tích, đánh giá ưu điểm, hạn chế, tính khả thi của từng kịch bản phát triển;
+
+- Lựa chọn kịch bản phát triển.
+
+[3]. Xác định quan điểm, tầm nhìn và mục tiêu phát triển của vùng:
+
+- Xây dựng quan điểm về phát triển vùng;
+
+- Xây dựng quan điểm về tổ chức không gian phát triển các hoạt động kinh tế - xã hội, quốc phòng, an ninh, phát triển kết cấu hạ tầng, sử dụng tài nguyên và bảo vệ môi trường trên lãnh thổ vùng trong thời kỳ quy hoạch;
+
+- Xây dựng mục tiêu tổng quát trong thời kỳ quy hoạch 10 năm và cho tầm nhìn 30 năm; mục tiêu cụ thể trong thời kỳ quy hoạch theo giai đoạn 05 năm.
+
+[4]. Xác định các nhiệm vụ trọng tâm và đột phá phát triển trong thời kỳ quy hoạch.
+
+[5]. Phương hướng phát triển ngành có lợi thế của vùng:
+
+- Xác định ngành có lợi thế của vùng;
+
+- Phương hướng phát triển và phân bố không gian phát triển ngành có lợi thế của vùng.
+
+[6]. Định hướng tổ chức không gian phát triển kinh tế - xã hội của vùng; phương hướng phát triển vùng, liên tỉnh:
+
+- Định hướng tổ chức không gian phát triển kinh tế - xã hội của vùng, bao gồm: xác định khu vực động lực, cực tăng trưởng, hành lang kinh tế của vùng; khu vực lãnh thổ cần bảo tồn; khu vực hạn chế phát triển;
+
+- Phương hướng tổ chức liên kết không gian phát triển của vùng, cơ chế phối hợp tổ chức phát triển không gian liên tỉnh.
+
+[7]. Phương hướng phát triển hệ thống đô thị và nông thôn:
+
+- Phương hướng phát triển hệ thống đô thị đã được xác định trong quy hoạch cấp quốc gia;
+
+- Dự kiến hệ thống đô thị loại II có vai trò, vị trí, chức năng là trung tâm chuyên ngành của tỉnh, thành phố hoặc vùng liên tỉnh;
+
+- Phương hướng phát triển chính cho từng đô thị loại II, bảo đảm kết nối với hệ thống đô thị đã được xác định trong quy hoạch cấp quốc gia;
+
+- Phương hướng phát triển khu vực nông thôn.
+
+[8]. Phương hướng phát triển các khu chức năng, bao gồm: hệ thống khu kinh tế đến từng tỉnh; khu công nghiệp; khu chế xuất; khu du lịch; khu công nghệ cao; khu nông nghiệp ứng dụng công nghệ cao; khu lâm nghiệp ứng dụng công nghệ cao; khu công nghệ số tập trung; khu nghiên cứu, đào tạo, khu phức hợp y tế; khu thể dục thể thao, khu văn hóa có tính chất liên tỉnh và các khu chức năng khác theo quy định của pháp luật; phương hướng phát triển vùng sản xuất nông nghiệp tập trung.
+
+[9]. Phương hướng phát triển kết cấu hạ tầng kỹ thuật trên lãnh thổ vùng đã được xác định trong quy hoạch cấp quốc gia.
+
+[10]. Phương hướng phát triển hạ tầng kỹ thuật kết nối liên tỉnh, bao gồm: đường nối liền các trung tâm hành chính cấp tỉnh, đường có vị trí quan trọng đối với sự phát triển kinh tế - xã hội, bảo đảm quốc phòng, an ninh của vùng; cảng biển phục vụ cho việc phát triển kinh tế - xã hội của vùng; đường sắt liên tỉnh; tuyến đường thủy nội địa liên tỉnh; hạ tầng viễn thông có phạm vi liên tỉnh; công trình thủy lợi, hệ thống cấp nước có phạm vi liên tỉnh và kết cấu hạ tầng kỹ thuật kết nối liên tỉnh khác.
+
+[11]. Phương hướng bảo vệ môi trường và bảo tồn đa dạng sinh học; khai thác, sử dụng và bảo vệ tài nguyên; phòng, chống thiên tai và ứng phó với biến đổi khí hậu trên lãnh thổ vùng:
+
+- Phương hướng bảo vệ môi trường của vùng, lưu vực sông liên tỉnh, khu vực ven biển liên tỉnh; phương hướng phát triển khu xử lý chất thải tập trung cấp vùng;
+
+- Phương hướng xác lập khu vực đa dạng sinh học cao, vùng đất ngập nước quan trọng, khu vực cảnh quan sinh thái quan trọng, cơ sở bảo tồn đa dạng sinh học, các khu bảo tồn thiên nhiên, các hành lang đa dạng sinh học liên tỉnh;
+
+- Phương hướng phát triển bền vững rừng đặc dụng, rừng phòng hộ, rừng sản xuất liên tỉnh;
+
+- Phương hướng phân vùng chức năng của nguồn nước; định hướng ưu tiên phân bổ trong trường hợp bình thường và hạn hán, thiếu nước; xác định yêu cầu chuyển nước giữa các lưu vực sông;
+
+- Phương hướng phòng, chống thiên tai và ứng phó với biến đổi khí hậu.
+
+[12]. Giải pháp, dự kiến nguồn lực thực hiện quy hoạch:
+
+- Giải pháp về cơ chế, chính sách đảm bảo liên kết vùng;
+
+- Giải pháp về huy động vốn đầu tư;
+
+- Giải pháp về phát triển nguồn nhân lực;
+
+- Giải pháp về môi trường;
+
+- Giải pháp về khoa học, công nghệ, đổi mới sáng tạo và chuyển đổi số;
+
+- Giải pháp về quản lý, kiểm soát phát triển đô thị và nông thôn;
+
+- Giải pháp về tổ chức thực hiện quy hoạch;
+
+- Dự kiến nguồn lực thực hiện quy hoạch.
+
+[13]. Xây dựng báo cáo thuyết minh quy hoạch gồm báo cáo tổng hợp và báo cáo tóm tắt; hệ thống sơ đồ quy hoạch và cơ sở dữ liệu về quy hoạch vùng. Danh mục và tỷ lệ sơ đồ quy hoạch vùng theo quy định tại mục V Phụ lục IV  Nghị định 70/2026/NĐ-CP .
+
+Căn cứ khoản 6 Điều 6  Luật Quy hoạch 2025  quy định về nguyên tắc xác định quy hoạch phải điều chỉnh và quy hoạch được thực hiện khi có mâu thuẫn giữa các quy hoạch như sau:
+
+Điều 6. Nguyên tắc xác định quy hoạch phải điều chỉnh và quy hoạch được thực hiện khi có mâu thuẫn giữa các quy hoạch
+
+[...]
+
+6. Trường hợp quy hoạch tỉnh mâu thuẫn với quy hoạch cấp quốc gia, quy hoạch vùng thì quy hoạch tỉnh phải điều chỉnh và thực hiện theo quy hoạch cấp quốc gia, quy hoạch vùng.
+
+Như vậy, trường hợp quy hoạch tỉnh mâu thuẫn với quy hoạch cấp quốc gia, quy hoạch vùng thì phải giải quyết như sau: quy hoạch tỉnh phải điều chỉnh và thực hiện theo quy hoạch cấp quốc gia, quy hoạch vùng.","","","","","2026-04-04","https://thuvienphapluat.vn/hoi-dap-phap-luat/dinh-muc-cho-hoat-dong-truc-tiep-lap-quy-hoach-vung-chi-tiet-the-nao-138086081.html","2026-04-13T04:52:59.298720+00:00"
+"138086084","Chính thức Quy hoạch tổng thể Thủ đô Hà Nội tầm nhìn 100 năm được thông qua tại Nghị quyết 03/NQ-HĐND đúng không?","Ngày 28/3/2026 HĐND TP Hà Nội đã ban hành Nghị quyết 03/NQ-HĐND Chính thức thông qua Quy hoạch tổng thể Thủ đô Hà Nội tầm nhìn 100 năm do Ůy ban nhân dân Thành phố trình tại Tờ trình số 73/TTr-UBND ngày 26 tháng 3 năm 2026.
+
+Xem chi tiết:
+
+>> Nghị quyết 03/NQ-HĐND thông qua Quy hoạch tổng thể Thủ đô Hà Nội tầm nhìn 100:    Tải về
+
+>> Tờ trình số 73/TTr-UBND ngày 26 tháng 3 năm 2026:   Tải về
+
+Tổ chức thực hiện:
+
+[1] Giao Ủy ban nhân dân Thành phố có trách nhiệm tiếp thu ý kiến của chủ tọa phiên họp, ý kiến thẩm tra của Ban Đô thị Hội đồng nhân dân Thành phố, ý kiến của các đại biểu Hội đồng nhân dân Thành phố để hoàn thiện hồ sơ Quy hoạch tổng thể Thủ đô Hà Nội tầm nhìn 100 năm, phê duyệt và công bố quy hoạch theo quy định của pháp luật.
+
+[2] Giao Thường trực Hội đồng nhân dân, các Ban của Hội đồng nhân dân Thành phố, các Tổ đại biểu và đại biểu Hội đồng nhân dân Thành phố giám sát việc tổ chức thực hiện Nghị quyết.
+
+[3] Đề nghị Ủy ban Mặt trận Tổ quốc Việt Nam thành phố Hà Nội phối hợp tuyên truyền và giám sát việc tổ chức thực hiện Nghị quyết.
+
+Chính thức Quy hoạch tổng thể Thủ đô Hà Nội tầm nhìn 100 năm được thông qua tại Nghị quyết 03/NQ-HĐND đúng không? (Hình từ Internet)
+
+Theo nội dung tại Tờ trình số 73/TTr-UBND ngày 26 tháng 3 năm 2026 thì phạm vi, ranh giới Quy hoạch tổng thể Thủ đô Hà Nội tầm nhìn 100 như sau:
+
+- Phạm vi lập quy hoạch:  Bao gồm toàn bộ không gian địa giới hành chính Thủ đô Hà Nội (126 xã. Phường).
+
+- Phạm vi nghiên cứu không gian vùng:  Mở rộng nghiên cứu kết nối với Vùng Thủ đô Hà Nội (gồm Hà Nội và 05 tỉnh: Phú Thọ, Thái Nguyên, Bắc Ninh, Hưng Yên, Ninh Bình), Vùng Đồng bằng sông Hồng, Vùng Trung du miền núi phía Bắc và các tuyến hành lang kinh tế quốc gia, quốc tế để xác lập cấu trúc chùm đô thị Vùng, trong đó Hà Nội đóng vai trò hạt nhân dẫn dắt toàn vùng.
+
+- Quy mô:
+
++ Quy mô diện tích đất tự nhiên: Khoảng 3.359,84 km2 (335.984 ha).
+
++ Quy mô dân số (bao gồm dân số thường trú và dân số quy đổi, tạm trú, khách vãng lai, làm việc, học tập, giao thương, khách nghỉ dưỡng, chăm sóc sức khỏe, khách du lịch):
+
+++ Giai đoạn đến năm 2035: Đạt khoảng 14 - 15 triệu người.
+
+++ Giai đoạn đến năm 2045: Đạt khoảng 15 - 16 triệu người.
+
+++ Giai đoạn đến năm 2065: Đạt khoảng 17 - 19 triệu người.
+
+++ Tầm nhìn dài hạn sau năm 2065 - 2085 và xa hơn: Cơ bản giữ ổn định, khống chế quy mô dân số tối đa không quá 20 triệu người; đảm bảo quy chuẩn về mật độ dân số (có thể đáp ứng ngưỡng chịu tải tối đa khoảng 22 - 25 triệu người với dự báo phát triển gia tăng tạm trú, khách vãng lai, làm việc, học tập, giao thương, khách nghỉ dưỡng, chăm sóc sức khỏe, khách du lịch).
+
++ Quy mô đất đai (Tỷ lệ đất xây dựng đô thị):
+
+++ Đến năm 2045: Nâng tỷ lệ đất xây dựng đô thị lên khoảng 45% - 50% tổng diện tích tự nhiên, phát triển theo mô hình ""nén - xanh"".
+
+++ Đến năm 2065: Chiếm khoảng 55% - 60% tổng diện tích tự nhiên. Phần quỹ đất còn lại được bảo vệ nghiêm ngặt để duy trì tỷ lệ rừng, phát triển rừng (>6,2%) và cấu trúc vành đai xanh, hành lang xanh, nêm xanh.
+
+++ Đến năm 2085 và xa hơn: Giữ phát triển ổn định; tập trung hoàn thiện, hoàn chỉnh, nâng cao chất lượng theo cấu trúc quy hoạch được duyệt.
+
+Thời hạn quy hoạch:  Giai đoạn ngắn hạn: Đến năm 2035; Giai đoạn trung hạn: Đến năm 2045; Giai đoạn dài hạn: Đến năm 2065; Tầm nhìn chiến lược: Tầm nhìn dài hạn 100 năm.
+
+Tại Điều 38  Luật Quy hoạch 2025  quy định:
+
+Điều 38. Hồ sơ trình quyết định hoặc phê duyệt quy hoạch
+
+1. Hồ sơ trình quyết định hoặc phê duyệt quy hoạch cấp quốc gia, quy hoạch vùng và quy hoạch tỉnh bao gồm:
+
+a) Tờ trình;
+
+b) Báo cáo thuyết minh quy hoạch;
+
+c) Dự thảo văn bản quyết định hoặc phê duyệt quy hoạch;
+
+d) Hệ thống sơ đồ, cơ sở dữ liệu về quy hoạch;
+
+đ) Báo cáo tổng hợp và giải trình, tiếp thu ý kiến góp ý của các cơ quan, tổ chức, cộng đồng, cá nhân về quy hoạch;
+
+e) Báo cáo đánh giá môi trường chiến lược (nếu có);
+
+g) Báo cáo thẩm định quy hoạch;
+
+h) Báo cáo giải trình, tiếp thu ý kiến thẩm định.
+
+2. Hồ sơ trình phê duyệt quy hoạch chi tiết ngành, quy hoạch đô thị và nông thôn thực hiện theo quy định của pháp luật có liên quan.
+
+3. Chính phủ quy định chi tiết thể thức của hồ sơ trình quyết định hoặc phê duyệt quy hoạch quy định tại khoản 1 Điều này.
+
+Theo đó hồ sơ trình phê duyệt quy hoạch Thủ dô Hà Nội bao gồm:
+
+- Tờ trình;
+
+- Báo cáo thuyết minh quy hoạch;
+
+- Dự thảo văn bản quyết định hoặc phê duyệt quy hoạch;
+
+- Hệ thống sơ đồ, cơ sở dữ liệu về quy hoạch;
+
+- Báo cáo tổng hợp và giải trình, tiếp thu ý kiến góp ý của các cơ quan, tổ chức, cộng đồng, cá nhân về quy hoạch;
+
+- Báo cáo đánh giá môi trường chiến lược (nếu có);
+
+- Báo cáo thẩm định quy hoạch;
+
+- Báo cáo giải trình, tiếp thu ý kiến thẩm định.","","","","","2026-04-04","https://thuvienphapluat.vn/hoi-dap-phap-luat/chinh-thuc-quy-hoach-tong-the-thu-do-ha-noi-tam-nhin-100-nam-duoc-thong-qua-tai-nghi-quyet-03nqhdnd-138086084.html","2026-04-13T04:53:03.604764+00:00"
+"138086054","Công văn 1965/CT-CS năm 2026 hướng dẫn thực hiện Nghị định 50/2026/NĐ-CP thế nào?","Ngày 02/4/2026, Bộ Tài chính ban hành Công văn 1965/CT-CS về việc triển khai thực hiện  Nghị định 50/2026/NĐ-CP.
+
+Theo đó, ngày 31/01/2026, Chính phủ ban hành  Nghị định 50/2026/NĐ-CP  quy định chi tiết một số điều của Nghị quyết số 254/2025/QH15 ngày 11 tháng 12 năm 2025 của Quốc hội quy định một số cơ chế, chính sách tháo gỡ khó khăn, vướng mắc trong tổ chức thi hành Luật Đất đai về tiền sử dụng đất, tiền thuê đất.
+
+Để triển khai thực hiện có hiệu quả Nghị định này, đề nghị các đồng chí Trưởng Thuế tỉnh, thành phố tập trung chỉ đạo triển khai đầy đủ các nhiệm vụ, trách nhiệm được giao theo quy định tại  Nghị định 50/2026/NĐ-CP , quy định của pháp luật về đất đai và quy định của pháp luật liên quan (nếu có); trong đó lưu ý các nhiệm vụ, giải pháp trọng tâm sau:
+
+[1] Tổ chức tuyên truyền, phổ biến theo quy định nội dung của  Nghị định 50/2026/NĐ-CP  tới các cơ quan, tổ chức, đơn vị và các đối tượng khác có liên quan, đảm bảo các đối tượng chịu sự tác động của Nghị định nắm bắt đầy đủ, chính xác, kịp thời nội dung Nghị định.
+
+[2] Thực hiện đầy đủ trách nhiệm của cơ quan thuế quy định tại khoản 3 Điều 44  Nghị định 103/2024/NĐ-CP  ngày 30/7/2024 của Chính phủ, được sửa đổi, bổ sung tại điểm b khoản 17 Điều 1  Nghị định 291/2025/NĐ-CP  ngày 6/11/2025, điểm b khoản 21 Điều 13  Nghị định 50/2026/NĐ-CP  ngày 31/01/2026 của Chính phủ và các nội dung tháo gỡ vướng mắc, khó khăn trong tổ chức thi hành Luật Đất đai tại  Nghị quyết 254/2025/QH15  liên quan đến tiền sử dụng đất, tiền thuê đất được quy định chi tiết tại  Nghị định 50/2026/NĐ-CP , trong đó lưu ý đối với các nội dung quy định sau: (i) Căn cứ tính tiền sử dụng đất quy định tại khoản 1 Điều 5  Nghị quyết 254/2025/QH15 , Điều 3  Nghị định 50/2026/NĐ-CP ; (ii) Căn cứ tính tiền thuê đất quy định tại khoản 2 Điều 5  Nghị quyết 254/2025/QH15 , Điều 4  Nghị định 50/2026/NĐ-CP ; (iii) Quy định xử lý chuyển tiếp về tiền thuê đất của đơn vị sự nghiệp công lập quy định tại điểm c khoản 9 Điều 4  Nghị quyết 254/2025/QH15 , khoản 1 Điều 12  Nghị định 50/2026/NĐ-CP;  (iv) Xử lý chuyển tiếp đối với trường hợp hộ gia đình, cá nhân đã được cơ quan nhà nước có thẩm quyền có quyết định cho phép chuyển mục đích sử dụng đất quy định tại khoản 2 Điều 12  Nghị định 50/2026/NĐ-CP ; (v) Quy định về thanh toán nợ tiền sử dụng đất đối với trường hợp hộ gia đình, cá nhân đã được ghi nợ tiền sử dụng đất trên Giấy chứng nhận theo quy định của pháp luật từng thời kỳ nhưng đến trước ngày Nghị định này có hiệu lực thi hành mà chưa thanh toán hết nợ tiền sử dụng đất quy định tại khoản 23 Điều 13  Nghị định 50/2026/NĐ-CP .
+
+[...]
+
+Xem đầy đủ Công văn 1965 CT CS năm 2026 hướng dẫn thực hiện Nghị định 50/2026/NĐ-CP
+
+Tải về
+
+* Trên đây là Thông tin Công văn 1965 CT CS năm 2026 hướng dẫn thực hiện Nghị định 50/2026/NĐ-CP thế nào?
+
+Công văn 1965/CT-CS năm 2026 hướng dẫn thực hiện Nghị định 50/2026/NĐ-CP thế nào? (Hình từ Internet)
+
+Căn cứ theo Điều 15  Luật Đất đai 2024  quy định như sau:
+
+Điều 15. Trách nhiệm của Nhà nước đối với người sử dụng đất
+
+1. Có chính sách tạo điều kiện cho người trực tiếp sản xuất nông nghiệp không có đất sản xuất do quá trình chuyển đổi cơ cấu sử dụng đất và chuyển đổi cơ cấu kinh tế được đào tạo nghề, chuyển đổi nghề và tìm kiếm việc làm.
+
+2. Cấp Giấy chứng nhận quyền sử dụng đất, quyền sở hữu tài sản gắn liền với đất cho người sử dụng đất khi có đủ điều kiện theo quy định của pháp luật về đất đai.
+
+3. Thực hiện bồi thường, hỗ trợ, tái định cư theo quy định của pháp luật cho người có đất thu hồi khi Nhà nước thu hồi đất vì mục đích quốc phòng, an ninh; phát triển kinh tế - xã hội vì lợi ích quốc gia, công cộng.
+
+4. Tuyên truyền, phổ biến, hướng dẫn, trợ giúp pháp lý theo quy định của pháp luật cho người sử dụng đất trong việc thực hiện chính sách, pháp luật, thủ tục hành chính về đất đai, khai thác thông tin trong cơ sở dữ liệu quốc gia về đất đai.
+
+5. Giải quyết tranh chấp đất đai; giải quyết khiếu nại, tố cáo về đất đai.
+
+Theo đó, trách nhiệm của Nhà nước đối với người sử dụng đất như sau:
+
+- Có chính sách tạo điều kiện cho người trực tiếp sản xuất nông nghiệp không có đất sản xuất do quá trình chuyển đổi cơ cấu sử dụng đất và chuyển đổi cơ cấu kinh tế được đào tạo nghề, chuyển đổi nghề và tìm kiếm việc làm.
+
+- Cấp Giấy chứng nhận quyền sử dụng đất, quyền sở hữu tài sản gắn liền với đất cho người sử dụng đất khi có đủ điều kiện theo quy định của pháp luật về đất đai.
+
+- Thực hiện bồi thường, hỗ trợ, tái định cư theo quy định của pháp luật cho người có đất thu hồi khi Nhà nước thu hồi đất vì mục đích quốc phòng, an ninh; phát triển kinh tế - xã hội vì lợi ích quốc gia, công cộng.
+
+- Tuyên truyền, phổ biến, hướng dẫn, trợ giúp pháp lý theo quy định của pháp luật cho người sử dụng đất trong việc thực hiện chính sách, pháp luật, thủ tục hành chính về đất đai, khai thác thông tin trong cơ sở dữ liệu quốc gia về đất đai.
+
+- Giải quyết tranh chấp đất đai; giải quyết khiếu nại, tố cáo về đất đai.
+
+Tại Điều 14  Luật Đất đai 2024  quy định Nhà nước thực hiện quyền đại diện chủ sở hữu về đất đai như sau:
+
+Nhà nước thực hiện quyền đại diện chủ sở hữu về đất đai theo thẩm quyền quy định  Luật Đất đai 2024  và luật khác có liên quan thông qua các cơ quan sau đây:
+
+- Quốc hội, Ủy ban Thường vụ Quốc hội ban hành luật, pháp lệnh, nghị quyết về đất đai; quyết định quy hoạch sử dụng đất quốc gia; thực hiện quyền giám sát đối với việc quản lý, sử dụng đất đai trong phạm vi cả nước;
+
+- Hội đồng nhân dân các cấp thực hiện quyền thông qua quy hoạch sử dụng đất của địa phương mình trước khi trình cơ quan có thẩm quyền phê duyệt; thông qua việc thu hồi đất để thực hiện các dự án phát triển kinh tế - xã hội vì lợi ích quốc gia, công cộng của địa phương theo thẩm quyền; thông qua việc chuyển mục đích sử dụng đất trồng lúa, đất rừng đặc dụng, đất rừng phòng hộ, đất rừng sản xuất theo thẩm quyền quy định của Luật này; quyết định bảng giá đất; giám sát việc thi hành pháp luật về đất đai tại địa phương;
+
+- Chính phủ, Ủy ban nhân dân các cấp thực hiện quyền đại diện chủ sở hữu về đất đai theo thẩm quyền quy định  Luật Đất đai 2024  và luật khác có liên quan.","","","","","2026-04-04","https://thuvienphapluat.vn/hoi-dap-phap-luat/cong-van-1965ctcs-nam-2026-huong-dan-thuc-hien-nghi-dinh-502026ndcp-the-nao-138086054.html","2026-04-13T04:53:08.164791+00:00"
