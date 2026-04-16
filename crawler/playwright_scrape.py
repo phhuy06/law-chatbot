@@ -5,16 +5,29 @@ from datetime import datetime, timezone
 import time
 import random
 import argparse
+import json
 
 import os
 from bs4 import BeautifulSoup
-from typing import Dict, List
+from typing import Dict, List, Optional
+
+try:
+    from elasticsearch import Elasticsearch
+    from confluent_kafka import Producer
+    from minio import Minio
+    HAS_REALTIME = True
+except ImportError:
+    HAS_REALTIME = False
 
 BASEDIR = os.path.dirname(__file__)
 OUTPUT = os.path.join(BASEDIR, "output", "tai-nguyen-moi-truong.csv")
 START_URL = "https://thuvienphapluat.vn/hoi-dap-phap-luat/tai-nguyen-moi-truong"
 START_PAGE = 1
 END_PAGE = 5
+
+KAFKA_TOPIC = "van-ban-phap-luat"
+MINIO_BUCKET = "phapluat"
+ES_INDEX = "phapluat"
 
 
 def normalize_text(s: str) -> str:
@@ -301,6 +314,83 @@ def extract_from_detail(page, url):
     }
 
 
+def is_article_exists(es: 'Elasticsearch', article_id: str) -> bool:
+    """Check if article already exists in Elasticsearch."""
+    if not article_id:
+        return False
+    try:
+        resp = es.search(
+            index=ES_INDEX,
+            query={"term": {"doc_id": article_id}},
+            size=1,
+            _source=False,
+        )
+        return resp["hits"]["total"]["value"] > 0
+    except Exception:
+        return False
+
+
+def create_kafka_producer(servers: str) -> Optional['Producer']:
+    """Create Kafka producer."""
+    try:
+        return Producer({"bootstrap.servers": servers})
+    except Exception as e:
+        print(f"Failed to create Kafka producer: {e}")
+        return None
+
+
+def to_kafka_doc(item: dict) -> dict:
+    """Convert crawler item to Kafka document schema."""
+    return {
+        "id": item.get("id", ""),
+        "title": item.get("question", ""),
+        "content": item.get("answer", ""),
+        "category": item.get("category", ""),
+        "doc_type": "",
+        "doc_number": "",
+        "agency": item.get("author", ""),
+        "published_date": item.get("published_date", ""),
+        "url": item.get("url", ""),
+        "crawled_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+def publish_to_kafka(producer: 'Producer', item: dict, topic: str = KAFKA_TOPIC):
+    """Publish document to Kafka."""
+    try:
+        doc = to_kafka_doc(item)
+        producer.produce(
+            topic=topic,
+            value=json.dumps(doc, ensure_ascii=False).encode("utf-8"),
+            key=doc["id"].encode("utf-8"),
+        )
+        producer.flush()
+        return True
+    except Exception as e:
+        print(f"Failed to publish to Kafka: {e}")
+        return False
+
+
+def upload_csv_to_minio(local_path: str, endpoint: str, access_key: str, secret_key: str):
+    """Upload CSV to MinIO backup folder."""
+    try:
+        client = Minio(
+            endpoint,
+            access_key=access_key,
+            secret_key=secret_key,
+            secure=False
+        )
+        ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+        base = os.path.basename(local_path).replace(".csv", "")
+        remote_path = f"csv/backup/{base}-{ts}.csv"
+        client.fput_object(MINIO_BUCKET, remote_path, local_path)
+        print(f"Uploaded to MinIO: {remote_path}")
+        return True
+    except Exception as e:
+        print(f"Failed to upload to MinIO: {e}")
+        return False
+
+
 def safe_goto(page, url, retries=3, timeout=20000):
     """Navigate with retries and exponential backoff. Returns True on success, False on final failure."""
     attempt = 0
@@ -383,7 +473,30 @@ def collect_links(start_page=START_PAGE, end_page=END_PAGE):
         browser.close()
 
 
-def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0, delay_min=1.0, delay_max=2.0, retries=3):
+def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0, delay_min=1.0, delay_max=2.0, retries=3, 
+         realtime=False, es_url="http://localhost:9200", kafka_servers="localhost:9092",
+         minio_endpoint="localhost:9000", minio_access="minioadmin", minio_secret="minioadmin"):
+    
+    # Initialize realtime components
+    es = None
+    producer = None
+    if realtime:
+        if not HAS_REALTIME:
+            print("ERROR: Realtime mode requires: pip install elasticsearch confluent-kafka minio")
+            return
+        try:
+            es = Elasticsearch(es_url)
+            print(f"Connected to Elasticsearch: {es_url}")
+        except Exception as e:
+            print(f"Failed to connect to Elasticsearch: {e}")
+            return
+        
+        producer = create_kafka_producer(kafka_servers)
+        if not producer:
+            print("Failed to create Kafka producer")
+            return
+        print(f"Connected to Kafka: {kafka_servers}")
+    
     with sync_playwright() as pw:
         browser = pw.chromium.launch(headless=True, args=["--disable-blink-features=AutomationControlled"])
         context = browser.new_context(user_agent=(
@@ -489,22 +602,54 @@ def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0, delay_min=1
 
             for idx, link in enumerate(to_process, 1):
                 print(f"Processing {idx}/{len(to_process)}: {link}")
+                
+                # Extract article ID for ES dedup check
+                article_id = ""
+                if realtime:
+                    m = re.search(r"-(\d+)\.html$", link)
+                    article_id = m.group(1) if m else ""
+                    
+                    # Check if exists in ES
+                    if article_id and is_article_exists(es, article_id):
+                        print(f"  [skip] {article_id} already exists in ES")
+                        continue
+                
                 try:
                     ok = safe_goto(page, link, retries=retries, timeout=20000)
                     if not ok:
                         print(f"Skipping {link} due to repeated navigation failures")
                         continue
+                    
                     item = extract_from_detail(page, link)
+                    
+                    if not item.get("id"):
+                        print(f"  [skip] No ID extracted from {link}")
+                        continue
+                    
+                    # Write to CSV
                     writer.writerow([
                         item.get('id', ''), item.get('question', ''), item.get('answer', ''),
                         item.get('category', ''), item.get('author', ''), item.get('published_date', ''),
-                        item.get('legal_refs', ''), item.get('tags', ''), item.get('views', 0), item.get('url', ''), datetime.now(timezone.utc).isoformat()
+                        item.get('legal_refs', ''), item.get('tags', ''), item.get('views', 0), 
+                        item.get('url', ''), datetime.now(timezone.utc).isoformat()
                     ])
+                    
+                    # Publish to Kafka (realtime mode)
+                    if realtime and producer:
+                        if publish_to_kafka(producer, item):
+                            print(f"  [kafka] {item['id']}")
+                        else:
+                            print(f"  [kafka-fail] {item['id']}")
+                    
                 except Exception as e:
                     print(f"Error fetching {link}: {e}")
 
                 # polite delay between articles
                 time.sleep(random.uniform(delay_min, delay_max))
+        
+        # Upload CSV to MinIO (realtime mode)
+        if realtime and os.path.exists(OUTPUT):
+            upload_csv_to_minio(OUTPUT, minio_endpoint, minio_access, minio_secret)
 
         context.close()
         browser.close()
@@ -518,5 +663,24 @@ if __name__ == '__main__':
     parser.add_argument('--delay-min', type=float, default=1.0, help='minimum per-request delay')
     parser.add_argument('--delay-max', type=float, default=2.0, help='maximum per-request delay')
     parser.add_argument('--retries', type=int, default=3, help='navigation retry attempts')
+    parser.add_argument('--realtime', action='store_true', help='Check ES dedup + publish Kafka + upload MinIO')
+    parser.add_argument('--es-url', default='http://localhost:9200', help='Elasticsearch URL')
+    parser.add_argument('--kafka-servers', default='localhost:9092', help='Kafka bootstrap servers')
+    parser.add_argument('--minio-endpoint', default='localhost:9000', help='MinIO endpoint')
+    parser.add_argument('--minio-access', default='minioadmin', help='MinIO access key')
+    parser.add_argument('--minio-secret', default='minioadmin', help='MinIO secret key')
     args = parser.parse_args()
-    main(start_page=args.start, end_page=args.end, per_page_limit=args.limit, delay_min=args.delay_min, delay_max=args.delay_max, retries=args.retries)
+    main(
+        start_page=args.start, 
+        end_page=args.end, 
+        per_page_limit=args.limit, 
+        delay_min=args.delay_min, 
+        delay_max=args.delay_max, 
+        retries=args.retries,
+        realtime=args.realtime,
+        es_url=args.es_url,
+        kafka_servers=args.kafka_servers,
+        minio_endpoint=args.minio_endpoint,
+        minio_access=args.minio_access,
+        minio_secret=args.minio_secret
+    )

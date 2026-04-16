@@ -86,6 +86,7 @@ def run_streaming_pipeline():
         StructField("doc_type", StringType(), True),
         StructField("doc_number", StringType(), True),
         StructField("agency", StringType(), True),
+        StructField("published_date", StringType(), True),
         StructField("url", StringType(), True),
         StructField("published_date", StringType(), True),
         StructField("crawled_at", StringType(), True)
