@@ -11,10 +11,10 @@ from bs4 import BeautifulSoup
 from typing import Dict, List
 
 BASEDIR = os.path.dirname(__file__)
-OUTPUT = os.path.join(BASEDIR, "output", "tai-nguyen-moi-truong.csv")
-START_URL = "https://thuvienphapluat.vn/hoi-dap-phap-luat/tai-nguyen-moi-truong"
+OUTPUT = os.path.join(BASEDIR, "output", "giam-tru-gia-canh.csv")
+START_URL = "https://thuvienphapluat.vn/hoi-dap-phap-luat/chu-de/giam-tru-gia-canh"
 START_PAGE = 1
-END_PAGE = 5
+END_PAGE = 10
 
 
 def normalize_text(s: str) -> str:
