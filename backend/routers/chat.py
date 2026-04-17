@@ -24,7 +24,11 @@ class ChatRequest(BaseModel):
 class Source(BaseModel):
     title: str
     url: str
+<<<<<<< HEAD
     doc_number: str
+=======
+    doc_id: str
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 
 
 class ChatResponse(BaseModel):
@@ -54,9 +58,15 @@ async def chat(req: ChatRequest):
             detail="Failed to generate embedding for the question. Please try again later.",
         )
 
+<<<<<<< HEAD
     # 3. Search ES (kNN + full-text, both indices)
     try:
         chunks = await search_service.hybrid_search(question, vector, top_k=5)
+=======
+    # 3. Hybrid search (kNN + full-text)
+    try:
+        chunks = await search_service.hybrid_search(question, vector, top_k=10)
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
     except Exception as exc:
         logger.error("Elasticsearch search failed: %s", exc)
         raise HTTPException(
@@ -64,9 +74,15 @@ async def chat(req: ChatRequest):
             detail="Search service is currently unavailable. Please try again later.",
         )
 
+<<<<<<< HEAD
     # 4. Generate answer with GPT
     try:
         answer = await llm_service.generate(question, chunks)
+=======
+    # 4. Generate answer — GPT returns answer + which chunks it used
+    try:
+        answer, used_indices = await llm_service.generate(question, chunks)
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
     except Exception as exc:
         logger.error("LLM generation failed: %s", exc)
         raise HTTPException(
@@ -74,17 +90,38 @@ async def chat(req: ChatRequest):
             detail="Language model service is currently unavailable. Please try again later.",
         )
 
+<<<<<<< HEAD
     # 5. Build sources (deduplicate by URL)
     seen_urls = set()
     sources = []
     for chunk in chunks:
+=======
+    # 5. Build sources — only from chunks GPT actually used (deduplicate by URL)
+    no_info = "không tìm thấy thông tin" in answer.lower()
+
+    seen_urls: set[str] = set()
+    sources = []
+    if no_info:
+        used_chunks = []
+    elif used_indices:
+        used_chunks = [chunks[i] for i in used_indices if i < len(chunks)]
+    else:
+        # GPT answered but forgot to list sources — use top 3
+        used_chunks = chunks[:3]
+
+    for chunk in used_chunks:
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
         url = chunk.get("url", "")
         if url and url not in seen_urls:
             seen_urls.add(url)
             sources.append({
                 "title": chunk.get("title", ""),
                 "url": url,
+<<<<<<< HEAD
                 "doc_number": chunk.get("doc_number", ""),
+=======
+                "doc_id": chunk.get("doc_id", ""),
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
             })
 
     response = {"answer": answer, "sources": sources}

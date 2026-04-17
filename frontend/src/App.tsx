@@ -33,12 +33,12 @@ const mockResponse = async (question: string): Promise<ChatResponse> => {
       {
         title: "Luật Doanh nghiệp 2020",
         url: "https://thuvienphapluat.vn/van-ban/Doanh-nghiep/Luat-Doanh-nghiep-2020-59-2020-QH14-427301.aspx",
-        doc_number: "59/2020/QH14",
+        doc_id: "59/2020/QH14",
       },
       {
         title: "Bộ luật Dân sự 2015",
         url: "https://thuvienphapluat.vn/van-ban/Quyen-dan-su/Bo-luat-Dan-su-2015-91-2015-QH13-296543.aspx",
-        doc_number: "91/2015/QH13",
+        doc_id: "91/2015/QH13",
       },
     ],
   };
@@ -82,7 +82,11 @@ export default function App() {
         ? await mockResponse(question)
         : await sendQuestion(question);
 
+<<<<<<< HEAD
       // Replace loading message
+=======
+      // Replace loading message — store full answer for history
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
       const assistantMessageId = loadingId;
       setMessages((prev) =>
         prev.map((msg) =>
@@ -162,6 +166,7 @@ export default function App() {
       </footer>
     </div>
   );
+<<<<<<< HEAD
 }import { useState, useEffect, useRef } from "react";
 import ChatMessage from "./components/ChatMessage";
 import ChatInput from "./components/ChatInput";
@@ -326,4 +331,6 @@ export default function App() {
       </footer>
     </div>
   );
+=======
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 }

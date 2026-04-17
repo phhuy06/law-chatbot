@@ -4,7 +4,7 @@ USER root
 WORKDIR /app
 
 COPY requirements-spark.txt .
-RUN pip install --no-cache-dir -r requirements-spark.txt
+RUN pip install --upgrade pip && pip install --no-cache-dir --timeout=300 --retries=5 -r requirements-spark.txt
 
 COPY spark/ ./spark/
 
@@ -21,5 +21,10 @@ RUN curl -fSL -o /opt/spark/jars/spark-sql-kafka-0-10_2.12-3.5.8.jar \
     curl -fSL -o /opt/spark/jars/spark-token-provider-kafka-0-10_2.12-3.5.8.jar \
         https://repo1.maven.org/maven2/org/apache/spark/spark-token-provider-kafka-0-10_2.12/3.5.8/spark-token-provider-kafka-0-10_2.12-3.5.8.jar
 
+<<<<<<< HEAD
+=======
+ENV PYTHONUNBUFFERED=1
+
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 ENTRYPOINT []
 CMD ["python3", "-m", "spark.streaming.consumer"]

@@ -40,7 +40,10 @@ echo "==> Waiting for app to be ready..."
 kubectl -n law-chatbot wait --for=condition=available --timeout=120s deployment/backend
 kubectl -n law-chatbot wait --for=condition=available --timeout=120s deployment/frontend
 kubectl -n law-chatbot wait --for=condition=available --timeout=120s deployment/kafka-consumer
+<<<<<<< HEAD
 kubectl -n law-chatbot wait --for=condition=available --timeout=120s deployment/data-ingest
+=======
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 kubectl -n law-chatbot wait --for=condition=available --timeout=180s deployment/spark-master
 kubectl -n law-chatbot wait --for=condition=available --timeout=180s deployment/spark-worker
 kubectl -n law-chatbot wait --for=condition=available --timeout=180s deployment/spark-job

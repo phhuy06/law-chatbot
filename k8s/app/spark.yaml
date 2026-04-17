@@ -12,8 +12,12 @@ data:
   MINIO_SECRET_KEY: "minioadmin"
   MINIO_BUCKET: "phapluat"
   ELASTICSEARCH_URL: "http://elasticsearch:9200"
+<<<<<<< HEAD
   ES_INDEX_BATCH: "phapluat-batch"
   ES_INDEX_REALTIME: "phapluat-realtime"
+=======
+  ES_INDEX: "phapluat"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 ---
 # Spark Master
 apiVersion: v1

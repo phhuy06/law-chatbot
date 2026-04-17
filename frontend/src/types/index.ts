@@ -1,7 +1,7 @@
 export interface Source {
   title: string;       // "Luat Doanh nghiep 2020"
   url: string;         // "https://thuvienphapluat.vn/..."
-  doc_number: string;  
+  doc_id: string;  
 }
 
 // 1 message trong khung chat

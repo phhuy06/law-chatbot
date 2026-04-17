@@ -30,6 +30,7 @@ BATCH_SIZE = int(os.environ.get("INGEST_BATCH_SIZE", "50"))
 
 
 def parse_row(row: dict) -> dict:
+<<<<<<< HEAD
     """Convert a CSV row dict to the document schema expected by the pipeline."""
     return {
         "id": row.get("id", ""),
@@ -41,6 +42,26 @@ def parse_row(row: dict) -> dict:
         "legal_refs": row.get("legal_refs", ""),
         "tags": row.get("tags", ""),
         "views": int(row.get("views", 0) or 0),
+=======
+    """Convert a CSV row dict to the unified document schema.
+
+    Supports both QA format (question/answer columns) and general document
+    format (title/content columns).  QA fields are mapped to the unified
+    schema so downstream consumers only deal with one shape.
+    """
+    title = row.get("title", "") or row.get("question", "")
+    content = row.get("content", "") or row.get("answer", "")
+
+    return {
+        "id": row.get("id", ""),
+        "title": title,
+        "content": content,
+        "category": row.get("category", ""),
+        "doc_type": row.get("doc_type", ""),
+        "doc_number": row.get("doc_number", ""),
+        "agency": row.get("agency", "") or row.get("author", ""),
+        "published_date": row.get("published_date", ""),
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
         "url": row.get("url", ""),
         "crawled_at": row.get("crawled_at", datetime.now(timezone.utc).isoformat()),
     }
@@ -67,7 +88,11 @@ def process_csv(minio_client: Minio, producer: DocumentProducer, object_name: st
 
     for row in reader:
         doc = parse_row(row)
+<<<<<<< HEAD
         if not doc["id"] and not doc["question"]:
+=======
+        if not doc["id"] and not doc["title"]:
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
             continue
         batch.append(doc)
 
@@ -94,6 +119,24 @@ def process_csv(minio_client: Minio, producer: DocumentProducer, object_name: st
     return total
 
 
+<<<<<<< HEAD
+=======
+def get_processed_filenames(minio_client: Minio) -> set[str]:
+    """Return set of filenames already in the processed folder."""
+    processed = set()
+    try:
+        for obj in minio_client.list_objects(
+            MINIO_BUCKET, prefix=PROCESSED_PREFIX, recursive=True,
+        ):
+            # Strip prefix to get the bare filename
+            name = obj.object_name.replace(PROCESSED_PREFIX, "", 1)
+            processed.add(name)
+    except Exception as e:
+        logger.error("Error listing processed objects: %s", e)
+    return processed
+
+
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 def poll_loop():
     minio_client = Minio(
         MINIO_ENDPOINT,
@@ -111,17 +154,35 @@ def poll_loop():
 
     while True:
         try:
+<<<<<<< HEAD
+=======
+            processed_names = get_processed_filenames(minio_client)
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
             objects = minio_client.list_objects(
                 MINIO_BUCKET, prefix=UNPROCESSED_PREFIX, recursive=True,
             )
             for obj in objects:
                 if obj.object_name.startswith(PROCESSED_PREFIX):
                     continue
+<<<<<<< HEAD
                 if obj.object_name.endswith(".csv"):
                     try:
                         process_csv(minio_client, producer, obj.object_name)
                     except Exception as e:
                         logger.error("Failed to process %s: %s", obj.object_name, e)
+=======
+                if not obj.object_name.endswith(".csv"):
+                    continue
+                filename = obj.object_name.replace(UNPROCESSED_PREFIX, "", 1)
+                if filename in processed_names:
+                    logger.info("Skipping duplicate: %s (already processed)", filename)
+                    minio_client.remove_object(MINIO_BUCKET, obj.object_name)
+                    continue
+                try:
+                    process_csv(minio_client, producer, obj.object_name)
+                except Exception as e:
+                    logger.error("Failed to process %s: %s", obj.object_name, e)
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
         except Exception as e:
             logger.error("Error listing MinIO objects: %s", e)
 

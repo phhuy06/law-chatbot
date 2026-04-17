@@ -11,6 +11,7 @@ INDEX_MAPPING = {
     "settings": {
         "number_of_shards": 1,
         "number_of_replicas": 0,
+<<<<<<< HEAD
     },
     "mappings": {
         "properties": {
@@ -19,6 +20,26 @@ INDEX_MAPPING = {
             "url": {"type": "keyword"},
             "doc_type": {"type": "keyword"},
             "doc_number": {"type": "keyword"},
+=======
+        "analysis": {
+            "analyzer": {
+                "vietnamese": {
+                    "type": "custom",
+                    "tokenizer": "icu_tokenizer",
+                    "filter": ["icu_normalizer", "icu_folding", "lowercase"],
+                },
+            },
+        },
+    },
+    "mappings": {
+        "properties": {
+            "doc_id": {"type": "keyword"},
+            "chunk_text": {"type": "text", "analyzer": "vietnamese"},
+            "title": {"type": "text", "analyzer": "vietnamese"},
+            "url": {"type": "keyword"},
+            "category": {"type": "keyword"},
+            "doc_type": {"type": "keyword"},
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
             "agency": {"type": "keyword"},
             "embedding": {
                 "type": "dense_vector",
@@ -31,8 +52,12 @@ INDEX_MAPPING = {
 }
 
 INDICES = [
+<<<<<<< HEAD
     os.environ.get("ES_INDEX_BATCH", "phapluat-batch"),
     os.environ.get("ES_INDEX_REALTIME", "phapluat-realtime"),
+=======
+    os.environ.get("ES_INDEX", "phapluat"),
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 ]
 
 

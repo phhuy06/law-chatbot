@@ -8,8 +8,7 @@ class Settings(BaseSettings):
 
     # Elasticsearch
     elasticsearch_url: str = "http://localhost:9200"
-    es_index_batch: str = "phapluat-batch"
-    es_index_realtime: str = "phapluat-realtime"
+    es_index: str = "phapluat"
 
     # Redis
     redis_url: str = "redis://localhost:6379/0"

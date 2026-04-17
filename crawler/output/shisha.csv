@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 "id","question","answer","category","author","published_date","legal_refs","tags","views","url","crawled_at"
+=======
+"id","title","content","category","doc_type","doc_number","agency","published_date","url","crawled_at"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "1","Hút shisha có bị phạt không?","Từ nhân viên văn phòng đến “ông hoàng” streamer
 
 Độ Mixi, tên thật là Phùng Thanh Độ sinh năm 1989, hiện là một trong những gương mặt nổi bật nhất trên không gian mạng Việt Nam. Ít ai ngờ rằng trước khi trở thành “ông hoàng” streamer, anh từng là một nhân viên văn phòng bình thường.
@@ -76,4 +80,8 @@ Sự trưởng thành của một cộng đồng fan được đo bằng khả n
 
 Ông Long kết luận: “Sự việc này phản ánh rõ văn hóa tranh luận trên mạng xã hội Việt Nam - nặng cảm xúc, dễ cực đoan và phe phái. Thông điệp lớn nhất là: Mức độ ảnh hưởng càng lớn, trách nhiệm càng cao.
 
+<<<<<<< HEAD
 Người nổi tiếng phải ý thức rằng mỗi hành động nhỏ đều có thể thành biểu tượng, còn fan cần học cách yêu mến thần tượng một cách trưởng thành, không bảo vệ mù quáng; thần tượng một cách dễ dãi”.","Pháp luật về sức khỏe","Đạ Shiso","2024-05-01","Nghị định 117/2020/NĐ-CP, Luật Phòng chống tác hại của thuốc lá","shisha, hút thuốc, phạt tiền","1500","https://dantri.com.vn/doi-song/vang-tuc-hut-shisha-do-mixi-van-co-trieu-nguoi-ham-mo-than-tuong-de-dai-20250911182250845.htm","2024-06-01T10:00:00Z"
+=======
+Người nổi tiếng phải ý thức rằng mỗi hành động nhỏ đều có thể thành biểu tượng, còn fan cần học cách yêu mến thần tượng một cách trưởng thành, không bảo vệ mù quáng; thần tượng một cách dễ dãi”.","Pháp luật về sức khỏe","","","Đạ Shiso","2024-05-01","https://dantri.com.vn/doi-song/vang-tuc-hut-shisha-do-mixi-van-co-trieu-nguoi-ham-mo-than-tuong-de-dai-20250911182250845.htm","2024-06-01T10:00:00Z"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1

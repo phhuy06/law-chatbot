@@ -54,6 +54,7 @@ spec:
             limits:
               memory: "256Mi"
               cpu: "300m"
+<<<<<<< HEAD
 ---
 # data-ingest: watches MinIO for new CSVs and pushes to Kafka
 apiVersion: apps/v1
@@ -97,3 +98,5 @@ spec:
             limits:
               memory: "256Mi"
               cpu: "300m"
+=======
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1

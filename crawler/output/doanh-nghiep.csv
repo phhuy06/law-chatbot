@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 "id","question","answer","category","author","published_date","legal_refs","tags","views","url","crawled_at"
+=======
+"id","title","content","category","doc_type","doc_number","agency","published_date","url","crawled_at"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "138086721","Doanh nghiệp bán hàng đa cấp phải ký quỹ bao nhiêu từ 01/07/2026?","Căn cứ theo khoản 2 Điều 50  Nghị định 137/2026/NĐ-CP  quy định như sau:
 
 Điều 50. Tiền ký quỹ
@@ -57,7 +61,11 @@ Theo đó, hồ sơ đề nghị rút tiền ký quỹ bao gồm:
 
 - Đơn đề nghị rút tiền ký quỹ theo Mẫu số 22 tại Phụ lục 1 ban hành kèm theo  Nghị định 137/2026/NĐ-CP ;   Tải về
 
+<<<<<<< HEAD
 - Danh sách người tham gia bán hàng đa cấp đến thời điểm chấm dứt hoạt động bán hàng đa cấp (tên, số thẻ căn cước/căn cước công dân hoặc hộ chiếu, địa chỉ, điện thoại, số hợp đồng tham gia bán hàng đa cấp, ngày ký hợp đồng, số Thẻ thành viên).","","","2026-04-13","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/doanh-nghiep-ban-hang-da-cap-phai-ky-quy-bao-nhieu-tu-01072026-138086721.html","2026-04-13T05:07:21.617060+00:00"
+=======
+- Danh sách người tham gia bán hàng đa cấp đến thời điểm chấm dứt hoạt động bán hàng đa cấp (tên, số thẻ căn cước/căn cước công dân hoặc hộ chiếu, địa chỉ, điện thoại, số hợp đồng tham gia bán hàng đa cấp, ngày ký hợp đồng, số Thẻ thành viên).","","","","","2026-04-13","https://thuvienphapluat.vn/hoi-dap-phap-luat/doanh-nghiep-ban-hang-da-cap-phai-ky-quy-bao-nhieu-tu-01072026-138086721.html","2026-04-13T05:07:21.617060+00:00"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "138086703","Mẫu Đơn đề nghị cấp giấy chứng nhận đăng ký hoạt động bán hàng đa cấp từ 01/07/2026 là mẫu nào?","Mẫu Đơn đề nghị cấp giấy chứng nhận đăng ký hoạt động bán hàng đa cấp là Mẫu số 01 quy định tại Phụ lục 1 ban hành kèm theo  Nghị định 137/2026/NĐ-CP .
 
 Mẫu Đơn đề nghị cấp giấy chứng nhận đăng ký hoạt động bán hàng đa cấp từ 01/07/2026 có dạng như sau:
@@ -124,7 +132,11 @@ Căn cứ theo Điều 10  Nghị định 137/2026/NĐ-CP  quy định hồ sơ 
 
 - Tài liệu chứng minh việc đáp ứng điều kiện quy định tại điểm e khoản 1 Điều 8  Nghị định 137/2026/NĐ-CP , trong trường hợp doanh nghiệp có nhà đầu tư nước ngoài, tổ chức kinh tế có vốn đầu tư nước ngoài là chủ sở hữu hoặc thành viên hoặc cổ đông.
 
+<<<<<<< HEAD
 - Giấy phép kinh doanh có nội dung cấp phép thực hiện quyền phân phối bán lẻ, bao gồm hoạt động bán lẻ theo phương thức đa cấp, trong trường hợp doanh nghiệp có nhà đầu tư nước ngoài, tổ chức kinh tế có vốn đầu tư nước ngoài là chủ sở hữu hoặc thành viên hoặc cổ đông.","","","2026-04-13","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/mau-don-de-nghi-cap-giay-chung-nhan-dang-ky-hoat-dong-ban-hang-da-cap-tu-01072026-la-mau-nao-138086703.html","2026-04-13T05:07:25.630435+00:00"
+=======
+- Giấy phép kinh doanh có nội dung cấp phép thực hiện quyền phân phối bán lẻ, bao gồm hoạt động bán lẻ theo phương thức đa cấp, trong trường hợp doanh nghiệp có nhà đầu tư nước ngoài, tổ chức kinh tế có vốn đầu tư nước ngoài là chủ sở hữu hoặc thành viên hoặc cổ đông.","","","","","2026-04-13","https://thuvienphapluat.vn/hoi-dap-phap-luat/mau-don-de-nghi-cap-giay-chung-nhan-dang-ky-hoat-dong-ban-hang-da-cap-tu-01072026-la-mau-nao-138086703.html","2026-04-13T05:07:25.630435+00:00"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "138086657","Khung chương trình đào tạo kiến thức pháp luật về bán hàng đa cấp từ 01/07/2026 ra sao?","Căn cứ theo Phụ lục 2 ban hành kèm theo  Nghị định 137/2026/NĐ-CP  có hiệu lực thi hành từ 01/07/2026 quy định  Khung chương trình đào tạo kiến thức pháp luật về bán hàng đa cấp  cụ thể như sau:
 
 1. TỔNG QUAN VỀ BÁN HÀNG ĐA CẤP
@@ -223,7 +235,11 @@ Căn cứ theo Điều 40  Nghị định 137/2026/NĐ-CP  quy định trách nh
 
 Doanh thu quy định tại khoản này là doanh thu do người tham gia bán cho người tiêu dùng hoặc doanh thu do doanh nghiệp bán hàng đa cấp bán cho người tiêu dùng thông qua mã số giới thiệu của người tham gia.
 
+<<<<<<< HEAD
 - Không cung cấp thông tin về thực phẩm bằng hình thức sử dụng hình ảnh, thiết bị, trang phục, tên, thư tín của các đơn vị, cơ sở y tế, bác sỹ, dược sỹ, nhân viên y tế, thư cảm ơn, lời cảm ơn của người bệnh, bài viết của bác sỹ, dược sỹ, nhân viên y tế; không cung cấp thông tin về thực phẩm có nội dung đăng tải, dẫn, trích dẫn hoặc nêu ý kiến người bệnh mô tả thực phẩm có tác dụng điều trị bệnh.","","","2026-04-13","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/khung-chuong-trinh-dao-tao-kien-thuc-phap-luat-ve-ban-hang-da-cap-tu-01072026-ra-sao-138086657.html","2026-04-13T05:07:29.971561+00:00"
+=======
+- Không cung cấp thông tin về thực phẩm bằng hình thức sử dụng hình ảnh, thiết bị, trang phục, tên, thư tín của các đơn vị, cơ sở y tế, bác sỹ, dược sỹ, nhân viên y tế, thư cảm ơn, lời cảm ơn của người bệnh, bài viết của bác sỹ, dược sỹ, nhân viên y tế; không cung cấp thông tin về thực phẩm có nội dung đăng tải, dẫn, trích dẫn hoặc nêu ý kiến người bệnh mô tả thực phẩm có tác dụng điều trị bệnh.","","","","","2026-04-13","https://thuvienphapluat.vn/hoi-dap-phap-luat/khung-chuong-trinh-dao-tao-kien-thuc-phap-luat-ve-ban-hang-da-cap-tu-01072026-ra-sao-138086657.html","2026-04-13T05:07:29.971561+00:00"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "138086701","Điều kiện đối với người tham gia bán hàng đa cấp từ 01/07/2026 là gì?","Căn cứ theo Điều 28  Nghị định 137/2026/NĐ-CP  có hiệu lực thi hành từ 01/07/2026 quy định điều kiện đối với người tham gia bán hàng đa cấp như sau:
 
 - Người tham gia bán hàng đa cấp là cá nhân có năng lực hành vi dân sự đầy đủ theo quy định của pháp luật và cư trú tại Việt Nam.
@@ -280,7 +296,11 @@ Căn cứ theo khoản 1 Điều 30  Nghị định 137/2026/NĐ-CP  quy định
 
 [...]
 
+<<<<<<< HEAD
 Theo đó, người tham gia bán hàng đa cấp đơn phương chấm dứt thực hiện hợp đồng phải thông báo cho doanh nghiệp ít nhất là 10 ngày làm việc  trước khi chấm dứt hợp đồng.","","","2026-04-12","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/dieu-kien-doi-voi-nguoi-tham-gia-ban-hang-da-cap-tu-01072026-la-gi-138086701.html","2026-04-13T05:07:34.077225+00:00"
+=======
+Theo đó, người tham gia bán hàng đa cấp đơn phương chấm dứt thực hiện hợp đồng phải thông báo cho doanh nghiệp ít nhất là 10 ngày làm việc  trước khi chấm dứt hợp đồng.","","","","","2026-04-12","https://thuvienphapluat.vn/hoi-dap-phap-luat/dieu-kien-doi-voi-nguoi-tham-gia-ban-hang-da-cap-tu-01072026-la-gi-138086701.html","2026-04-13T05:07:34.077225+00:00"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "138086859","Những hàng hóa nào không được kinh doanh theo phương thức đa cấp từ 01/07/2026?","Căn cứ theo khoản 2 Điều 4  Nghị định 137/2026/NĐ-CP  có hiệu lực thi hành từ 01/07/2026 quy định như sau:
 
 Điều 4. Đối tượng kinh doanh theo phương thức đa cấp
@@ -335,7 +355,11 @@ Theo đó, tiền ký quỹ của doanh nghiệp bán hàng đa cấp được s
 
 - Doanh nghiệp chấm dứt hoạt động bán hàng đa cấp nhưng không chấp hành quyết định xử phạt vi phạm trong hoạt động bán hàng đa cấp đã có hiệu lực của cơ quan có thẩm quyền;
 
+<<<<<<< HEAD
 - Doanh nghiệp bán hàng đa cấp chấm dứt hoạt động bán hàng đa cấp theo quy định tại khoản 1 Điều 17  Nghị định 137/2026/NĐ-CP  nhưng không thực hiện đầy đủ các nghĩa vụ liên quan đến hoạt động bán hàng đa cấp đối với người tham gia bán hàng đa cấp và có bản án có hiệu lực pháp luật của tòa án về việc giải quyết các tranh chấp giữa doanh nghiệp bán hàng đa cấp với người tham gia bán hàng đa cấp liên quan đến các nghĩa vụ đó.","","","2026-04-12","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/nhung-hang-hoa-nao-khong-duoc-kinh-doanh-theo-phuong-thuc-da-cap-tu-01072026-138086859.html","2026-04-13T05:07:37.590637+00:00"
+=======
+- Doanh nghiệp bán hàng đa cấp chấm dứt hoạt động bán hàng đa cấp theo quy định tại khoản 1 Điều 17  Nghị định 137/2026/NĐ-CP  nhưng không thực hiện đầy đủ các nghĩa vụ liên quan đến hoạt động bán hàng đa cấp đối với người tham gia bán hàng đa cấp và có bản án có hiệu lực pháp luật của tòa án về việc giải quyết các tranh chấp giữa doanh nghiệp bán hàng đa cấp với người tham gia bán hàng đa cấp liên quan đến các nghĩa vụ đó.","","","","","2026-04-12","https://thuvienphapluat.vn/hoi-dap-phap-luat/nhung-hang-hoa-nao-khong-duoc-kinh-doanh-theo-phuong-thuc-da-cap-tu-01072026-138086859.html","2026-04-13T05:07:37.590637+00:00"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "138083028","Dịch vụ Halal là dịch vụ gì? Nguyên tắc hoạt động thử nghiệm sản phẩm Halal ra sao?","Căn cứ khoản 4 Điều 3  Nghị định 127/2026/NĐ-CP  quy định về giải thích từ ngữ như sau:
 
 Điều 3. Giải thích từ ngữ
@@ -410,7 +434,11 @@ Căn cứ khoản 1 Điều 7  Nghị định 127/2026/NĐ-CP  quy định sản
 
 - Lượng hàng hóa đóng gói sẵn phải tuân thủ pháp luật về đo lường.
 
+<<<<<<< HEAD
 Lưu ý:  Nghị định 127/2026/NĐ-CP  có hiệu lực từ ngày 01/6/2026.","","","2026-04-11","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/dich-vu-halal-la-dich-vu-gi-nguyen-tac-hoat-dong-thu-nghiem-san-pham-halal-ra-sao-138083028.html","2026-04-13T05:07:41.725081+00:00"
+=======
+Lưu ý:  Nghị định 127/2026/NĐ-CP  có hiệu lực từ ngày 01/6/2026.","","","","","2026-04-11","https://thuvienphapluat.vn/hoi-dap-phap-luat/dich-vu-halal-la-dich-vu-gi-nguyen-tac-hoat-dong-thu-nghiem-san-pham-halal-ra-sao-138083028.html","2026-04-13T05:07:41.725081+00:00"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "138086472","Doanh nghiệp gặp khó khăn được giảm mức đóng kinh phí công đoàn bao nhiêu %?","Căn cứ khoản 3 Điều 12  Nghị định 105/2026/NĐ-CP  quy định về giảm mức đóng kinh phí công đoàn như sau:
 
 Điều 12. Giảm mức đóng kinh phí công đoàn
@@ -479,7 +507,11 @@ Như vậy, đoàn viên công đoàn có những trách nhiệm sau đây:
 
 - Học tập nâng cao trình độ chính trị, văn hóa, chuyên môn, nghiệp vụ, kỹ năng nghề nghiệp, tác phong làm việc; rèn luyện phẩm chất giai cấp công nhân; sống và làm việc theo Hiến pháp, pháp luật.
 
+<<<<<<< HEAD
 - Đoàn kết, giúp đỡ đồng nghiệp trong lao động và trong cuộc sống; nâng cao năng suất, chất lượng, hiệu quả lao động; bảo vệ quyền, lợi ích hợp pháp, chính đáng của người lao lao động và tổ chức Công đoàn; tham gia xây dựng quan hệ lao động tiến bộ, hài hòa và ổn định.","","","2026-04-11","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/doanh-nghiep-gap-kho-khan-duoc-giam-muc-dong-kinh-phi-cong-doan-bao-nhieu-138086472.html","2026-04-13T05:07:45.938939+00:00"
+=======
+- Đoàn kết, giúp đỡ đồng nghiệp trong lao động và trong cuộc sống; nâng cao năng suất, chất lượng, hiệu quả lao động; bảo vệ quyền, lợi ích hợp pháp, chính đáng của người lao lao động và tổ chức Công đoàn; tham gia xây dựng quan hệ lao động tiến bộ, hài hòa và ổn định.","","","","","2026-04-11","https://thuvienphapluat.vn/hoi-dap-phap-luat/doanh-nghiep-gap-kho-khan-duoc-giam-muc-dong-kinh-phi-cong-doan-bao-nhieu-138086472.html","2026-04-13T05:07:45.938939+00:00"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "138086964","Tổng hợp Thông báo ngừng sử dụng hóa đơn đối với HKD có doanh thu dưới 500 triệu ra sao?","Dưới đây là Tổng hợp Thông báo ngừng sử dụng hóa đơn đối với HKD có doanh thu dưới 500 triệu chi tiết:
 
 [1] Thông báo 796/TB-TCS1 năm 2026
@@ -608,7 +640,11 @@ Cơ quan thuế có trách nhiệm tổ chức, xây dựng, quản lý và vậ
 
 - Tổ chức cung cấp dịch vụ hóa đơn điện tử có trách nhiệm xây dựng cơ chế kiểm tra, phát hiện, cảnh báo trong sử dụng hóa đơn điện tử và cung cấp thông tin cho cơ quan thuế;
 
+<<<<<<< HEAD
 - Người mua có quyền và trách nhiệm yêu cầu người bán cung cấp hóa đơn điện tử khi mua hàng hóa, dịch vụ; được hưởng các biện pháp khuyến khích theo quy định của pháp luật.","","","2026-04-11","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/tong-hop-thong-bao-ngung-su-dung-hoa-don-doi-voi-hkd-co-doanh-thu-duoi-500-trieu-ra-sao-138086964.html","2026-04-13T05:07:49.847165+00:00"
+=======
+- Người mua có quyền và trách nhiệm yêu cầu người bán cung cấp hóa đơn điện tử khi mua hàng hóa, dịch vụ; được hưởng các biện pháp khuyến khích theo quy định của pháp luật.","","","","","2026-04-11","https://thuvienphapluat.vn/hoi-dap-phap-luat/tong-hop-thong-bao-ngung-su-dung-hoa-don-doi-voi-hkd-co-doanh-thu-duoi-500-trieu-ra-sao-138086964.html","2026-04-13T05:07:49.847165+00:00"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "138086905","Giấy xác nhận đăng ký hoạt động in bị thu hồi trong trường hợp nào từ 08/04/2026?","Căn cứ theo khoản 5 Điều 14  Nghị định 60/2014/NĐ-CP  được sửa đổi bởi Điều 1  Nghị định 116/2026/NĐ-CP  quy định như sau:
 
 Điều 14. Đăng ký hoạt động in và các trường hợp thu hồi giấy xác nhận đăng ký hoạt động in
@@ -661,7 +697,11 @@ Căn cứ theo Điều 10  Nghị định 60/2014/NĐ-CP  quy định về việ
 
 - Sản phẩm in có sai phạm thì tùy theo tính chất, mức độ mà bị buộc khắc phục, thu hồi, tịch thu, cấm lưu hành, tiêu hủy.
 
+<<<<<<< HEAD
 - Cơ quan quản lý nhà nước về hoạt động in phải chịu trách nhiệm về quyết định của mình; trường hợp quyết định sai, gây thiệt hại thì phải bồi thường theo quy định của pháp luật.","","","2026-04-11","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/giay-xac-nhan-dang-ky-hoat-dong-in-bi-thu-hoi-trong-truong-hop-nao-tu-08042026-138086905.html","2026-04-13T05:07:54.046188+00:00"
+=======
+- Cơ quan quản lý nhà nước về hoạt động in phải chịu trách nhiệm về quyết định của mình; trường hợp quyết định sai, gây thiệt hại thì phải bồi thường theo quy định của pháp luật.","","","","","2026-04-11","https://thuvienphapluat.vn/hoi-dap-phap-luat/giay-xac-nhan-dang-ky-hoat-dong-in-bi-thu-hoi-trong-truong-hop-nao-tu-08042026-138086905.html","2026-04-13T05:07:54.046188+00:00"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "138086888","Mẫu Bản khai đăng ký địa chỉ Internet từ 08/04/2026 là mẫu nào?","Mẫu Bản khai đăng ký địa chỉ Internet là Mẫu số 07 quy định tại Phụ lục ban hành kèm theo  Nghị định 116/2026/NĐ-CP .
 
 Mẫu Bản khai đăng ký địa chỉ Internet từ 08/04/2026 có dạng như sau:
@@ -734,7 +774,11 @@ Căn cứ theo Điều 6  Nghị định 147/2024/NĐ-CP  quy định trách nhi
 
 + Tuân thủ giờ mở cửa, đóng cửa theo quy định tại khoản 4 Điều 5  Nghị định 147/2024/NĐ-CP ;
 
+<<<<<<< HEAD
 + Trách nhiệm quy định tại điểm a, điểm c, điểm e, điểm h, điểm i khoản 1 Điều 6  Nghị định 147/2024/NĐ-CP .","","","2026-04-11","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/mau-ban-khai-dang-ky-dia-chi-internet-tu-08042026-la-mau-nao-138086888.html","2026-04-13T05:07:58.483626+00:00"
+=======
++ Trách nhiệm quy định tại điểm a, điểm c, điểm e, điểm h, điểm i khoản 1 Điều 6  Nghị định 147/2024/NĐ-CP .","","","","","2026-04-11","https://thuvienphapluat.vn/hoi-dap-phap-luat/mau-ban-khai-dang-ky-dia-chi-internet-tu-08042026-la-mau-nao-138086888.html","2026-04-13T05:07:58.483626+00:00"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "138087010","Hồ sơ đề nghị cấp giấy chứng nhận đăng ký hoạt động bán hàng đa cấp từ 01/07/2026 bao gồm những gì?","Căn cứ theo Điều 10  Nghị định 137/2026/NĐ-CP  có hiệu lực thi hành từ 01/07/2026 quy định hồ sơ đề nghị cấp giấy chứng nhận đăng ký hoạt động bán hàng đa cấp bao gồm các tài liệu sau đây (có đóng dấu xác nhận của doanh nghiệp):
 
 - 01 đơn đề nghị cấp giấy chứng nhận đăng ký hoạt động bán hàng đa cấp theo Mẫu số 01 tại Phụ lục I ban hành kèm theo  Nghị định 137/2026/NĐ-CP .
@@ -807,7 +851,11 @@ Căn cứ theo Điều 8  Nghị định 137/2026/NĐ-CP  quy định tổ chứ
 
 - Trong trường hợp tổ chức đăng ký hoạt động bán hàng đa cấp là doanh nghiệp có nhà đầu tư nước ngoài hoặc tổ chức kinh tế có vốn đầu tư nước ngoài là chủ sở hữu hoặc thành viên hoặc cổ đông, tất cả các nhà đầu tư nước ngoài, tổ chức kinh tế có vốn đầu tư nước ngoài đó phải có thời gian hoạt động kinh doanh theo phương thức đa cấp trong thực tế tối thiểu là 03 năm liên tục ở một nước, vùng lãnh thổ trên thế giới.
 
+<<<<<<< HEAD
 Lưu ý:  Doanh nghiệp đăng ký hoạt động bán hàng đa cấp phải lập hồ sơ đề nghị cấp giấy chứng nhận đăng ký hoạt động bán hàng đa cấp theo quy định tại Điều 10  Nghị định 137/2026/NĐ-CP  và chịu trách nhiệm về tính hợp pháp của hồ sơ.","","","2026-04-11","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/ho-so-de-nghi-cap-giay-chung-nhan-dang-ky-hoat-dong-ban-hang-da-cap-tu-01072026-bao-gom-nhung-gi-138087010.html","2026-04-13T05:08:02.904882+00:00"
+=======
+Lưu ý:  Doanh nghiệp đăng ký hoạt động bán hàng đa cấp phải lập hồ sơ đề nghị cấp giấy chứng nhận đăng ký hoạt động bán hàng đa cấp theo quy định tại Điều 10  Nghị định 137/2026/NĐ-CP  và chịu trách nhiệm về tính hợp pháp của hồ sơ.","","","","","2026-04-11","https://thuvienphapluat.vn/hoi-dap-phap-luat/ho-so-de-nghi-cap-giay-chung-nhan-dang-ky-hoat-dong-ban-hang-da-cap-tu-01072026-bao-gom-nhung-gi-138087010.html","2026-04-13T05:08:02.904882+00:00"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "138085996","Cách điền Mẫu 01 BK HTK Bảng kê hàng tồn kho, máy móc, thiết bị của hộ kinh doanh, cá nhân kinh doanh ra sao?","Mẫu số 01/BK-HTK Bảng kê hàng tồn kho, máy móc, thiết bị của hộ kinh doanh, cá nhân kinh doanh là Mẫu số 01/BK-HTK được quy định tại Phụ lục ban hành kèm theo  Thông tư 18/2026/TT-BTC .
 
 Tải Mẫu 01 BK HTK Bảng kê hàng tồn kho, máy móc, thiết bị của hộ kinh doanh, cá nhân kinh doanh
@@ -888,8 +936,13 @@ Hộ kinh doanh, cá nhân kinh doanh đang hoạt động thuộc đối tượ
 
 Hộ kinh doanh, cá nhân kinh doanh mới ra kinh doanh gửi Thông báo số tài khoản/số hiệu ví điện tử theo mẫu số 01/BK-STK ban hành kèm theo  Thông tư 18/2026/TT-BTC  kèm theo Thông báo doanh thu hoặc Tờ khai thuế đầu tiên của năm 2026.
 
+<<<<<<< HEAD
 Hộ kinh doanh, cá nhân kinh doanh khi thay đổi thông tin số tài khoản/số hiệu ví điện tử thì thông báo cho cơ quan thuế theo quy định của pháp luật quản lý thuế.","","","2026-04-11","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/cach-dien-mau-01-bk-htk-bang-ke-hang-ton-kho-may-moc-thiet-bi-cua-ho-kinh-doanh-ca-nhan-kinh-doanh--138085996.html","2026-04-13T05:08:06.944501+00:00"
 "138086037","","","","","","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/muc-phat-cham-thong-bao-so-tai-khoan-ngan-hang-cho-cqt-doi-voi-hkd-bao-nhieu-138086037.html","2026-04-13T05:08:13.770471+00:00"
+=======
+Hộ kinh doanh, cá nhân kinh doanh khi thay đổi thông tin số tài khoản/số hiệu ví điện tử thì thông báo cho cơ quan thuế theo quy định của pháp luật quản lý thuế.","","","","","2026-04-11","https://thuvienphapluat.vn/hoi-dap-phap-luat/cach-dien-mau-01-bk-htk-bang-ke-hang-ton-kho-may-moc-thiet-bi-cua-ho-kinh-doanh-ca-nhan-kinh-doanh--138085996.html","2026-04-13T05:08:06.944501+00:00"
+"138086037","","","","","","","","https://thuvienphapluat.vn/hoi-dap-phap-luat/muc-phat-cham-thong-bao-so-tai-khoan-ngan-hang-cho-cqt-doi-voi-hkd-bao-nhieu-138086037.html","2026-04-13T05:08:13.770471+00:00"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "138086671","Mẫu Đơn đề nghị rút tiền ký quỹ của doanh nghiệp bán hàng đa cấp từ 01/07/2026 là mẫu nào?","Mẫu Đơn đề nghị rút tiền ký quỹ của doanh nghiệp bán hàng đa cấp là Mẫu số 22 quy định tại Phụ lục 1 ban hành kèm theo  Nghị định 137/2026/NĐ-CP .
 
 Mẫu Đơn đề nghị rút tiền ký quỹ của doanh nghiệp bán hàng đa cấp từ 01/07/2026 có dạng như sau:
@@ -946,7 +999,11 @@ Theo đó, tiền ký quỹ của doanh nghiệp bán hàng đa cấp được s
 
 - Doanh nghiệp chấm dứt hoạt động bán hàng đa cấp nhưng không chấp hành quyết định xử phạt vi phạm trong hoạt động bán hàng đa cấp đã có hiệu lực của cơ quan có thẩm quyền;
 
+<<<<<<< HEAD
 - Doanh nghiệp bán hàng đa cấp chấm dứt hoạt động bán hàng đa cấp theo quy định tại khoản 1 Điều 17  Nghị định 137/2026/NĐ-CP  nhưng không thực hiện đầy đủ các nghĩa vụ liên quan đến hoạt động bán hàng đa cấp đối với người tham gia bán hàng đa cấp và có bản án có hiệu lực pháp luật của tòa án về việc giải quyết các tranh chấp giữa doanh nghiệp bán hàng đa cấp với người tham gia bán hàng đa cấp liên quan đến các nghĩa vụ đó.","","","2026-04-10","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/mau-don-de-nghi-rut-tien-ky-quy-cua-doanh-nghiep-ban-hang-da-cap-tu-01072026-la-mau-nao-138086671.html","2026-04-13T05:08:19.119773+00:00"
+=======
+- Doanh nghiệp bán hàng đa cấp chấm dứt hoạt động bán hàng đa cấp theo quy định tại khoản 1 Điều 17  Nghị định 137/2026/NĐ-CP  nhưng không thực hiện đầy đủ các nghĩa vụ liên quan đến hoạt động bán hàng đa cấp đối với người tham gia bán hàng đa cấp và có bản án có hiệu lực pháp luật của tòa án về việc giải quyết các tranh chấp giữa doanh nghiệp bán hàng đa cấp với người tham gia bán hàng đa cấp liên quan đến các nghĩa vụ đó.","","","","","2026-04-10","https://thuvienphapluat.vn/hoi-dap-phap-luat/mau-don-de-nghi-rut-tien-ky-quy-cua-doanh-nghiep-ban-hang-da-cap-tu-01072026-la-mau-nao-138086671.html","2026-04-13T05:08:19.119773+00:00"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "138086714","Mẫu Đơn đăng ký kiểm tra kiến thức pháp luật về bán hàng đa cấp từ 01/07/2026 là mẫu nào?","Mẫu Đơn đăng ký kiểm tra kiến thức pháp luật về bán hàng đa cấp là Mẫu số 19 quy định tại Phụ lục 1 ban hành kèm theo  Nghị định 137/2026/NĐ-CP .
 
 Mẫu Đơn đăng ký kiểm tra kiến thức pháp luật về bán hàng đa cấp từ 01/07/2026 có dạng như sau:
@@ -1015,7 +1072,11 @@ b) Đối với bài kiểm tra kiến thức cho đầu mối tại địa phư
 
 6. Kết quả kiểm tra kiến thức pháp luật về bán hàng đa cấp, kiến thức cho đầu mối tại địa phương do Ủy ban nhân dân cấp tỉnh công bố có giá trị áp dụng trên toàn quốc.
 
+<<<<<<< HEAD
 Theo đó, bài kiểm tra kiến thức pháp luật về bán hàng đa cấp có thời gian tối thiểu là 60 phút.","","","2026-04-10","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/mau-don-dang-ky-kiem-tra-kien-thuc-phap-luat-ve-ban-hang-da-cap-tu-01072026-la-mau-nao-138086714.html","2026-04-13T05:08:22.905648+00:00"
+=======
+Theo đó, bài kiểm tra kiến thức pháp luật về bán hàng đa cấp có thời gian tối thiểu là 60 phút.","","","","","2026-04-10","https://thuvienphapluat.vn/hoi-dap-phap-luat/mau-don-dang-ky-kiem-tra-kien-thuc-phap-luat-ve-ban-hang-da-cap-tu-01072026-la-mau-nao-138086714.html","2026-04-13T05:08:22.905648+00:00"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "138086020","Mẫu Tờ khai đăng ký hợp đồng chuyển quyền sử dụng đối tượng sở hữu công nghiệp từ 01/04/2026 là mẫu nào?","Mẫu Tờ khai đăng ký hợp đồng chuyển quyền sử dụng đối tượng sở hữu công nghiệp là Mẫu số 15 quy định tại Phụ lục 1 ban hành kèm theo  Nghị định 100/2026/NĐ-CP .
 
 Mẫu Tờ khai đăng ký hợp đồng chuyển quyền sử dụng đối tượng sở hữu công nghiệp có dạng như sau:
@@ -1086,8 +1147,13 @@ Theo đó, nội dung quản lý nhà nước về sở hữu trí tuệ bao g�
 
 - Giáo dục, tuyên truyền, phổ biến kiến thức, pháp luật về sở hữu trí tuệ.
 
+<<<<<<< HEAD
 - Hợp tác quốc tế về sở hữu trí tuệ.","","","2026-04-10","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/mau-to-khai-dang-ky-hop-dong-chuyen-quyen-su-dung-doi-tuong-so-huu-cong-nghiep-tu-01042026-la-mau-n-138086020.html","2026-04-13T05:08:27.200417+00:00"
 "138086709","","","","","","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/doanh-nghiep-ban-hang-da-cap-duoc-rut-tien-ky-quy-trong-truong-hop-nao-tu-01072026-138086709.html","2026-04-13T05:08:33.847416+00:00"
+=======
+- Hợp tác quốc tế về sở hữu trí tuệ.","","","","","2026-04-10","https://thuvienphapluat.vn/hoi-dap-phap-luat/mau-to-khai-dang-ky-hop-dong-chuyen-quyen-su-dung-doi-tuong-so-huu-cong-nghiep-tu-01042026-la-mau-n-138086020.html","2026-04-13T05:08:27.200417+00:00"
+"138086709","","","","","","","","https://thuvienphapluat.vn/hoi-dap-phap-luat/doanh-nghiep-ban-hang-da-cap-duoc-rut-tien-ky-quy-trong-truong-hop-nao-tu-01072026-138086709.html","2026-04-13T05:08:33.847416+00:00"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "138086433","Hộ kinh doanh mới ra kinh doanh có doanh thu dưới 500 triệu trong 2026 có phải thông báo tài khoản ngân hàng trước 20/4/2026 không?","Xem thêm:
 
 >>>  Sửa lỗi Bạn chưa được xác định địa điểm kinh doanh chính trên eTax Mobile như thế nào?
@@ -1154,7 +1220,11 @@ Theo đó, hộ kinh doanh thực hiện thông báo cho cơ quan thuế theo ph
 
 Mẫu thông báo số tài khoản hộ kinh doanh mới ra kinh doanh có doanh thu dưới 500 triệu/năm:
 
+<<<<<<< HEAD
 Tải về Mẫu thông báo số tài khoản hộ kinh doanh doanh thu dưới 500 triệu/năm   Tải về","","","2026-04-10","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/ho-kinh-doanh-moi-ra-kinh-doanh-co-doanh-thu-duoi-500-trieu-trong-2026-co-phai-thong-bao-tai-khoan--138086433.html","2026-04-13T05:08:39.132897+00:00"
+=======
+Tải về Mẫu thông báo số tài khoản hộ kinh doanh doanh thu dưới 500 triệu/năm   Tải về","","","","","2026-04-10","https://thuvienphapluat.vn/hoi-dap-phap-luat/ho-kinh-doanh-moi-ra-kinh-doanh-co-doanh-thu-duoi-500-trieu-trong-2026-co-phai-thong-bao-tai-khoan--138086433.html","2026-04-13T05:08:39.132897+00:00"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "138086704","Việc phân chia kết quả của hoạt động liên doanh, liên kết đối với đơn vị sự nghiệp công thực hiện như thế nào?","Tại khoản 4 Điều 25  Nghị định 60/2021/NĐ-CP :
 
 Điều 25. Tự chủ trong hoạt động liên doanh, liên kết
@@ -1205,7 +1275,11 @@ Trường hợp thẩm quyền phê duyệt Đề án sử dụng tài sản cô
 
 Trường hợp thẩm quyền phê duyệt Đề án sử dụng tài sản công vào các mục đích kinh doanh, cho thuê, liên doanh, liên kết là không cùng một cơ quan, người có thẩm quyền thì đơn vị lập Đề án sử dụng tài sản công vào từng mục đích để báo cáo cơ quan quản lý cấp trên (nếu có cơ quan quản lý cấp trên) xem xét, có ý kiến về đề án, trình cơ quan, người có thẩm quyền phê duyệt đề án xem xét, phê duyệt.
 
+<<<<<<< HEAD
 Như vậy, để được phế duyệt Đề án sử dụng tài sản công vào mục đích kinh doanh, cho thuê, liên doanh, liên kết, đơn vị sự nghiệp công lập cần chuẩn bị đầy đủ hồ sơ nêu trên.","","","2026-04-09","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/viec-phan-chia-ket-qua-cua-hoat-dong-lien-doanh-lien-ket-doi-voi-don-vi-su-nghiep-cong-thuc-hien-nh-138086704.html","2026-04-13T05:08:43.047622+00:00"
+=======
+Như vậy, để được phế duyệt Đề án sử dụng tài sản công vào mục đích kinh doanh, cho thuê, liên doanh, liên kết, đơn vị sự nghiệp công lập cần chuẩn bị đầy đủ hồ sơ nêu trên.","","","","","2026-04-09","https://thuvienphapluat.vn/hoi-dap-phap-luat/viec-phan-chia-ket-qua-cua-hoat-dong-lien-doanh-lien-ket-doi-voi-don-vi-su-nghiep-cong-thuc-hien-nh-138086704.html","2026-04-13T05:08:43.047622+00:00"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "138086631","Các bước kiểm tra tiền thuế đã nộp thành công cho hộ kinh doanh nhóm 2, 3, 4 trên Etax chi tiết 2026?","Sau khi nộp tờ khai thuế tháng /quý, HKD, CNKD nhóm 2,3,4 lập giấy nộp tiền thuế GTGT, TNCN phát sinh. Giấy nộp tiền lập thành công, tiền đã trừ khỏi tài khoản ngân hàng. Hộ kinh doanh cần kiểm tra nghĩa vụ thuế xem đã hoàn thành chưa.
 
 Dưới đây là Các bước kiểm tra tiền thuế đã nộp thành công cho hộ kinh doanh nhóm 2, 3, 4 trên Etax chi tiết 2026 theo hướng dẫn của Thuế cơ sở 1 tỉnh Vĩnh Long:
@@ -1250,8 +1324,13 @@ Căn cứ theo khoản 1 Điều 20  Luật Quản lý thuế 2025  quy định 
 
 - Người nộp thuế đã bị cơ quan có thẩm quyền thu hồi giấy chứng nhận đăng ký kinh doanh, giấy chứng nhận đăng ký doanh nghiệp, giấy chứng nhận đăng ký hợp tác xã, giấy chứng nhận đăng ký tổ hợp tác, giấy chứng nhận đăng ký hộ kinh doanh, giấy phép thành lập và hoạt động, giấy phép hành nghề, giấy chứng nhận đăng ký hoạt động chi nhánh, văn phòng đại diện, giấy chứng nhận đăng ký địa điểm kinh doanh, đăng ký hoặc giấy phép hoạt động kinh doanh nền tảng thương mại điện tử;
 
+<<<<<<< HEAD
 - Người nộp thuế bị hạn chế trên thực tế quyền khai thác, sử dụng về đất đai, khoáng sản được cấp, được giao do nguyên nhân từ cơ quan nhà nước có thẩm quyền dẫn đến nợ nghĩa vụ tài chính về đất, khoáng sản.","","","2026-04-09","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/cac-buoc-kiem-tra-tien-thue-da-nop-thanh-cong-cho-ho-kinh-doanh-nhom-2-3-4-tren-etax-chi-tiet-2026-138086631.html","2026-04-13T05:08:47.191755+00:00"
 "138086451","","","","","","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/ho-kinh-doanh-nao-phai-lap-bang-ke-hang-ton-kho-theo-nghi-dinh-68-138086451.html","2026-04-13T05:08:54.059721+00:00"
+=======
+- Người nộp thuế bị hạn chế trên thực tế quyền khai thác, sử dụng về đất đai, khoáng sản được cấp, được giao do nguyên nhân từ cơ quan nhà nước có thẩm quyền dẫn đến nợ nghĩa vụ tài chính về đất, khoáng sản.","","","","","2026-04-09","https://thuvienphapluat.vn/hoi-dap-phap-luat/cac-buoc-kiem-tra-tien-thue-da-nop-thanh-cong-cho-ho-kinh-doanh-nhom-2-3-4-tren-etax-chi-tiet-2026-138086631.html","2026-04-13T05:08:47.191755+00:00"
+"138086451","","","","","","","","https://thuvienphapluat.vn/hoi-dap-phap-luat/ho-kinh-doanh-nao-phai-lap-bang-ke-hang-ton-kho-theo-nghi-dinh-68-138086451.html","2026-04-13T05:08:54.059721+00:00"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "138086659","Toàn văn Nghị định 137/2026/NĐ-CP về quản lý hoạt động kinh doanh theo phương thức đa cấp ra sao?","Ngày 07/04/2026, Chính phủ đã ban hành Nghị định 137/2026/NĐ-CP về quản lý hoạt động kinh doanh theo phương thức đa cấp.
 
 Tải về Nghị định 137/2026/NĐ-CP
@@ -1312,7 +1391,11 @@ Căn cứ theo Điều 4  Luật Bảo vệ quyền lợi người tiêu dùng 2
 
 - Được bảo vệ khi sử dụng dịch vụ công theo quy định của  Luật Bảo vệ quyền lợi người tiêu dùng 2023  và quy định khác của pháp luật có liên quan.
 
+<<<<<<< HEAD
 - Quyền khác theo quy định của pháp luật.","","","2026-04-09","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/toan-van-nghi-dinh-1372026ndcp-ve-quan-ly-hoat-dong-kinh-doanh-theo-phuong-thuc-da-cap-ra-sao-138086659.html","2026-04-13T05:08:59.243066+00:00"
+=======
+- Quyền khác theo quy định của pháp luật.","","","","","2026-04-09","https://thuvienphapluat.vn/hoi-dap-phap-luat/toan-van-nghi-dinh-1372026ndcp-ve-quan-ly-hoat-dong-kinh-doanh-theo-phuong-thuc-da-cap-ra-sao-138086659.html","2026-04-13T05:08:59.243066+00:00"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "138086314","Doanh thu bao nhiêu phải đăng ký hộ kinh doanh?","Tại Điều 82  Nghị định 168/2025/NĐ-CP  có quy định về quyền thành lập hộ kinh doanh như sau:
 
 Điều 82. Quyền thành lập hộ kinh doanh
@@ -1365,7 +1448,11 @@ Tại khoản 1 Điều 86  Nghị định 168/2025/NĐ-CP  quy định tên h�
 
 Tên riêng được viết bằng các chữ cái trong bảng chữ cái tiếng Việt, các chữ F, J, Z, W, có thể kèm theo chữ số, ký hiệu.
 
+<<<<<<< HEAD
 Trên đây là thông tin ""Doanh thu bao nhiêu phải đăng ký hộ kinh doanh?""","","","2026-04-09","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/doanh-thu-bao-nhieu-phai-dang-ky-ho-kinh-doanh-138086314.html","2026-04-13T05:09:03.401691+00:00"
+=======
+Trên đây là thông tin ""Doanh thu bao nhiêu phải đăng ký hộ kinh doanh?""","","","","","2026-04-09","https://thuvienphapluat.vn/hoi-dap-phap-luat/doanh-thu-bao-nhieu-phai-dang-ky-ho-kinh-doanh-138086314.html","2026-04-13T05:09:03.401691+00:00"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 "138086579","4 công việc hộ kinh doanh dưới 500 triệu đồng/năm cần làm theo Thông báo 252/TB-TCS6?","Ngày 7/4/2026, Thuế cơ sở 6 tỉnh Vĩnh Long ban hành Thông báo 252/TB-TCS6 năm 2026 Về việc thực hiện Thông báo Doanh thu, Kê khai thuế, mở số kế toán và Thông báo số tài khoản số hiệu vĩ điện từ đối với Hộ kinh doanh, cả nhân kinh doanh có doanh thu từ 500 triệu đồng/năm trở xuống.
 
 Tải về
@@ -1404,4 +1491,8 @@ Trường hợp hộ kinh doanh, cá nhân kinh doanh bắt đầu hoạt độn
 
 - Hộ kinh doanh, cá nhân kinh doanh mới bắt đầu hoạt động sản xuất, kinh doanh, khi có doanh thu lũy kế trên 500 triệu đồng thì thực hiện khai thuế theo quý theo quy định tại Điều 10  Nghị định 68/2026/NĐ-CP  kể từ quý phát sinh doanh thu trên 500 triệu đồng.
 
+<<<<<<< HEAD
 - Từ năm tiếp theo, hộ kinh doanh, cá nhân kinh doanh nếu có doanh thu thực tế phát sinh từ 500 triệu đồng trở xuống thực hiện thông báo doanh thu theo quy định tại Điều 8  Nghị định 68/2026/NĐ-CP ; trường hợp có doanh thu thực tế phát sinh trên 500 triệu đồng thì thực hiện khai thuế theo quy định tại Điều 10  Nghị định 68/2026/NĐ-CP","","","2026-04-09","","","0","https://thuvienphapluat.vn/hoi-dap-phap-luat/4-cong-viec-ho-kinh-doanh-duoi-500-trieu-dongnam-can-lam-theo-thong-bao-252tbtcs6-138086579.html","2026-04-13T05:09:07.151369+00:00"
+=======
+- Từ năm tiếp theo, hộ kinh doanh, cá nhân kinh doanh nếu có doanh thu thực tế phát sinh từ 500 triệu đồng trở xuống thực hiện thông báo doanh thu theo quy định tại Điều 8  Nghị định 68/2026/NĐ-CP ; trường hợp có doanh thu thực tế phát sinh trên 500 triệu đồng thì thực hiện khai thuế theo quy định tại Điều 10  Nghị định 68/2026/NĐ-CP","","","","","2026-04-09","https://thuvienphapluat.vn/hoi-dap-phap-luat/4-cong-viec-ho-kinh-doanh-duoi-500-trieu-dongnam-can-lam-theo-thong-bao-252tbtcs6-138086579.html","2026-04-13T05:09:07.151369+00:00"
+>>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
