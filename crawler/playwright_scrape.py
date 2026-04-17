@@ -5,18 +5,6 @@ from datetime import datetime, timezone
 import time
 import random
 import argparse
-<<<<<<< HEAD
-
-import os
-from bs4 import BeautifulSoup
-from typing import Dict, List
-
-BASEDIR = os.path.dirname(__file__)
-OUTPUT = os.path.join(BASEDIR, "output", "giam-tru-gia-canh.csv")
-START_URL = "https://thuvienphapluat.vn/hoi-dap-phap-luat/chu-de/giam-tru-gia-canh"
-START_PAGE = 1
-END_PAGE = 10
-=======
 import json
 
 import os
@@ -40,7 +28,6 @@ END_PAGE = 5
 KAFKA_TOPIC = "van-ban-phap-luat"
 MINIO_BUCKET = "phapluat"
 ES_INDEX = "phapluat"
->>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 
 
 def normalize_text(s: str) -> str:
@@ -327,8 +314,6 @@ def extract_from_detail(page, url):
     }
 
 
-<<<<<<< HEAD
-=======
 def is_article_exists(es: 'Elasticsearch', article_id: str) -> bool:
     """Check if article already exists in Elasticsearch."""
     if not article_id:
@@ -406,7 +391,6 @@ def upload_csv_to_minio(local_path: str, endpoint: str, access_key: str, secret_
         return False
 
 
->>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 def safe_goto(page, url, retries=3, timeout=20000):
     """Navigate with retries and exponential backoff. Returns True on success, False on final failure."""
     attempt = 0
@@ -489,9 +473,6 @@ def collect_links(start_page=START_PAGE, end_page=END_PAGE):
         browser.close()
 
 
-<<<<<<< HEAD
-def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0, delay_min=1.0, delay_max=2.0, retries=3):
-=======
 def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0, delay_min=1.0, delay_max=2.0, retries=3, 
          realtime=False, es_url="http://localhost:9200", kafka_servers="localhost:9092",
          minio_endpoint="localhost:9000", minio_access="minioadmin", minio_secret="minioadmin"):
@@ -516,7 +497,6 @@ def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0, delay_min=1
             return
         print(f"Connected to Kafka: {kafka_servers}")
     
->>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
     with sync_playwright() as pw:
         browser = pw.chromium.launch(headless=True, args=["--disable-blink-features=AutomationControlled"])
         context = browser.new_context(user_agent=(
@@ -622,8 +602,6 @@ def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0, delay_min=1
 
             for idx, link in enumerate(to_process, 1):
                 print(f"Processing {idx}/{len(to_process)}: {link}")
-<<<<<<< HEAD
-=======
                 
                 # Extract article ID for ES dedup check
                 article_id = ""
@@ -636,20 +614,11 @@ def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0, delay_min=1
                         print(f"  [skip] {article_id} already exists in ES")
                         continue
                 
->>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
                 try:
                     ok = safe_goto(page, link, retries=retries, timeout=20000)
                     if not ok:
                         print(f"Skipping {link} due to repeated navigation failures")
                         continue
-<<<<<<< HEAD
-                    item = extract_from_detail(page, link)
-                    writer.writerow([
-                        item.get('id', ''), item.get('question', ''), item.get('answer', ''),
-                        item.get('category', ''), item.get('author', ''), item.get('published_date', ''),
-                        item.get('legal_refs', ''), item.get('tags', ''), item.get('views', 0), item.get('url', ''), datetime.now(timezone.utc).isoformat()
-                    ])
-=======
                     
                     item = extract_from_detail(page, link)
                     
@@ -672,19 +641,15 @@ def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0, delay_min=1
                         else:
                             print(f"  [kafka-fail] {item['id']}")
                     
->>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
                 except Exception as e:
                     print(f"Error fetching {link}: {e}")
 
                 # polite delay between articles
                 time.sleep(random.uniform(delay_min, delay_max))
-<<<<<<< HEAD
-=======
         
         # Upload CSV to MinIO (realtime mode)
         if realtime and os.path.exists(OUTPUT):
             upload_csv_to_minio(OUTPUT, minio_endpoint, minio_access, minio_secret)
->>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 
         context.close()
         browser.close()
@@ -698,10 +663,6 @@ if __name__ == '__main__':
     parser.add_argument('--delay-min', type=float, default=1.0, help='minimum per-request delay')
     parser.add_argument('--delay-max', type=float, default=2.0, help='maximum per-request delay')
     parser.add_argument('--retries', type=int, default=3, help='navigation retry attempts')
-<<<<<<< HEAD
-    args = parser.parse_args()
-    main(start_page=args.start, end_page=args.end, per_page_limit=args.limit, delay_min=args.delay_min, delay_max=args.delay_max, retries=args.retries)
-=======
     parser.add_argument('--realtime', action='store_true', help='Check ES dedup + publish Kafka + upload MinIO')
     parser.add_argument('--es-url', default='http://localhost:9200', help='Elasticsearch URL')
     parser.add_argument('--kafka-servers', default='localhost:9092', help='Kafka bootstrap servers')
@@ -723,4 +684,3 @@ if __name__ == '__main__':
         minio_access=args.minio_access,
         minio_secret=args.minio_secret
     )
->>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
