@@ -20,6 +20,28 @@ from spark.utils.udfs import clean_text, chunk_text
 # Max texts per OpenAI embedding API call
 EMBED_BATCH_SIZE = 100
 
+# Max doc_ids per ES terms-lookup query
+ES_DEDUP_BATCH_SIZE = 1000
+
+
+def fetch_existing_doc_ids(es_client, index: str, doc_ids: list[str]) -> set[str]:
+    """Return the subset of doc_ids that already have at least one chunk in ES."""
+    existing: set[str] = set()
+    for i in range(0, len(doc_ids), ES_DEDUP_BATCH_SIZE):
+        chunk = doc_ids[i:i + ES_DEDUP_BATCH_SIZE]
+        try:
+            resp = es_client.search(
+                index=index,
+                size=0,
+                query={"terms": {"doc_id": chunk}},
+                aggs={"ids": {"terms": {"field": "doc_id", "size": len(chunk)}}},
+            )
+            for bucket in resp["aggregations"]["ids"]["buckets"]:
+                existing.add(bucket["key"])
+        except Exception as e:
+            print(f"[dedup] ES query failed: {e}")
+    return existing
+
 
 def batch_embed(texts: list[str], client) -> list[list[float]]:
     """Call OpenAI embeddings API with multiple texts in one request."""
@@ -88,8 +110,7 @@ def run_streaming_pipeline():
         StructField("agency", StringType(), True),
         StructField("published_date", StringType(), True),
         StructField("url", StringType(), True),
-        StructField("published_date", StringType(), True),
-        StructField("crawled_at", StringType(), True)
+        StructField("crawled_at", StringType(), True),
     ])
 
     df_kafka = spark.readStream \
@@ -127,6 +148,17 @@ def run_streaming_pipeline():
     def embed_and_write_to_es(batch_df, batch_id):
         try:
             rows = batch_df.collect()
+            if not rows:
+                return
+
+            # Skip chunks whose doc_id already has anything indexed in ES
+            unique_doc_ids = list({r["doc_id"] for r in rows if r["doc_id"]})
+            if unique_doc_ids:
+                existing_ids = fetch_existing_doc_ids(es_client, es_index, unique_doc_ids)
+                if existing_ids:
+                    before = len(rows)
+                    rows = [r for r in rows if r["doc_id"] not in existing_ids]
+                    print(f"[batch {batch_id}] skipped {before - len(rows)}/{before} chunks — {len(existing_ids)} doc_ids already in ES")
             if not rows:
                 return
 

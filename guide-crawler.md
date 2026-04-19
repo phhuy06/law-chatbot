@@ -1,180 +1,142 @@
 # Huong dan: Crawler
 
-## Tuan 1 - Muc tieu
+Crawler hien tai la mot script Playwright dung thang (`crawler/playwright_scrape.py`),
+khong dung Scrapy. No cao `thuvienphapluat.vn/hoi-dap-phap-luat/<category>`, luu CSV
+local, va (trong che do realtime) day moi bai viet len Kafka + backup CSV len MinIO.
 
-- Cai dat moi truong Scrapy + Playwright
-- Vao duoc trang thuvienphapluat.vn, parse duoc 1 trang chi tiet van ban
-- Xuat ra dung 10 field JSON theo schema quy dinh
-
----
-
-## 1. Cai dat moi truong
+## 1. Cai dat
 
 ```bash
-# Python
 source .venv/bin/activate
 pip install -r requirements.txt
-
-# Cai Playwright browser (bat buoc de render trang JS)
 playwright install chromium
-
-# Kiem tra Scrapy chay duoc
-cd crawler
-scrapy version
 ```
 
----
+## 2. Cau truc
 
-## 2. Hieu cau truc trang web
-
-### 2.1 Trang danh sach van ban
-
-URL mau:
 ```
-https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=&area=0&match=False&type=0&status=0&signer=0&sort=1&lan=1&scan=0&org=0&fields=0&page=1
-```
-
-- Tham so `page=1`, `page=2`, ... de phan trang
-- Moi trang co ~20 link den trang chi tiet van ban
-
-Hoac tim theo loai van ban:
-- Luat: `type=1`
-- Nghi dinh: `type=2`
-- Thong tu: `type=4`
-
-### 2.2 Trang chi tiet van ban
-
-URL mau:
-```
-https://thuvienphapluat.vn/van-ban/Doanh-nghiep/Luat-59-2020-QH14-Doanh-nghiep-123456.aspx
+crawler/
+  playwright_scrape.py   # script chinh
+  test_realtime.py       # kiem tra ES / Kafka / MinIO truoc khi chay realtime
+  run_hourly.sh          # wrapper cron (page 1-3 cua moi category, stop-on-seen)
+  output/                # CSV theo category: bat-dong-san.csv, doanh-nghiep.csv, ...
 ```
 
-Cac thong tin can lay:
+## 3. CLI
 
-| Thong tin | Vi tri tren trang | Goi y CSS Selector |
-|-----------|--------------------|--------------------|
-| Tieu de | Heading chinh | `.doc-title` hoac `h1` |
-| Loai van ban | Bang thuoc tinh | Dong "Loai van ban" |
-| So hieu | Bang thuoc tinh | Dong "So hieu" |
-| Ngay ban hanh | Bang thuoc tinh | Dong "Ngay ban hanh" — can chuyen sang `YYYY-MM-DD` |
-| Co quan ban hanh | Bang thuoc tinh | Dong "Co quan ban hanh" |
-| Noi dung HTML | Than van ban | `.content1` hoac `#toanvancontent` |
-| Tinh trang | Bang thuoc tinh | Dong "Tinh trang" |
-
-**LUU Y:** CSS selector o tren chi la goi y. Ban PHAI tu mo trang web, nhan F12 (DevTools), inspect de xac dinh chinh xac. Trang web co the dung class name khac.
-
----
-
-## 3. Viet spider
-
-File: `crawler/spiders/thuvienphapluat.py`
-
-### 3.1 Cau truc co ban
-
-```python
-import scrapy
-import uuid
-from datetime import datetime
-
-
-class ThuvienPhapLuatSpider(scrapy.Spider):
-    name = "thuvienphapluat"
-    allowed_domains = ["thuvienphapluat.vn"]
-
-    def start_requests(self):
-        # Tuan 1: chi can test voi 1 URL trang chi tiet
-        # Chua can crawl trang danh sach
-        test_url = "https://thuvienphapluat.vn/van-ban/Doanh-nghiep/Luat-59-2020-QH14-Doanh-nghiep-450686.aspx"
-        yield scrapy.Request(
-            test_url,
-            callback=self.parse_document,
-            meta={"playwright": True},  # Bat buoc de render JS
-        )
-
-    def parse_document(self, response):
-        # TODO: Thay bang CSS selector thuc te sau khi inspect trang web
-        title = response.css("h1::text").get("").strip()
-        # ... lay cac field khac ...
-
-        yield {
-            "id": str(uuid.uuid4()),
-            "title": title,
-            "doc_type": doc_type,
-            "doc_number": doc_number,
-            "issued_date": issued_date,       # PHAI la "YYYY-MM-DD"
-            "agency": agency,
-            "content_html": content_html,      # Giu nguyen HTML
-            "url": response.url,
-            "crawled_at": datetime.utcnow().isoformat() + "Z",
-            "status": status,                  # "con-hieu-luc" hoac "het-hieu-luc"
-        }
+```
+python playwright_scrape.py \
+    --category <slug> \          # vd: doanh-nghiep, bat-dong-san, ...
+    --start 1 --end 3 \          # khoang trang listing can quet
+    --limit 0 \                  # gioi han tong bai (0 = khong gioi han)
+    --realtime \                 # bat dedup ES + Kafka + MinIO
+    --stop-on-seen               # gap bai da co trong ES thi dung category
 ```
 
-### 3.2 Cach chay thu
+`--category` tu dong suy ra:
+- URL listing = `https://thuvienphapluat.vn/hoi-dap-phap-luat/<slug>`
+- File CSV   = `crawler/output/<slug>.csv`
+
+Liet ke moi category hien co tren trang (dung cho cron / audit):
 
 ```bash
-cd crawler
-
-# Chay spider, xuat ra file JSON
-scrapy crawl thuvienphapluat -O output/test.json
+python playwright_scrape.py --list-categories
 ```
 
-Kiem tra file `output/test.json` co du 10 field khong.
+Lenh nay fetch `https://thuvienphapluat.vn/hoi-dap-phap-luat`, parse toan bo anchor
+tro toi `/hoi-dap-phap-luat/<slug>` mot cap, in moi slug tren 1 dong, roi thoat.
+`run_hourly.sh` goi no dau moi run de khong phai hardcode danh sach.
 
----
+Ket noi mac dinh (host → docker-compose):
 
-## 4. Schema bat buoc (KHONG DUOC THAY DOI)
+| Service       | Default                    |
+| ------------- | -------------------------- |
+| Elasticsearch | `http://localhost:9200`    |
+| Kafka         | `localhost:29092`          |
+| MinIO         | `localhost:9000`           |
 
-Moi document xuat ra PHAI co dung 10 field nay:
+## 4. Luong du lieu
+
+```
+playwright_scrape.py (host)
+    │  1. ES term query tren doc_id → neu co → skip/break
+    │  2. Extract question/answer/... tu trang chi tiet
+    │  3. Append 1 row vao crawler/output/<category>.csv
+    │  4. producer.produce("van-ban-phap-luat", key=id, value=json)
+    ▼
+Kafka  ──►  spark-job (consumer.py)  ──►  OpenAI embedding  ──►  Elasticsearch (index: phapluat)
+
+Cuoi run, neu co >=1 row moi: upload CSV → MinIO bucket "phapluat/csv/backup/..."
+```
+
+Schema Kafka payload (10 truong):
 
 ```json
 {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "title": "Luat Doanh nghiep 2020",
-    "doc_type": "Luat",
-    "doc_number": "59/2020/QH14",
-    "issued_date": "2020-06-17",
-    "agency": "Quoc hoi",
-    "content_html": "<p>Dieu 1. Pham vi dieu chinh...</p>",
-    "url": "https://thuvienphapluat.vn/van-ban/...",
-    "crawled_at": "2026-03-26T10:30:00Z",
-    "status": "con-hieu-luc"
+  "id": "450686",
+  "title": "...",
+  "content": "...",
+  "category": "",
+  "doc_type": "",
+  "doc_number": "",
+  "agency": "",
+  "published_date": "2024-03-17",
+  "url": "https://thuvienphapluat.vn/hoi-dap-phap-luat/.../...-450686.html",
+  "crawled_at": "2026-04-18T12:00:00+00:00"
 }
 ```
 
-| Field | Kieu | Bat buoc | Luu y |
-|-------|------|----------|-------|
-| `id` | string | CO | UUID4, tu generate: `str(uuid.uuid4())` |
-| `title` | string | CO | Tieu de day du tu trang web |
-| `doc_type` | string | CO | Mot trong: `Luat`, `Nghi dinh`, `Thong tu`, `Nghi quyet`, `Quyet dinh`, `Bo luat` |
-| `doc_number` | string | CO | VD: "59/2020/QH14" |
-| `issued_date` | string | CO | **Bat buoc format `YYYY-MM-DD`**. Trang web co the hien thi "17/06/2020" — phai chuyen thanh "2020-06-17" |
-| `agency` | string | CO | VD: "Quoc hoi", "Chinh phu", "Bo Tai chinh" |
-| `content_html` | string | CO | Giu nguyen HTML goc, KHONG strip tags |
-| `url` | string | CO | `response.url` |
-| `crawled_at` | string | CO | ISO 8601: `datetime.utcnow().isoformat() + "Z"` |
-| `status` | string | CO | Chi co 2 gia tri: `con-hieu-luc` hoac `het-hieu-luc` |
+`doc_type`, `doc_number`, `agency`, `category` hien chua duoc extractor dien —
+cac cot CSV `category`/`author` duoc map vao `category`/`agency` nhung thuong rong.
 
-**KHONG doi ten field. KHONG them field moi. KHONG doi kieu du lieu.** Kafka, Spark, va Backend deu phu thuoc vao schema nay.
+## 5. Chay
 
----
+### Kiem tra dich vu
 
-## 5. Loi thuong gap
+```bash
+docker-compose up -d zookeeper kafka kafka-init elasticsearch es-init minio spark-job
+cd crawler
+python test_realtime.py
+```
 
-| Loi | Nguyen nhan | Cach sua |
-|-----|-------------|----------|
-| Trang load xong nhung khong co noi dung | Chua bat Playwright | Them `meta={"playwright": True}` vao Request |
-| `issued_date` sai format | Trang web hien thi "17/06/2020" | Parse va chuyen: `datetime.strptime(raw, "%d/%m/%Y").strftime("%Y-%m-%d")` |
-| `content_html` rong | Sai CSS selector | Mo DevTools (F12), inspect phan noi dung, tim dung selector |
-| Bi block / 403 | Crawl qua nhanh | Da co `DOWNLOAD_DELAY = 1.5` trong settings.py, khong can sua |
+### Test thu nho
 
----
+```bash
+python playwright_scrape.py --category doanh-nghiep --start 1 --end 1 --limit 3 --realtime
+```
 
-## 6. Ket qua can dat cuoi tuan 1
+Ky vong log: `[kafka] <id>` xuat hien cho moi bai moi. Neu `[kafka-fail]` → kiem tra
+lai listener Kafka (`docker-compose.yml`) va bien `--kafka-servers`.
 
-- [ ] Scrapy + Playwright cai dat thanh cong
-- [ ] Chay spider voi 1 URL trang chi tiet, khong loi
-- [ ] Xuat ra file JSON co du 10 field
-- [ ] `issued_date` dung format `YYYY-MM-DD`
-- [ ] `content_html` co noi dung (khong rong)
-- [ ] `status` la `con-hieu-luc` hoac `het-hieu-luc`
+### Backfill 1 category
+
+```bash
+python playwright_scrape.py --category bat-dong-san --start 1 --end 20 --realtime
+# KHONG --stop-on-seen: quet het 20 trang, skip rieng tung bai da co
+```
+
+### Chay hang gio (production)
+
+`crawler/run_hourly.sh` duyet toan bo 16 category, moi category chay trang 1-3 voi
+`--stop-on-seen` nen lan chay thu 2 tro di rat nhanh khi khong co bai moi.
+
+Cai cron:
+
+```bash
+crontab -e
+# Them dong:
+0 * * * * /Users/huy/Workspaces/Hust/Big\ Data/law-chatbot/crawler/run_hourly.sh >> /Users/huy/Workspaces/Hust/Big\ Data/law-chatbot/crawler/output/cron.log 2>&1
+```
+
+macOS: co the phai cap **Full Disk Access** cho `/usr/sbin/cron`
+(System Settings → Privacy & Security → Full Disk Access).
+
+## 6. Loi thuong gap
+
+| Loi                               | Nguyen nhan                                   | Cach sua                                      |
+| --------------------------------- | --------------------------------------------- | --------------------------------------------- |
+| Kafka producer hang / timeout     | Kafka listener khong expose host              | Dung `localhost:29092`, kiem tra compose file |
+| Tat ca bai bi `[skip]`            | ES da co het (binh thuong), hoac CSV da co    | Tang `--end`, hoac xoa CSV neu can rebuild    |
+| `[skip]` roi break ngay lap tuc   | `--stop-on-seen` + bai dau tien da co trong ES | Dung, nghia la khong co gi moi                |
+| MinIO upload bi bo qua            | `new_rows_count == 0` — khong co gi de upload | Dung, day la behavior co chu y                |
+| `scrapy crawl ...` bao khong tim thay spider | Du an KHONG con dung Scrapy              | Chay `python playwright_scrape.py ...`        |

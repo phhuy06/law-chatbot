@@ -19,6 +19,28 @@ from spark.utils.udfs import clean_text, chunk_text
 # Max texts per OpenAI embedding API call
 EMBED_BATCH_SIZE = 100
 
+# Max doc_ids per ES terms-lookup query
+ES_DEDUP_BATCH_SIZE = 1000
+
+
+def fetch_existing_doc_ids(es_client, index: str, doc_ids: list[str]) -> set[str]:
+    """Return the subset of doc_ids that already have at least one chunk in ES."""
+    existing: set[str] = set()
+    for i in range(0, len(doc_ids), ES_DEDUP_BATCH_SIZE):
+        chunk = doc_ids[i:i + ES_DEDUP_BATCH_SIZE]
+        try:
+            resp = es_client.search(
+                index=index,
+                size=0,
+                query={"terms": {"doc_id": chunk}},
+                aggs={"ids": {"terms": {"field": "doc_id", "size": len(chunk)}}},
+            )
+            for bucket in resp["aggregations"]["ids"]["buckets"]:
+                existing.add(bucket["key"])
+        except Exception as e:
+            print(f"[dedup] ES query failed for batch {i // ES_DEDUP_BATCH_SIZE}: {e}")
+    return existing
+
 
 def batch_embed(texts: list[str], client) -> list[list[float]]:
     """Call OpenAI embeddings API with multiple texts in one request."""
@@ -73,7 +95,19 @@ def run_batch_pipeline():
         .option("header", "true") \
         .option("quote", "\"") \
         .option("escape", "\"") \
+        .option("multiLine", "true") \
         .csv(data_path)
+
+    # Skip doc_ids already indexed in ES
+    from elasticsearch import Elasticsearch, helpers
+    es_client = Elasticsearch(es_url)
+
+    all_ids = [r["id"] for r in df_raw.select("id").distinct().collect() if r["id"]]
+    if all_ids:
+        existing_ids = fetch_existing_doc_ids(es_client, es_index, all_ids)
+        print(f"[batch] {len(existing_ids)}/{len(all_ids)} doc_ids already in ES — skipping")
+        if existing_ids:
+            df_raw = df_raw.filter(~col("id").isin(list(existing_ids)))
 
     df_clean = df_raw.withColumn("clean_text", clean_text(col("content")))
     df_chunks = df_clean.withColumn("chunks", chunk_text(col("clean_text")))
@@ -108,9 +142,6 @@ def run_batch_pipeline():
         print("[batch] SKIP embedding (no API key)")
         embeddings = [[0.0] * 1536 for _ in texts]
 
-    from elasticsearch import Elasticsearch, helpers
-    es = Elasticsearch(es_url)
-
     actions = []
     for doc, emb in zip(docs, embeddings):
         doc["embedding"] = emb
@@ -120,7 +151,7 @@ def run_batch_pipeline():
             action["_id"] = cid
         actions.append(action)
 
-    success, errors = helpers.bulk(es, actions, raise_on_error=False)
+    success, errors = helpers.bulk(es_client, actions, raise_on_error=False)
     print(f"[batch] Done — {success}/{len(actions)} docs written to ES")
     if errors:
         print(f"[batch] ES errors: {errors}")
