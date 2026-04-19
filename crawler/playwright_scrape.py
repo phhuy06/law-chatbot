@@ -249,16 +249,20 @@ def extract_from_detail(page, url):
     except Exception:
         pass
 
-    # published date: from breadcrumb container span.news-time
+    # published date: from breadcrumb container span.news-time. The site renders
+    # it as "HH:MM | DD/MM/YYYY", so preserve the time — it is the only way to
+    # order two articles published on the same day.
     published_date = ""
     try:
         pub_el = page.query_selector("div.d-flex.justify-content-between.align-items-baseline.tvpl-breadcrumb-container span.news-time") or page.query_selector("span.news-time")
         pub = normalize_text(pub_el.inner_text()) if pub_el else ""
         if pub:
-            for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y", "%Y/%m/%d", "%H:%M | %d/%m/%Y"):
+            for fmt in ("%H:%M | %d/%m/%Y", "%d/%m/%Y", "%d-%m-%Y", "%Y-%m-%d", "%Y/%m/%d"):
                 try:
                     dt = datetime.strptime(pub.strip(), fmt)
-                    published_date = dt.strftime("%Y-%m-%d")
+                    # Always emit ISO 8601 so lexicographic sort == chronological
+                    # (date-only rows get a 00:00:00 suffix, sort before same-day timed ones)
+                    published_date = dt.strftime("%Y-%m-%dT%H:%M:%S")
                     break
                 except Exception:
                     continue

@@ -23,6 +23,23 @@ EMBED_BATCH_SIZE = 100
 ES_DEDUP_BATCH_SIZE = 1000
 
 
+def invalidate_chat_cache(redis_url: str):
+    """Delete all chat:* keys after a successful batch write."""
+    if not redis_url:
+        return
+    try:
+        import redis
+        client = redis.from_url(redis_url)
+        deleted = 0
+        for key in client.scan_iter("chat:*", count=500):
+            client.delete(key)
+            deleted += 1
+        if deleted:
+            print(f"[cache] invalidated {deleted} chat:* keys")
+    except Exception as e:
+        print(f"[cache] invalidate failed (non-fatal): {e}")
+
+
 def fetch_existing_doc_ids(es_client, index: str, doc_ids: list[str]) -> set[str]:
     """Return the subset of doc_ids that already have at least one chunk in ES."""
     existing: set[str] = set()
@@ -74,6 +91,7 @@ def run_batch_pipeline():
     es_port = es_url.replace("http://", "").replace("https://", "").split(":")[-1]
     api_key = os.environ.get("OPENAI_API_KEY", "")
     es_index = os.environ.get("ES_INDEX", "phapluat")
+    redis_url = os.environ.get("REDIS_URL", "")
 
     spark = SparkSession.builder \
         .appName("Legal-Chatbot-Batch-Pipeline") \
@@ -155,6 +173,8 @@ def run_batch_pipeline():
     print(f"[batch] Done — {success}/{len(actions)} docs written to ES")
     if errors:
         print(f"[batch] ES errors: {errors}")
+    if success:
+        invalidate_chat_cache(redis_url)
 
     spark.stop()
 

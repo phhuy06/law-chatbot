@@ -1,63 +1,4 @@
 "id","title","content","category","doc_type","doc_number","agency","published_date","url","crawled_at"
-"138086712","Mã định danh thửa đất là gì? Một thửa đất có bao nhiêu mã định danh?","Căn cứ Mục 1 Phụ lục 1 Xây dựng mã định danh thửa đất ban hành kèm theo  Thông tư 19/2026/TT-BTNMT  quy định cụ thể như sau:
-
-I. Nguyên tắc về Mã định danh thửa đất theo vị trí địa lý
-
-Mã định danh thửa đất là một mã được gán cho từng thửa đất và có tính duy nhất trên toàn quốc. Một thửa đất cụ thể chỉ có 01 mã định danh và là duy nhất.
-
-Mã định danh thửa đất là chuỗi gồm 12 ký tự được mã hóa theo vị trí địa lý trong hệ tọa độ địa lý quốc tế WGS84 của thửa đất.
-
-Mã định danh thửa đất được mã hóa từ vị trí địa lý của thửa đất theo thuật toán GeoHash. Thuật toán GeoHash là một thuật toán mã hóa một tọa độ địa lý (vĩ độ và kinh độ) thành một chuỗi ký tự chữ và số ngắn gọn.
-
-Như vậy, Mã định danh thửa đất là một mã được gán cho từng thửa đất và có tính duy nhất trên toàn quốc. Một thửa đất cụ thể chỉ có 01 mã định danh và là duy nhất.
-
-Bên cạnh đó, mã định danh thửa đất là chuỗi gồm 12 ký tự được mã hóa theo vị trí địa lý trong hệ tọa độ địa lý quốc tế WGS84 của thửa đất.
-
-Mã định danh thửa đất được mã hóa từ vị trí địa lý của thửa đất theo thuật toán GeoHash. Thuật toán GeoHash là một thuật toán mã hóa một tọa độ địa lý (vĩ độ và kinh độ) thành một chuỗi ký tự chữ và số ngắn gọn.
-
-* Trên đây là Thông tin Mã định danh thửa đất là gì? Một thửa đất có bao nhiêu mã định danh?
-
-Mã định danh thửa đất là gì? Một thửa đất có bao nhiêu mã định danh? (Hình từ Internet)
-
-Căn cứ Mục 2 Phụ lục 1 Xây dựng mã định danh thửa đất ban hành kèm theo  Thông tư 19/2026/TT-BTNMT  quy định 04 bước xây dựng Mã định danh thửa đất chi tiết 2026 cụ thể như sau:
-
-Trường Mã thửa đất là mã định danh thửa đất duy nhất trên toàn quốc. Mã định danh thửa đất là chuỗi 12 ký tự được mã hóa theo vị trí địa lý (vĩ độ và kinh độ) của thửa đất. Quy trình tạo Mã định danh thửa đất như sau:
-
-Bước 1: Xác định điểm đặc trưng của thửa đất
-
-Trên lớp dữ liệu không gian của thửa đất, xác định tọa độ vị trí (X, Y) của điểm đặc trưng của thửa đất trong Hệ tọa độ VN2000 theo kinh tuyến trục của từng địa phương.
-
-Điểm đặc trưng của thửa đất là một điểm nằm trong ranh giới thửa đất, được xác định từ tọa độ các đình thửa theo thuật toán Polygonlabel, đảm bảo các yếu tố là điểm nằm sâu trong ranh giới thửa đất, cách xa các cạnh thửa đất.
-
-Bước 2: Tính chuyển vị trí từ hệ tọa độ VN2000 của Việt Nam sang hệ tọa độ quốc tế WGS84
-
-Tính chuyển vị trí điểm đặc trưng của thửa đất trong hệ tọa độ VN2000 sang tọa độ địa lý (vĩ độ và kinh độ) trong hệ tọa độ địa lý WGS84 toàn cầu. Công thức tính chuyển từ hệ tọa độ VN2000 sang hệ tọa độ quốc tế WGS84 thực hiện theo quy định hiện hành.
-
-Bước 3: Mã hóa vị trí điểm đặc trưng của thửa đất
-
-Mã hóa vị trí điểm đặc trưng của thửa đất: Sử dụng thuật toán GeoHash để mã hóa tọa độ địa lý (vĩ độ và kinh độ) thành một chuỗi ký tự với độ dài chuỗi là 12 ký tự chữ và số. Mã định danh của thửa đất là chuỗi ký tự sau khi mã hóa.
-
-Bước 4: Cập nhật Mã định danh của thửa đất vào cơ sở dữ liệu địa chính
-
-Cập nhật Mã định danh của thửa đất vào tr ường Mã thửa đất của các bảng dữ liệu liên quan đến thửa đất trong nhóm dữ liệu không gian địa chính, nhóm dữ liệu thuộc tính địa chính của cơ sở dữ liệu địa chính.
-
-Tại Điều 6  Thông tư 19/2026/TT-BTNMT  quy định về lồng ghép nội dung xử lý nội nghiệp của kết quả đo đạc lập bản đồ địa chính với lập hồ sơ địa chính và xây dựng cơ sở dữ liệu địa chính như sau:
-
-Đơn vị thi công thực hiện các nội dung công việc sau:
-
-- Số liệu đo đạc của thửa đất được xử lý nội nghiệp ngay trong ngày, cập nhật dữ liệu đo đạc thửa đất vào tệp định dạng DGN theo từng mảnh bản đồ, biên tập mảnh bản đồ địa chính, xây dựng dữ liệu không gian địa chính của thửa đất, tạo lập Mã định danh thửa đất theo hướng dẫn tại Phụ lục I ban hành kèm theo Thông tư này.
-
-- Xây dựng dữ liệu thuộc tính địa chính thửa đất từ các hồ sơ, tài liệu đã thu thập theo quy định.
-
-- Xây dựng dữ liệu phi cấu trúc cho thửa đất theo quy định; xuất sổ địa chính đối với thửa đất đã đăng ký, đã cấp Giấy chứng nhận và chuyển Văn phòng đăng ký đất đai để đối soát, ký số.
-
-- Xây dựng, chỉnh lý dữ liệu không gian đất đai nền từ bản đồ địa chính.
-
-- Hoàn thiện dữ liệu địa chính và xây dựng siêu dữ liệu địa chính.
-
-- Tổ chức kiểm tra chất lượng sản phẩm cấp đơn vị thi công ngay đối với các nội dung tại các khoản 1, 2, 3, 4 và 5 Điều 6  Thông tư 19/2026/TT-BTNMT  theo quy định về cơ chế giám sát, đánh giá, kiểm định chất lượng và quy chế kiểm tra, nghiệm thu sản phẩm của địa phương và chuyển sản phẩm để chủ đầu tư thực hiện kiểm tra theo quy định.
-
-- Hoàn thiện sản phẩm theo ý kiến kiểm tra cấp chủ đầu tư theo quy định.","","","","","2026-04-12","https://thuvienphapluat.vn/hoi-dap-phap-luat/ma-dinh-danh-thua-dat-la-gi-mot-thua-dat-co-bao-nhieu-ma-dinh-danh-138086712.html","2026-04-13T04:51:26.200166+00:00"
 "138084245","Điều kiện về thu nhập mua nhà ở cho lực lượng vũ trang mới nhất như thế nào?","Ngày 07/4/2026 Chính phủ ban hành  Nghị định 136/2026/NĐ-CP  sửa đổi, bổ sung một số điều của  Nghị định 100/2024/NĐ-CP  về nhà ở xã hội.
 
 Trong đó Điều 67  Nghị định 100/2024/NĐ-CP  được sửa đổi bởi khoản 2 Điều 1  Nghị định 136/2026/NĐ-CP  quy định về điều kiện thu nhập mua nhà ở cho lực lượng vũ trang nhân dân như sau:
@@ -1823,3 +1764,62 @@ Nhà nước thực hiện quyền đại diện chủ sở hữu về đất đ
 - Hội đồng nhân dân các cấp thực hiện quyền thông qua quy hoạch sử dụng đất của địa phương mình trước khi trình cơ quan có thẩm quyền phê duyệt; thông qua việc thu hồi đất để thực hiện các dự án phát triển kinh tế - xã hội vì lợi ích quốc gia, công cộng của địa phương theo thẩm quyền; thông qua việc chuyển mục đích sử dụng đất trồng lúa, đất rừng đặc dụng, đất rừng phòng hộ, đất rừng sản xuất theo thẩm quyền quy định của Luật này; quyết định bảng giá đất; giám sát việc thi hành pháp luật về đất đai tại địa phương;
 
 - Chính phủ, Ủy ban nhân dân các cấp thực hiện quyền đại diện chủ sở hữu về đất đai theo thẩm quyền quy định  Luật Đất đai 2024  và luật khác có liên quan.","","","","","2026-04-04","https://thuvienphapluat.vn/hoi-dap-phap-luat/cong-van-1965ctcs-nam-2026-huong-dan-thuc-hien-nghi-dinh-502026ndcp-the-nao-138086054.html","2026-04-13T04:53:08.164791+00:00"
+"138086712","Mã định danh thửa đất là gì? Một thửa đất có bao nhiêu mã định danh?","Căn cứ Mục 1 Phụ lục 1 Xây dựng mã định danh thửa đất ban hành kèm theo  Thông tư 19/2026/TT-BTNMT  quy định cụ thể như sau:
+
+I. Nguyên tắc về Mã định danh thửa đất theo vị trí địa lý
+
+Mã định danh thửa đất là một mã được gán cho từng thửa đất và có tính duy nhất trên toàn quốc. Một thửa đất cụ thể chỉ có 01 mã định danh và là duy nhất.
+
+Mã định danh thửa đất là chuỗi gồm 12 ký tự được mã hóa theo vị trí địa lý trong hệ tọa độ địa lý quốc tế WGS84 của thửa đất.
+
+Mã định danh thửa đất được mã hóa từ vị trí địa lý của thửa đất theo thuật toán GeoHash. Thuật toán GeoHash là một thuật toán mã hóa một tọa độ địa lý (vĩ độ và kinh độ) thành một chuỗi ký tự chữ và số ngắn gọn.
+
+Như vậy, Mã định danh thửa đất là một mã được gán cho từng thửa đất và có tính duy nhất trên toàn quốc. Một thửa đất cụ thể chỉ có 01 mã định danh và là duy nhất.
+
+Bên cạnh đó, mã định danh thửa đất là chuỗi gồm 12 ký tự được mã hóa theo vị trí địa lý trong hệ tọa độ địa lý quốc tế WGS84 của thửa đất.
+
+Mã định danh thửa đất được mã hóa từ vị trí địa lý của thửa đất theo thuật toán GeoHash. Thuật toán GeoHash là một thuật toán mã hóa một tọa độ địa lý (vĩ độ và kinh độ) thành một chuỗi ký tự chữ và số ngắn gọn.
+
+* Trên đây là Thông tin Mã định danh thửa đất là gì? Một thửa đất có bao nhiêu mã định danh?
+
+Mã định danh thửa đất là gì? Một thửa đất có bao nhiêu mã định danh? (Hình từ Internet)
+
+Căn cứ Mục 2 Phụ lục 1 Xây dựng mã định danh thửa đất ban hành kèm theo  Thông tư 19/2026/TT-BTNMT  quy định 04 bước xây dựng Mã định danh thửa đất chi tiết 2026 cụ thể như sau:
+
+Trường Mã thửa đất là mã định danh thửa đất duy nhất trên toàn quốc. Mã định danh thửa đất là chuỗi 12 ký tự được mã hóa theo vị trí địa lý (vĩ độ và kinh độ) của thửa đất. Quy trình tạo Mã định danh thửa đất như sau:
+
+Bước 1: Xác định điểm đặc trưng của thửa đất
+
+Trên lớp dữ liệu không gian của thửa đất, xác định tọa độ vị trí (X, Y) của điểm đặc trưng của thửa đất trong Hệ tọa độ VN2000 theo kinh tuyến trục của từng địa phương.
+
+Điểm đặc trưng của thửa đất là một điểm nằm trong ranh giới thửa đất, được xác định từ tọa độ các đình thửa theo thuật toán Polygonlabel, đảm bảo các yếu tố là điểm nằm sâu trong ranh giới thửa đất, cách xa các cạnh thửa đất.
+
+Bước 2: Tính chuyển vị trí từ hệ tọa độ VN2000 của Việt Nam sang hệ tọa độ quốc tế WGS84
+
+Tính chuyển vị trí điểm đặc trưng của thửa đất trong hệ tọa độ VN2000 sang tọa độ địa lý (vĩ độ và kinh độ) trong hệ tọa độ địa lý WGS84 toàn cầu. Công thức tính chuyển từ hệ tọa độ VN2000 sang hệ tọa độ quốc tế WGS84 thực hiện theo quy định hiện hành.
+
+Bước 3: Mã hóa vị trí điểm đặc trưng của thửa đất
+
+Mã hóa vị trí điểm đặc trưng của thửa đất: Sử dụng thuật toán GeoHash để mã hóa tọa độ địa lý (vĩ độ và kinh độ) thành một chuỗi ký tự với độ dài chuỗi là 12 ký tự chữ và số. Mã định danh của thửa đất là chuỗi ký tự sau khi mã hóa.
+
+Bước 4: Cập nhật Mã định danh của thửa đất vào cơ sở dữ liệu địa chính
+
+Cập nhật Mã định danh của thửa đất vào tr ường Mã thửa đất của các bảng dữ liệu liên quan đến thửa đất trong nhóm dữ liệu không gian địa chính, nhóm dữ liệu thuộc tính địa chính của cơ sở dữ liệu địa chính.
+
+Tại Điều 6  Thông tư 19/2026/TT-BTNMT  quy định về lồng ghép nội dung xử lý nội nghiệp của kết quả đo đạc lập bản đồ địa chính với lập hồ sơ địa chính và xây dựng cơ sở dữ liệu địa chính như sau:
+
+Đơn vị thi công thực hiện các nội dung công việc sau:
+
+- Số liệu đo đạc của thửa đất được xử lý nội nghiệp ngay trong ngày, cập nhật dữ liệu đo đạc thửa đất vào tệp định dạng DGN theo từng mảnh bản đồ, biên tập mảnh bản đồ địa chính, xây dựng dữ liệu không gian địa chính của thửa đất, tạo lập Mã định danh thửa đất theo hướng dẫn tại Phụ lục I ban hành kèm theo Thông tư này.
+
+- Xây dựng dữ liệu thuộc tính địa chính thửa đất từ các hồ sơ, tài liệu đã thu thập theo quy định.
+
+- Xây dựng dữ liệu phi cấu trúc cho thửa đất theo quy định; xuất sổ địa chính đối với thửa đất đã đăng ký, đã cấp Giấy chứng nhận và chuyển Văn phòng đăng ký đất đai để đối soát, ký số.
+
+- Xây dựng, chỉnh lý dữ liệu không gian đất đai nền từ bản đồ địa chính.
+
+- Hoàn thiện dữ liệu địa chính và xây dựng siêu dữ liệu địa chính.
+
+- Tổ chức kiểm tra chất lượng sản phẩm cấp đơn vị thi công ngay đối với các nội dung tại các khoản 1, 2, 3, 4 và 5 Điều 6  Thông tư 19/2026/TT-BTNMT  theo quy định về cơ chế giám sát, đánh giá, kiểm định chất lượng và quy chế kiểm tra, nghiệm thu sản phẩm của địa phương và chuyển sản phẩm để chủ đầu tư thực hiện kiểm tra theo quy định.
+
+- Hoàn thiện sản phẩm theo ý kiến kiểm tra cấp chủ đầu tư theo quy định.","","","","","2026-04-12","https://thuvienphapluat.vn/hoi-dap-phap-luat/ma-dinh-danh-thua-dat-la-gi-mot-thua-dat-co-bao-nhieu-ma-dinh-danh-138086712.html","2026-04-19T07:03:44.852114+00:00"

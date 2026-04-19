@@ -4,13 +4,20 @@
 #
 # Usage:
 #   ./run_realtime.sh                       # sweep all categories like the cron does
-#   ./run_realtime.sh <category>            # one category, pages 1-5, no stop-on-seen
+#   ./run_realtime.sh <category>            # one category, pages 1-5, stop-on-seen
 #   ./run_realtime.sh <category> <start> <end>
+#
+# --stop-on-seen is always on: as soon as the crawler hits an article already
+# indexed in ES, the category loop exits. Listings are newest-first, so
+# everything after the first seen article is already done. For a deep
+# backfill that scans past already-indexed articles, invoke the python
+# script directly without the flag:
+#   .venv/bin/python crawler/playwright_scrape.py --category X --start 1 --end 20 --realtime
 #
 # Examples:
 #   ./run_realtime.sh                       # full hourly-style run, right now
-#   ./run_realtime.sh doanh-nghiep          # backfill pages 1-5 of doanh-nghiep
-#   ./run_realtime.sh bat-dong-san 1 20     # deep backfill pages 1-20 of bat-dong-san
+#   ./run_realtime.sh doanh-nghiep          # incremental catch-up of doanh-nghiep
+#   ./run_realtime.sh bat-dong-san 1 20     # same as above, just wider page range
 
 set -u
 
@@ -34,5 +41,6 @@ echo "=== $(date -Iseconds) manual realtime: $CAT pages $START-$END ==="
 python playwright_scrape.py \
     --category "$CAT" \
     --start "$START" --end "$END" \
-    --realtime
+    --realtime \
+    --stop-on-seen
 echo "=== $(date -Iseconds) done ==="

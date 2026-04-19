@@ -24,6 +24,24 @@ EMBED_BATCH_SIZE = 100
 ES_DEDUP_BATCH_SIZE = 1000
 
 
+def invalidate_chat_cache(redis_url: str):
+    """Delete all chat:* keys so the backend re-runs retrieval with fresh ES state.
+    Called after each batch that actually wrote new docs."""
+    if not redis_url:
+        return
+    try:
+        import redis
+        client = redis.from_url(redis_url)
+        deleted = 0
+        for key in client.scan_iter("chat:*", count=500):
+            client.delete(key)
+            deleted += 1
+        if deleted:
+            print(f"[cache] invalidated {deleted} chat:* keys")
+    except Exception as e:
+        print(f"[cache] invalidate failed (non-fatal): {e}")
+
+
 def fetch_existing_doc_ids(es_client, index: str, doc_ids: list[str]) -> set[str]:
     """Return the subset of doc_ids that already have at least one chunk in ES."""
     existing: set[str] = set()
@@ -78,6 +96,7 @@ def run_streaming_pipeline():
     es_index = os.environ.get("ES_INDEX", "phapluat")
     api_key = os.environ.get("OPENAI_API_KEY", "")
     max_offsets = os.environ.get("MAX_OFFSETS_PER_TRIGGER", "3")
+    redis_url = os.environ.get("REDIS_URL", "")
 
     # Reusable clients
     openai_client = None
@@ -187,6 +206,8 @@ def run_streaming_pipeline():
             print(f"[batch {batch_id}] Done — {success}/{len(actions)} docs written to ES")
             if errors:
                 print(f"[batch {batch_id}] ES errors: {errors}")
+            if success:
+                invalidate_chat_cache(redis_url)
         except Exception as e:
             print(f"[batch {batch_id}] ERROR: {e}")
 
