@@ -1,4 +1,4 @@
-import { useState, KeyboardEvent } from "react";
+import { useState, useRef, KeyboardEvent } from "react";
 
 interface ChatInputProps {
   onSend: (question: string) => void;
@@ -7,11 +7,13 @@ interface ChatInputProps {
 
 export default function ChatInput({ onSend, disabled }: ChatInputProps) {
   const [input, setInput] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSend = () => {
     if (input.trim() && !disabled) {
       onSend(input.trim());
       setInput("");
+      setTimeout(() => textareaRef.current?.focus(), 0);
     }
   };
 
@@ -25,6 +27,7 @@ export default function ChatInput({ onSend, disabled }: ChatInputProps) {
   return (
     <div className="chat-input-container">
       <textarea
+        ref={textareaRef}
         className="chat-input"
         value={input}
         onChange={(e) => setInput(e.target.value)}
