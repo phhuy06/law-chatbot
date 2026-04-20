@@ -17,7 +17,9 @@ export default function ChatMessage({ message }: ChatMessageProps) {
             <span></span>
           </div>
         ) : (
-          <div className="message-content">{message.content}</div>
+          <div className="message-content">
+            {message.content.replace(/\*\*(.*?)\*\*/g, "$1")}
+          </div>
         )}
         
         {message.sources && message.sources.length > 0 && (

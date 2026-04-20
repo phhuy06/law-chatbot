@@ -1,4 +1,7 @@
-from playwright.sync_api import sync_playwright
+# patchright = playwright drop-in with stealth patches deep enough to clear
+# Cloudflare's JS challenge on thuvienphapluat. Needs real Chrome installed and
+# headed mode (classic/new headless both get flagged).
+from patchright.sync_api import sync_playwright
 import re
 import csv
 from datetime import datetime, timezone
@@ -6,10 +9,25 @@ import time
 import random
 import argparse
 import json
+import sys
 
 import os
 from bs4 import BeautifulSoup
 from typing import Dict, List, Optional
+
+# Persistent browser profile — keeps the cf_clearance cookie across runs so
+# subsequent invocations avoid re-solving the challenge.
+PROFILE_DIR = os.path.join(os.path.expanduser("~"), ".cache", "law-chatbot-crawler-profile")
+
+
+def _clear_cf_challenge(page, max_wait_s: int = 30) -> bool:
+    """Wait for Cloudflare 'Chờ một chút...' / 'Just a moment...' to resolve."""
+    for _ in range(max_wait_s):
+        t = page.title() or ""
+        if "Chờ" not in t and "Just a moment" not in t:
+            return True
+        time.sleep(1)
+    return False
 
 try:
     from elasticsearch import Elasticsearch
@@ -20,8 +38,9 @@ except ImportError:
     HAS_REALTIME = False
 
 BASEDIR = os.path.dirname(__file__)
-OUTPUT = os.path.join(BASEDIR, "output", "giao-duc.csv")
-START_URL = "https://thuvienphapluat.vn/hoi-dap-phap-luat/giao-duc"
+DEFAULT_CATEGORY = "tai-nguyen-moi-truong"
+BASE_URL = "https://thuvienphapluat.vn/hoi-dap-phap-luat"
+START_URL = f"{BASE_URL}/{DEFAULT_CATEGORY}"  # referenced only by the standalone collect_links() helper
 START_PAGE = 1
 END_PAGE = 5
 
@@ -121,7 +140,7 @@ def parse_article(html: str) -> Dict[str, object]:
     return {"question": question, "answer": answer_list}
 
 
-def extract_from_detail(page, url):
+def extract_from_detail(page, url, category_slug: str = ""):
     # Wait for the main detail container
     try:
         page.wait_for_selector("div.tvpl-main.container.pt-3.pb-3.wap-page-detail", timeout=5000)
@@ -230,30 +249,28 @@ def extract_from_detail(page, url):
     except Exception:
         pass
 
-    # published date: from breadcrumb container span.news-time
+    # published date: from breadcrumb container span.news-time. The site renders
+    # it as "HH:MM | DD/MM/YYYY", so preserve the time — it is the only way to
+    # order two articles published on the same day.
     published_date = ""
     try:
         pub_el = page.query_selector("div.d-flex.justify-content-between.align-items-baseline.tvpl-breadcrumb-container span.news-time") or page.query_selector("span.news-time")
         pub = normalize_text(pub_el.inner_text()) if pub_el else ""
         if pub:
-            for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y", "%Y/%m/%d", "%H:%M | %d/%m/%Y"):
+            for fmt in ("%H:%M | %d/%m/%Y", "%d/%m/%Y", "%d-%m-%Y", "%Y-%m-%d", "%Y/%m/%d"):
                 try:
                     dt = datetime.strptime(pub.strip(), fmt)
-                    published_date = dt.strftime("%Y-%m-%d")
+                    # Always emit ISO 8601 so lexicographic sort == chronological
+                    # (date-only rows get a 00:00:00 suffix, sort before same-day timed ones)
+                    published_date = dt.strftime("%Y-%m-%dT%H:%M:%S")
                     break
                 except Exception:
                     continue
     except Exception:
         published_date = ""
 
-    # category from breadcrumb (fallback)
-    cat = ""
-    try:
-        bc = page.query_selector_all("nav.breadcrumb a")
-        if bc:
-            cat = normalize_text(bc[-1].inner_text())
-    except Exception:
-        cat = ""
+    # Category = slug passed from caller (breadcrumb selector missed > 99%).
+    cat = category_slug
 
     # author (fallback)
     author = ""
@@ -371,9 +388,10 @@ def publish_to_kafka(producer: 'Producer', item: dict, topic: str = KAFKA_TOPIC)
         return False
 
 
-def upload_csv_to_minio(local_path: str, endpoint: str, access_key: str, secret_key: str):
-    """Upload CSV to MinIO backup folder."""
+def upload_bytes_to_minio(data: bytes, category: str, endpoint: str, access_key: str, secret_key: str):
+    """Upload in-memory CSV bytes to MinIO at csv/backup/{category}/{timestamp}.csv."""
     try:
+        from io import BytesIO
         client = Minio(
             endpoint,
             access_key=access_key,
@@ -381,9 +399,14 @@ def upload_csv_to_minio(local_path: str, endpoint: str, access_key: str, secret_
             secure=False
         )
         ts = datetime.now().strftime("%Y%m%d-%H%M%S")
-        base = os.path.basename(local_path).replace(".csv", "")
-        remote_path = f"csv/backup/{base}-{ts}.csv"
-        client.fput_object(MINIO_BUCKET, remote_path, local_path)
+        remote_path = f"csv/backup/{category}/{ts}.csv"
+        client.put_object(
+            MINIO_BUCKET,
+            remote_path,
+            BytesIO(data),
+            length=len(data),
+            content_type="text/csv",
+        )
         print(f"Uploaded to MinIO: {remote_path}")
         return True
     except Exception as e:
@@ -406,6 +429,46 @@ def safe_goto(page, url, retries=3, timeout=20000):
             backoff = (2 ** (attempt - 1)) + random.uniform(0.5, 1.5)
             print(f"Goto failed ({attempt}/{retries}) for {url}: {e}; retrying after {backoff:.1f}s")
             time.sleep(backoff)
+
+
+def discover_categories(hub_url=BASE_URL, retries=3, timeout=20000) -> List[str]:
+    """Fetch the hub page and return category slugs found in its navigation.
+
+    A category link is any anchor whose href points to a single path segment under
+    /hoi-dap-phap-luat/ (i.e. not an article page, which ends in .html)."""
+    slugs: List[str] = []
+    seen: set = set()
+    os.makedirs(PROFILE_DIR, exist_ok=True)
+    with sync_playwright() as pw:
+        context = pw.chromium.launch_persistent_context(
+            PROFILE_DIR, channel="chrome", headless=False, no_viewport=True,
+        )
+        page = context.pages[0] if context.pages else context.new_page()
+        if not safe_goto(page, hub_url, retries=retries, timeout=timeout):
+            print(f"Failed to load hub page {hub_url}")
+            context.close()
+            return []
+        _clear_cf_challenge(page)
+        try:
+            page.wait_for_selector("a[href*='/hoi-dap-phap-luat/']", timeout=5000)
+        except Exception:
+            pass
+
+        for a in page.query_selector_all("a[href*='/hoi-dap-phap-luat/']"):
+            href = a.get_attribute("href") or ""
+            if href.startswith("/"):
+                href = "https://thuvienphapluat.vn" + href
+            clean = href.split("?")[0].split("#")[0].rstrip("/")
+            m = re.match(r"^https?://[^/]+/hoi-dap-phap-luat/([^/]+)$", clean)
+            if not m:
+                continue
+            slug = m.group(1)
+            if not slug or slug.endswith(".html") or slug in seen:
+                continue
+            seen.add(slug)
+            slugs.append(slug)
+        context.close()
+    return sorted(slugs)
 
 
 def collect_links(start_page=START_PAGE, end_page=END_PAGE):
@@ -473,41 +536,51 @@ def collect_links(start_page=START_PAGE, end_page=END_PAGE):
         browser.close()
 
 
-def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0, delay_min=1.0, delay_max=2.0, retries=3, 
-         realtime=False, es_url="http://localhost:9200", kafka_servers="localhost:9092",
-         minio_endpoint="localhost:9000", minio_access="minioadmin", minio_secret="minioadmin"):
-    
+def main(start_url, output_path,
+         start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0, delay_min=1.0, delay_max=2.0, retries=3,
+         realtime=False, es_url="http://localhost:9200", kafka_servers="localhost:29092",
+         minio_endpoint="localhost:9000", minio_access="minioadmin", minio_secret="minioadmin",
+         stop_on_seen=False):
+
     # Initialize realtime components
     es = None
     producer = None
     if realtime:
         if not HAS_REALTIME:
             print("ERROR: Realtime mode requires: pip install elasticsearch confluent-kafka minio")
-            return
+            return 0
         try:
             es = Elasticsearch(es_url)
             print(f"Connected to Elasticsearch: {es_url}")
         except Exception as e:
             print(f"Failed to connect to Elasticsearch: {e}")
-            return
-        
+            return 0
+
         producer = create_kafka_producer(kafka_servers)
         if not producer:
             print("Failed to create Kafka producer")
-            return
+            return 0
         print(f"Connected to Kafka: {kafka_servers}")
-    
+
+    new_rows_count = 0
+    os.makedirs(PROFILE_DIR, exist_ok=True)
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=True, args=["--disable-blink-features=AutomationControlled"])
-        context = browser.new_context(user_agent=(
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)"
-            " Chrome/114.0.0.0 Safari/537.36"
-        ))
-        page = context.new_page()
+        context = pw.chromium.launch_persistent_context(
+            PROFILE_DIR, channel="chrome", headless=False, no_viewport=True,
+        )
+        page = context.pages[0] if context.pages else context.new_page()
+        # warm up: hit the homepage, let CF clearance cookie land before we
+        # navigate to the protected listing pages
+        try:
+            page.goto("https://thuvienphapluat.vn/", wait_until="domcontentloaded", timeout=20000)
+            _clear_cf_challenge(page)
+            time.sleep(random.uniform(1.5, 3.0))
+        except Exception:
+            pass
 
         all_links = []
         for p in range(start_page, end_page + 1):
-            list_url = f"{START_URL}?page={p}"
+            list_url = f"{start_url}?page={p}"
             print(f"Fetching list page: {list_url}")
             try:
                 ok = safe_goto(page, list_url, retries=retries, timeout=20000)
@@ -517,7 +590,8 @@ def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0, delay_min=1
                 print(f"Failed to load list page {list_url}: {e}")
                 continue
 
-            # wait for list container
+            # clear any Cloudflare challenge, then wait for list container
+            _clear_cf_challenge(page)
             try:
                 page.wait_for_selector("div.tvpl-main.container.pt-3.pb-3", timeout=5000)
             except Exception:
@@ -573,32 +647,31 @@ def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0, delay_min=1
         else:
             links_to_process = ordered
 
-        # prepare output CSV: append mode, write header only if file missing or empty
-        os.makedirs(os.path.dirname(OUTPUT), exist_ok=True)
-        existing_urls = set()
-        if os.path.exists(OUTPUT):
-            try:
-                with open(OUTPUT, "r", encoding="utf-8", newline='') as rf:
-                    rdr = csv.reader(rf, delimiter=",", quoting=csv.QUOTE_ALL)
-                    # skip header
-                    first = True
-                    for row in rdr:
-                        if first:
-                            first = False
-                            continue
-                        if len(row) >= 10:
-                            existing_urls.add(row[9])
-            except Exception:
-                existing_urls = set()
+        # ES is the ONLY source of truth for dedup (realtime mode). Local CSV
+        # is just an artifact for teammates to commit; we don't read it back.
+        HEADER = ["id","title","content","category","doc_type","doc_number","agency","published_date","url","crawled_at"]
 
-        write_header = not os.path.exists(OUTPUT) or os.path.getsize(OUTPUT) == 0
-        with open(OUTPUT, "a", encoding="utf-8", newline='') as f:
-            writer = csv.writer(f, delimiter=",", quoting=csv.QUOTE_ALL)
+        import io
+        buf = None
+        local_fh = None
+        if realtime:
+            # Realtime: buffer rows in memory; upload to MinIO at end.
+            # Skip local file entirely — crawler/output/ is only for batch/teammate mode.
+            buf = io.StringIO()
+            writer = csv.writer(buf, delimiter=",", quoting=csv.QUOTE_ALL)
+            writer.writerow(HEADER)
+        else:
+            # Batch/teammate mode: append to local CSV so teammates can commit to git.
+            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+            write_header = not os.path.exists(output_path) or os.path.getsize(output_path) == 0
+            local_fh = open(output_path, "a", encoding="utf-8", newline='')
+            writer = csv.writer(local_fh, delimiter=",", quoting=csv.QUOTE_ALL)
             if write_header:
-                writer.writerow(["id","question","answer","category","author","published_date","legal_refs","tags","views","url","crawled_at"])
+                writer.writerow(HEADER)
 
-            to_process = [l for l in links_to_process if l not in existing_urls]
-            print(f"New links to process (excluding already-present): {len(to_process)}")
+        try:
+            to_process = links_to_process
+            print(f"Links to process: {len(to_process)}")
 
             for idx, link in enumerate(to_process, 1):
                 print(f"Processing {idx}/{len(to_process)}: {link}")
@@ -611,6 +684,9 @@ def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0, delay_min=1
                     
                     # Check if exists in ES
                     if article_id and is_article_exists(es, article_id):
+                        if stop_on_seen:
+                            print(f"  [stop] {article_id} already exists in ES — listings are newest-first, stopping this category")
+                            break
                         print(f"  [skip] {article_id} already exists in ES")
                         continue
                 
@@ -619,21 +695,30 @@ def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0, delay_min=1
                     if not ok:
                         print(f"Skipping {link} due to repeated navigation failures")
                         continue
+                    _clear_cf_challenge(page)
                     
-                    item = extract_from_detail(page, link)
+                    item = extract_from_detail(page, link, category_slug=os.path.splitext(os.path.basename(output_path))[0])
                     
                     if not item.get("id"):
                         print(f"  [skip] No ID extracted from {link}")
                         continue
                     
-                    # Write to CSV
+                    # Write to CSV (10-col Kafka-style schema: matches to_kafka_doc() and
+                    # what spark.batch.pipeline / spark.streaming.consumer expect)
                     writer.writerow([
-                        item.get('id', ''), item.get('question', ''), item.get('answer', ''),
-                        item.get('category', ''), item.get('author', ''), item.get('published_date', ''),
-                        item.get('legal_refs', ''), item.get('tags', ''), item.get('views', 0), 
-                        item.get('url', ''), datetime.now(timezone.utc).isoformat()
+                        item.get('id', ''),
+                        item.get('question', ''),      # → title
+                        item.get('answer', ''),        # → content
+                        item.get('category', ''),
+                        '',                             # doc_type (not extracted by this crawler)
+                        '',                             # doc_number (not extracted)
+                        item.get('author', ''),        # → agency
+                        item.get('published_date', ''),
+                        item.get('url', ''),
+                        datetime.now(timezone.utc).isoformat(),
                     ])
-                    
+                    new_rows_count += 1
+
                     # Publish to Kafka (realtime mode)
                     if realtime and producer:
                         if publish_to_kafka(producer, item):
@@ -646,17 +731,33 @@ def main(start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0, delay_min=1
 
                 # polite delay between articles
                 time.sleep(random.uniform(delay_min, delay_max))
-        
-        # Upload CSV to MinIO (realtime mode)
-        if realtime and os.path.exists(OUTPUT):
-            upload_csv_to_minio(OUTPUT, minio_endpoint, minio_access, minio_secret)
+        finally:
+            if local_fh is not None:
+                local_fh.close()
+
+        # Realtime: upload buffered CSV to MinIO, grouped by category
+        if realtime and new_rows_count > 0 and buf is not None:
+            category = os.path.splitext(os.path.basename(output_path))[0]
+            upload_bytes_to_minio(
+                buf.getvalue().encode("utf-8"),
+                category,
+                minio_endpoint,
+                minio_access,
+                minio_secret,
+            )
+        elif realtime:
+            print("No new rows — skipping MinIO upload")
 
         context.close()
-        browser.close()
+    return new_rows_count
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Playwright scraper for thuvienphapluat')
+    parser.add_argument('--category', default=DEFAULT_CATEGORY,
+                        help='category slug; crawls {BASE_URL}/{slug} into output/{slug}.csv')
+    parser.add_argument('--list-categories', action='store_true',
+                        help='Discover category slugs from the hub page, print one per line, and exit')
     parser.add_argument('--start', type=int, default=START_PAGE, help='start page')
     parser.add_argument('--end', type=int, default=END_PAGE, help='end page')
     parser.add_argument('--limit', type=int, default=0, help='limit total articles per run (0 = all)')
@@ -664,23 +765,40 @@ if __name__ == '__main__':
     parser.add_argument('--delay-max', type=float, default=2.0, help='maximum per-request delay')
     parser.add_argument('--retries', type=int, default=3, help='navigation retry attempts')
     parser.add_argument('--realtime', action='store_true', help='Check ES dedup + publish Kafka + upload MinIO')
+    parser.add_argument('--stop-on-seen', action='store_true',
+                        help='Stop this category as soon as an article is found already in ES (listings are newest-first, so everything after is also already seen)')
     parser.add_argument('--es-url', default='http://localhost:9200', help='Elasticsearch URL')
-    parser.add_argument('--kafka-servers', default='localhost:9092', help='Kafka bootstrap servers')
+    parser.add_argument('--kafka-servers', default='localhost:29092', help='Kafka bootstrap servers')
     parser.add_argument('--minio-endpoint', default='localhost:9000', help='MinIO endpoint')
     parser.add_argument('--minio-access', default='minioadmin', help='MinIO access key')
     parser.add_argument('--minio-secret', default='minioadmin', help='MinIO secret key')
     args = parser.parse_args()
+
+    if args.list_categories:
+        cats = discover_categories()
+        if not cats:
+            sys.exit(1)
+        for slug in cats:
+            print(slug)
+        sys.exit(0)
+
+    start_url = f"{BASE_URL}/{args.category}"
+    output_path = os.path.join(BASEDIR, "output", f"{args.category}.csv")
+
     main(
-        start_page=args.start, 
-        end_page=args.end, 
-        per_page_limit=args.limit, 
-        delay_min=args.delay_min, 
-        delay_max=args.delay_max, 
+        start_page=args.start,
+        end_page=args.end,
+        per_page_limit=args.limit,
+        delay_min=args.delay_min,
+        delay_max=args.delay_max,
         retries=args.retries,
         realtime=args.realtime,
         es_url=args.es_url,
         kafka_servers=args.kafka_servers,
         minio_endpoint=args.minio_endpoint,
         minio_access=args.minio_access,
-        minio_secret=args.minio_secret
+        minio_secret=args.minio_secret,
+        start_url=start_url,
+        output_path=output_path,
+        stop_on_seen=args.stop_on_seen,
     )

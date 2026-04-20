@@ -31,7 +31,7 @@ def test_kafka():
     """Test Kafka connection."""
     try:
         from confluent_kafka import Producer
-        producer = Producer({"bootstrap.servers": "localhost:9092"})
+        producer = Producer({"bootstrap.servers": "localhost:29092"})
 
         metadata = producer.list_topics(timeout=5)
         print("Kafka: Connected")

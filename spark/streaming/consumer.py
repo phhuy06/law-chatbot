@@ -20,6 +20,46 @@ from spark.utils.udfs import clean_text, chunk_text
 # Max texts per OpenAI embedding API call
 EMBED_BATCH_SIZE = 100
 
+# Max doc_ids per ES terms-lookup query
+ES_DEDUP_BATCH_SIZE = 1000
+
+
+def invalidate_chat_cache(redis_url: str):
+    """Delete all chat:* keys so the backend re-runs retrieval with fresh ES state.
+    Called after each batch that actually wrote new docs."""
+    if not redis_url:
+        return
+    try:
+        import redis
+        client = redis.from_url(redis_url)
+        deleted = 0
+        for key in client.scan_iter("chat:*", count=500):
+            client.delete(key)
+            deleted += 1
+        if deleted:
+            print(f"[cache] invalidated {deleted} chat:* keys")
+    except Exception as e:
+        print(f"[cache] invalidate failed (non-fatal): {e}")
+
+
+def fetch_existing_doc_ids(es_client, index: str, doc_ids: list[str]) -> set[str]:
+    """Return the subset of doc_ids that already have at least one chunk in ES."""
+    existing: set[str] = set()
+    for i in range(0, len(doc_ids), ES_DEDUP_BATCH_SIZE):
+        chunk = doc_ids[i:i + ES_DEDUP_BATCH_SIZE]
+        try:
+            resp = es_client.search(
+                index=index,
+                size=0,
+                query={"terms": {"doc_id": chunk}},
+                aggs={"ids": {"terms": {"field": "doc_id", "size": len(chunk)}}},
+            )
+            for bucket in resp["aggregations"]["ids"]["buckets"]:
+                existing.add(bucket["key"])
+        except Exception as e:
+            print(f"[dedup] ES query failed: {e}")
+    return existing
+
 
 def batch_embed(texts: list[str], client) -> list[list[float]]:
     """Call OpenAI embeddings API with multiple texts in one request."""
@@ -59,6 +99,7 @@ def run_streaming_pipeline():
     es_index = os.environ.get("ES_INDEX", "phapluat")
     api_key = os.environ.get("OPENAI_API_KEY", "")
     max_offsets = os.environ.get("MAX_OFFSETS_PER_TRIGGER", "3")
+    redis_url = os.environ.get("REDIS_URL", "")
 
     # Reusable clients
     openai_client = None
@@ -92,8 +133,7 @@ def run_streaming_pipeline():
         StructField("agency", StringType(), True),
         StructField("published_date", StringType(), True),
         StructField("url", StringType(), True),
-        StructField("published_date", StringType(), True),
-        StructField("crawled_at", StringType(), True)
+        StructField("crawled_at", StringType(), True),
     ])
 
     df_kafka = spark.readStream \
@@ -124,7 +164,6 @@ def run_streaming_pipeline():
         col("url"),
         col("category"),
         col("doc_type"),
-        col("agency"),
     )
 
     checkpoint_dir = os.path.join(project_root, "checkpoints", "streaming_python")
@@ -144,24 +183,17 @@ def run_streaming_pipeline():
             if not rows:
                 return
 
-<<<<<<< HEAD
-            print(f"Đang ghi Micro-Batch {batch_id} ({len(rows)} dòng) vào Elasticsearch...")
+            # Skip chunks whose doc_id already has anything indexed in ES
+            unique_doc_ids = list({r["doc_id"] for r in rows if r["doc_id"]})
+            if unique_doc_ids:
+                existing_ids = fetch_existing_doc_ids(es_client, es_index, unique_doc_ids)
+                if existing_ids:
+                    before = len(rows)
+                    rows = [r for r in rows if r["doc_id"] not in existing_ids]
+                    print(f"[batch {batch_id}] skipped {before - len(rows)}/{before} chunks — {len(existing_ids)} doc_ids already in ES")
+            if not rows:
+                return
 
-            from elasticsearch import Elasticsearch, helpers
-            es = Elasticsearch(es_url)
-            
-            actions = []
-            for row in rows:
-                doc = row.asDict()
-                if "embedding" in doc and doc["embedding"] is not None:
-                    doc["embedding"] = list(doc["embedding"])
-                
-                actions.append({
-                    "_index": es_index_realtime,
-                    "_id": doc.get("doc_number"), 
-                    "_source": doc
-                })
-=======
             docs = [row.asDict() for row in rows]
             texts = [doc["chunk_text"] or "" for doc in docs]
 >>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
@@ -188,6 +220,8 @@ def run_streaming_pipeline():
             print(f"[batch {batch_id}] Done — {success}/{len(actions)} docs written to ES")
             if errors:
                 print(f"[batch {batch_id}] ES errors: {errors}")
+            if success:
+                invalidate_chat_cache(redis_url)
         except Exception as e:
             print(f"[batch {batch_id}] ERROR: {e}")
 
