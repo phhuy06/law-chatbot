@@ -38,7 +38,7 @@ except ImportError:
     HAS_REALTIME = False
 
 BASEDIR = os.path.dirname(__file__)
-DEFAULT_CATEGORY = "tai-nguyen-moi-truong"
+DEFAULT_CATEGORY = "giao-duc"
 BASE_URL = "https://thuvienphapluat.vn/hoi-dap-phap-luat"
 START_URL = f"{BASE_URL}/{DEFAULT_CATEGORY}"  # referenced only by the standalone collect_links() helper
 START_PAGE = 1
