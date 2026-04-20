@@ -138,7 +138,6 @@ def run_batch_pipeline():
         col("url"),
         col("category"),
         col("doc_type"),
-        col("agency"),
     )
 
     # Collect and embed in batches on driver, then bulk write to ES

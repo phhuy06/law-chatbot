@@ -140,7 +140,7 @@ def parse_article(html: str) -> Dict[str, object]:
     return {"question": question, "answer": answer_list}
 
 
-def extract_from_detail(page, url):
+def extract_from_detail(page, url, category_slug: str = ""):
     # Wait for the main detail container
     try:
         page.wait_for_selector("div.tvpl-main.container.pt-3.pb-3.wap-page-detail", timeout=5000)
@@ -269,14 +269,8 @@ def extract_from_detail(page, url):
     except Exception:
         published_date = ""
 
-    # category from breadcrumb (fallback)
-    cat = ""
-    try:
-        bc = page.query_selector_all("nav.breadcrumb a")
-        if bc:
-            cat = normalize_text(bc[-1].inner_text())
-    except Exception:
-        cat = ""
+    # Category = slug passed from caller (breadcrumb selector missed > 99%).
+    cat = category_slug
 
     # author (fallback)
     author = ""
@@ -394,9 +388,10 @@ def publish_to_kafka(producer: 'Producer', item: dict, topic: str = KAFKA_TOPIC)
         return False
 
 
-def upload_csv_to_minio(local_path: str, endpoint: str, access_key: str, secret_key: str):
-    """Upload CSV to MinIO backup folder."""
+def upload_bytes_to_minio(data: bytes, category: str, endpoint: str, access_key: str, secret_key: str):
+    """Upload in-memory CSV bytes to MinIO at csv/backup/{category}/{timestamp}.csv."""
     try:
+        from io import BytesIO
         client = Minio(
             endpoint,
             access_key=access_key,
@@ -404,9 +399,14 @@ def upload_csv_to_minio(local_path: str, endpoint: str, access_key: str, secret_
             secure=False
         )
         ts = datetime.now().strftime("%Y%m%d-%H%M%S")
-        base = os.path.basename(local_path).replace(".csv", "")
-        remote_path = f"csv/backup/{base}-{ts}.csv"
-        client.fput_object(MINIO_BUCKET, remote_path, local_path)
+        remote_path = f"csv/backup/{category}/{ts}.csv"
+        client.put_object(
+            MINIO_BUCKET,
+            remote_path,
+            BytesIO(data),
+            length=len(data),
+            content_type="text/csv",
+        )
         print(f"Uploaded to MinIO: {remote_path}")
         return True
     except Exception as e:
@@ -647,32 +647,31 @@ def main(start_url, output_path,
         else:
             links_to_process = ordered
 
-        # prepare output CSV: append mode, write header only if file missing or empty
-        os.makedirs(os.path.dirname(output_path), exist_ok=True)
-        existing_urls = set()
-        if os.path.exists(output_path):
-            try:
-                with open(output_path, "r", encoding="utf-8", newline='') as rf:
-                    rdr = csv.reader(rf, delimiter=",", quoting=csv.QUOTE_ALL)
-                    # skip header
-                    first = True
-                    for row in rdr:
-                        if first:
-                            first = False
-                            continue
-                        if len(row) >= 10:
-                            existing_urls.add(row[8])  # url column in 10-col Kafka schema
-            except Exception:
-                existing_urls = set()
+        # ES is the ONLY source of truth for dedup (realtime mode). Local CSV
+        # is just an artifact for teammates to commit; we don't read it back.
+        HEADER = ["id","title","content","category","doc_type","doc_number","agency","published_date","url","crawled_at"]
 
-        write_header = not os.path.exists(output_path) or os.path.getsize(output_path) == 0
-        with open(output_path, "a", encoding="utf-8", newline='') as f:
-            writer = csv.writer(f, delimiter=",", quoting=csv.QUOTE_ALL)
+        import io
+        buf = None
+        local_fh = None
+        if realtime:
+            # Realtime: buffer rows in memory; upload to MinIO at end.
+            # Skip local file entirely — crawler/output/ is only for batch/teammate mode.
+            buf = io.StringIO()
+            writer = csv.writer(buf, delimiter=",", quoting=csv.QUOTE_ALL)
+            writer.writerow(HEADER)
+        else:
+            # Batch/teammate mode: append to local CSV so teammates can commit to git.
+            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+            write_header = not os.path.exists(output_path) or os.path.getsize(output_path) == 0
+            local_fh = open(output_path, "a", encoding="utf-8", newline='')
+            writer = csv.writer(local_fh, delimiter=",", quoting=csv.QUOTE_ALL)
             if write_header:
-                writer.writerow(["id","title","content","category","doc_type","doc_number","agency","published_date","url","crawled_at"])
+                writer.writerow(HEADER)
 
-            to_process = [l for l in links_to_process if l not in existing_urls]
-            print(f"New links to process (excluding already-present): {len(to_process)}")
+        try:
+            to_process = links_to_process
+            print(f"Links to process: {len(to_process)}")
 
             for idx, link in enumerate(to_process, 1):
                 print(f"Processing {idx}/{len(to_process)}: {link}")
@@ -698,7 +697,7 @@ def main(start_url, output_path,
                         continue
                     _clear_cf_challenge(page)
                     
-                    item = extract_from_detail(page, link)
+                    item = extract_from_detail(page, link, category_slug=os.path.splitext(os.path.basename(output_path))[0])
                     
                     if not item.get("id"):
                         print(f"  [skip] No ID extracted from {link}")
@@ -732,12 +731,22 @@ def main(start_url, output_path,
 
                 # polite delay between articles
                 time.sleep(random.uniform(delay_min, delay_max))
-        
-        # Upload CSV to MinIO only when new rows were added (realtime mode)
-        if realtime and new_rows_count > 0 and os.path.exists(output_path):
-            upload_csv_to_minio(output_path, minio_endpoint, minio_access, minio_secret)
+        finally:
+            if local_fh is not None:
+                local_fh.close()
+
+        # Realtime: upload buffered CSV to MinIO, grouped by category
+        if realtime and new_rows_count > 0 and buf is not None:
+            category = os.path.splitext(os.path.basename(output_path))[0]
+            upload_bytes_to_minio(
+                buf.getvalue().encode("utf-8"),
+                category,
+                minio_endpoint,
+                minio_access,
+                minio_secret,
+            )
         elif realtime:
-            print(f"No new rows — skipping MinIO upload")
+            print("No new rows — skipping MinIO upload")
 
         context.close()
     return new_rows_count

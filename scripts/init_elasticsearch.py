@@ -29,7 +29,6 @@ INDEX_MAPPING = {
             "url": {"type": "keyword"},
             "category": {"type": "keyword"},
             "doc_type": {"type": "keyword"},
-            "agency": {"type": "keyword"},
             "embedding": {
                 "type": "dense_vector",
                 "dims": 1536,

@@ -156,7 +156,6 @@ def run_streaming_pipeline():
         col("url"),
         col("category"),
         col("doc_type"),
-        col("agency"),
     )
 
     checkpoint_dir = os.path.join(project_root, "checkpoints", "streaming_python")

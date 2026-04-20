@@ -3,7 +3,7 @@
 set -e
 
 KIBANA_URL="${KIBANA_URL:-http://kibana:5601}"
-MAX_RETRIES=60
+MAX_RETRIES=120
 RETRY_INTERVAL=5
 
 echo "[kibana-init] Waiting for Kibana at $KIBANA_URL ..."
