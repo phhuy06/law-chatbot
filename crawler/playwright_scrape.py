@@ -20,8 +20,8 @@ except ImportError:
     HAS_REALTIME = False
 
 BASEDIR = os.path.dirname(__file__)
-OUTPUT = os.path.join(BASEDIR, "output", "tai-nguyen-moi-truong.csv")
-START_URL = "https://thuvienphapluat.vn/hoi-dap-phap-luat/tai-nguyen-moi-truong"
+OUTPUT = os.path.join(BASEDIR, "output", "giao-duc.csv")
+START_URL = "https://thuvienphapluat.vn/hoi-dap-phap-luat/giao-duc"
 START_PAGE = 1
 END_PAGE = 5
 
@@ -411,7 +411,7 @@ def safe_goto(page, url, retries=3, timeout=20000):
 def collect_links(start_page=START_PAGE, end_page=END_PAGE):
     """Collect article links from START_URL?page=start_page..end_page and print counts."""
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=True, args=["--disable-blink-features=AutomationControlled"])
+        browser = pw.chromium.launch(headless=False, args=["--disable-blink-features=AutomationControlled"])
         page = browser.new_page()
         all_links = []
         for p in range(start_page, end_page + 1):
