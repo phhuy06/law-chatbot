@@ -652,8 +652,17 @@ def main(start_url, output_path,
         HEADER = ["id","title","content","category","doc_type","doc_number","agency","published_date","url","crawled_at"]
 
         import io
+
+        class _UpsertWriter:
+            """Dict-backed writer: store rows by id (col 0); overwrite on repeat."""
+            def __init__(self, store):
+                self.store = store
+            def writerow(self, row):
+                if row and row[0]:
+                    self.store[row[0]] = list(row)
+
         buf = None
-        local_fh = None
+        rows_store = None
         if realtime:
             # Realtime: buffer rows in memory; upload to MinIO at end.
             # Skip local file entirely — crawler/output/ is only for batch/teammate mode.
@@ -661,13 +670,22 @@ def main(start_url, output_path,
             writer = csv.writer(buf, delimiter=",", quoting=csv.QUOTE_ALL)
             writer.writerow(HEADER)
         else:
-            # Batch/teammate mode: append to local CSV so teammates can commit to git.
+            # Batch/teammate mode: upsert into in-memory dict keyed by id,
+            # then write the whole CSV back sorted by published_date desc.
             os.makedirs(os.path.dirname(output_path), exist_ok=True)
-            write_header = not os.path.exists(output_path) or os.path.getsize(output_path) == 0
-            local_fh = open(output_path, "a", encoding="utf-8", newline='')
-            writer = csv.writer(local_fh, delimiter=",", quoting=csv.QUOTE_ALL)
-            if write_header:
-                writer.writerow(HEADER)
+            rows_store = {}
+            if os.path.exists(output_path):
+                with open(output_path, "r", encoding="utf-8", newline='') as rf:
+                    rdr = csv.reader(rf, delimiter=",", quoting=csv.QUOTE_ALL)
+                    try:
+                        next(rdr)  # skip header
+                    except StopIteration:
+                        pass
+                    for row in rdr:
+                        if len(row) >= 10 and row[0]:
+                            rows_store[row[0]] = row
+                print(f"Loaded {len(rows_store)} existing rows from {os.path.basename(output_path)}")
+            writer = _UpsertWriter(rows_store)
 
         try:
             to_process = links_to_process
@@ -732,8 +750,20 @@ def main(start_url, output_path,
                 # polite delay between articles
                 time.sleep(random.uniform(delay_min, delay_max))
         finally:
-            if local_fh is not None:
-                local_fh.close()
+            # Batch mode: flush upserted dict back to CSV, sorted by published_date desc.
+            if rows_store is not None:
+                PUB_IDX = 7  # published_date column in 10-col schema
+                rows_sorted = sorted(
+                    rows_store.values(),
+                    key=lambda r: r[PUB_IDX] if len(r) > PUB_IDX else "",
+                    reverse=True,
+                )
+                with open(output_path, "w", encoding="utf-8", newline='') as f:
+                    w = csv.writer(f, delimiter=",", quoting=csv.QUOTE_ALL)
+                    w.writerow(HEADER)
+                    for r in rows_sorted:
+                        w.writerow(r)
+                print(f"Wrote {len(rows_sorted)} rows to {os.path.basename(output_path)} (upsert + sorted by published_date desc)")
 
         # Realtime: upload buffered CSV to MinIO, grouped by category
         if realtime and new_rows_count > 0 and buf is not None:
