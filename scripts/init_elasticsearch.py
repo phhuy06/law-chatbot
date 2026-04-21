@@ -11,16 +11,6 @@ INDEX_MAPPING = {
     "settings": {
         "number_of_shards": 1,
         "number_of_replicas": 0,
-<<<<<<< HEAD
-    },
-    "mappings": {
-        "properties": {
-            "chunk_text": {"type": "text", "analyzer": "standard"},
-            "title": {"type": "text", "analyzer": "standard"},
-            "url": {"type": "keyword"},
-            "doc_type": {"type": "keyword"},
-            "doc_number": {"type": "keyword"},
-=======
         "analysis": {
             "analyzer": {
                 "vietnamese": {
@@ -50,12 +40,7 @@ INDEX_MAPPING = {
 }
 
 INDICES = [
-<<<<<<< HEAD
-    os.environ.get("ES_INDEX_BATCH", "phapluat-batch"),
-    os.environ.get("ES_INDEX_REALTIME", "phapluat-realtime"),
-=======
     os.environ.get("ES_INDEX", "phapluat"),
->>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 ]
 
 

@@ -45,7 +45,8 @@ spec:
       initContainers:
         - name: fix-permissions
           image: busybox
-          command: ["sh", "-c", "chown -R 1000:1000 /usr/share/elasticsearch/data"]
+          command:
+            ["sh", "-c", "chown -R 1000:1000 /usr/share/elasticsearch/data"]
           volumeMounts:
             - name: es-data
               mountPath: /usr/share/elasticsearch/data
@@ -159,12 +160,5 @@ spec:
           env:
             - name: ELASTICSEARCH_URL
               value: "http://elasticsearch:9200"
-<<<<<<< HEAD
-            - name: ES_INDEX_BATCH
-              value: "phapluat-batch"
-            - name: ES_INDEX_REALTIME
-              value: "phapluat-realtime"
-=======
             - name: ES_INDEX
               value: "phapluat"
->>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1

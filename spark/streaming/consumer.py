@@ -93,9 +93,6 @@ def run_streaming_pipeline():
     es_port = es_url.replace("http://", "").replace("https://", "").split(":")[-1]
     kafka_servers = os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
     kafka_topic = os.environ.get("KAFKA_TOPIC", "van-ban-phap-luat")
-<<<<<<< HEAD
-    es_index_realtime = os.environ.get("ES_INDEX_REALTIME", "phapluat-realtime")
-=======
     es_index = os.environ.get("ES_INDEX", "phapluat")
     api_key = os.environ.get("OPENAI_API_KEY", "")
     max_offsets = os.environ.get("MAX_OFFSETS_PER_TRIGGER", "3")
@@ -109,7 +106,6 @@ def run_streaming_pipeline():
 
     from elasticsearch import Elasticsearch, helpers
     es_client = Elasticsearch(es_url)
->>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 
     spark = SparkSession.builder \
         .appName("Legal-Chatbot-Streaming") \
@@ -140,12 +136,8 @@ def run_streaming_pipeline():
         .format("kafka") \
         .option("kafka.bootstrap.servers", kafka_servers) \
         .option("subscribe", kafka_topic) \
-<<<<<<< HEAD
-        .option("startingOffsets", "latest") \
-=======
         .option("startingOffsets", "earliest") \
         .option("maxOffsetsPerTrigger", max_offsets) \
->>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
         .load()
 
     df_parsed = df_kafka.select(
@@ -167,12 +159,6 @@ def run_streaming_pipeline():
     )
 
     checkpoint_dir = os.path.join(project_root, "checkpoints", "streaming_python")
-<<<<<<< HEAD
-    
-    print(f"[streaming] Pipeline ready. Kafka={kafka_servers}, Topic={kafka_topic}, ES={es_url}, Index={es_index_realtime}")
-    print("[streaming] Waiting for new data from Kafka...")
-=======
->>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 
     print(f"[streaming] Pipeline ready. Kafka={kafka_servers}, Topic={kafka_topic}, ES={es_url}, Index={es_index}")
     print("[streaming] Waiting for new data from Kafka...")
@@ -196,7 +182,6 @@ def run_streaming_pipeline():
 
             docs = [row.asDict() for row in rows]
             texts = [doc["chunk_text"] or "" for doc in docs]
->>>>>>> 8c62716650a37ad011a66b4bad1a8001acd7c3a1
 
             print(f"[batch {batch_id}] {len(docs)} chunks to embed and index...")
 

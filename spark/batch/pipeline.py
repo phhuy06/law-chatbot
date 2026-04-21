@@ -89,8 +89,6 @@ def run_batch_pipeline():
     es_url = os.environ.get("ELASTICSEARCH_URL", "http://localhost:9200")
     es_host = es_url.replace("http://", "").replace("https://", "").split(":")[0]
     es_port = es_url.replace("http://", "").replace("https://", "").split(":")[-1]
-<<<<<<< HEAD
-=======
     api_key = os.environ.get("OPENAI_API_KEY", "")
     es_index = os.environ.get("ES_INDEX", "phapluat")
     redis_url = os.environ.get("REDIS_URL", "")
