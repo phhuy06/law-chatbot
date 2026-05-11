@@ -1,0 +1,57 @@
+---
+# kibana-init: import data view + dashboard saved-objects into Kibana.
+# The dashboard NDJSON is supplied via the `kibana-dashboards` ConfigMap,
+# which is created from kibana/dashboard-export.ndjson by k8s/deploy.sh.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kibana-init
+  namespace: law-chatbot
+spec:
+  backoffLimit: 5
+  template:
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        - name: wait-for-kibana
+          image: curlimages/curl:8.5.0
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Waiting for Kibana..."
+              until curl -sf http://kibana:5601/api/status >/dev/null 2>&1; do
+                echo "Kibana not ready, retrying in 5s..."
+                sleep 5
+              done
+              echo "Kibana is ready!"
+      containers:
+        - name: kibana-init
+          image: curlimages/curl:8.5.0
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              echo "Importing saved objects..."
+              HTTP_CODE=$(curl -s -o /tmp/resp.json -w "%{http_code}" \
+                -X POST "http://kibana:5601/api/saved_objects/_import?overwrite=true" \
+                -H "kbn-xsrf: true" \
+                --form file=@/kibana-export/dashboard-export.ndjson)
+              echo "HTTP $HTTP_CODE"
+              cat /tmp/resp.json
+              echo
+              if [ "$HTTP_CODE" = "200" ]; then
+                echo "Dashboard imported successfully."
+              else
+                echo "ERROR: Import failed."
+                exit 1
+              fi
+          volumeMounts:
+            - name: kibana-export
+              mountPath: /kibana-export
+              readOnly: true
+      volumes:
+        - name: kibana-export
+          configMap:
+            name: kibana-dashboards
