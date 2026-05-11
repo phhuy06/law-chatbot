@@ -20,6 +20,12 @@ kubectl apply -f k8s/infrastructure/elasticsearch.yaml
 kubectl apply -f k8s/infrastructure/prometheus.yaml
 kubectl apply -f k8s/infrastructure/grafana.yaml
 
+echo "==> Creating Kibana dashboards ConfigMap..."
+kubectl -n law-chatbot create configmap kibana-dashboards \
+  --from-file=kibana/dashboard-export.ndjson \
+  --dry-run=client -o yaml | kubectl apply -f -
+kubectl apply -f k8s/infrastructure/kibana-init.yaml
+
 echo "==> Waiting for infra to be ready..."
 kubectl -n law-chatbot wait --for=condition=available --timeout=120s deployment/redis
 kubectl -n law-chatbot wait --for=condition=available --timeout=120s deployment/minio
@@ -33,6 +39,7 @@ kubectl -n law-chatbot wait --for=condition=available --timeout=120s deployment/
 echo "==> Waiting for init jobs to complete..."
 kubectl -n law-chatbot wait --for=condition=complete --timeout=120s job/kafka-init
 kubectl -n law-chatbot wait --for=condition=complete --timeout=120s job/es-init
+kubectl -n law-chatbot wait --for=condition=complete --timeout=180s job/kibana-init
 
 echo "==> Deploying application..."
 kubectl apply -f k8s/app/backend.yaml
@@ -44,6 +51,7 @@ echo "==> Waiting for app to be ready..."
 kubectl -n law-chatbot wait --for=condition=available --timeout=120s deployment/backend
 kubectl -n law-chatbot wait --for=condition=available --timeout=120s deployment/frontend
 kubectl -n law-chatbot wait --for=condition=available --timeout=120s deployment/kafka-consumer
+kubectl -n law-chatbot wait --for=condition=available --timeout=120s deployment/data-ingest
 kubectl -n law-chatbot wait --for=condition=available --timeout=180s deployment/spark-master
 kubectl -n law-chatbot wait --for=condition=available --timeout=180s deployment/spark-worker
 kubectl -n law-chatbot wait --for=condition=available --timeout=180s deployment/spark-job
