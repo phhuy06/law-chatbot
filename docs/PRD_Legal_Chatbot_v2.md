@@ -180,9 +180,8 @@ He thong su dung **mot index duy nhat**: `phapluat`
 | url | keyword | — | URL goc |
 | category | keyword | — | Danh muc (vd: chung-khoan, quyen-dan-su) |
 | doc_type | keyword | — | Loai van ban |
+| agency | keyword | — | Co quan ban hanh |
 | embedding | dense_vector | 1536, cosine, HNSW index | OpenAI text-embedding-3-small |
-
-**Ghi chu:** field `agency` co trong Kafka message va duoc backend doc, nhung khong khai bao trong mapping — Elasticsearch dynamic mapping tu suy ra kieu `text` + `.keyword` sub-field khi gap document dau tien co field nay.
 
 **Vietnamese analyzer:** custom analyzer `vietnamese` dung `icu_tokenizer` + `icu_normalizer` + `icu_folding` + `lowercase` — xu ly dau tieng Viet va normalize Unicode dung.
 
@@ -203,7 +202,7 @@ Kibana doc truc tiep tu Elasticsearch index — moi van ban Spark xu ly va ghi v
 
 | Dashboard | Mo ta | Visualizations |
 |---|---|---|
-| Legal Chatbot - Document Analytics | Buc tranh toan canh du lieu da thu thap | Total Chunks (Metric), Unique Documents (Metric), Avg Chunks per Document (Metric), Chunks by Category (Pie), Documents per Category (Bar), Top 10 Longest Documents (Bar), Document Details (Table) |
+| Legal Chatbot - Document Analytics | Buc tranh toan canh du lieu da thu thap | Total Chunks (Metric), Unique Documents (Metric), Chunks by Category (Pie), Top Agencies (Bar), Document Details (Table) |
 
 ### 3.2 Index pattern
 
@@ -304,7 +303,7 @@ Spark Streaming (spark/streaming/consumer.py)
    +-- Cache miss:
        3. Goi OpenAI embed cau hoi → vector 1536 chieu
        4. Elasticsearch hybrid search tren index phapluat, top_k = 10:
-          - kNN cosine (field=embedding, boost=0.3, num_candidates=10*top_k)
+          - kNN cosine (field=embedding, boost=0.3, num_candidates=100)
           - match chunk_text (boost=5.0)
           - match title (boost=3.0)
           Cac score cong lai → chon top 10
@@ -367,7 +366,7 @@ Spark Streaming (spark/streaming/consumer.py)
 | Service | Port | Vai tro | Chay |
 |---|---|---|---|
 | Zookeeper | 2181 | Kafka coordination | Always on |
-| Kafka | 29092 (host) / 9092 (internal) | Message queue | Always on |
+| Kafka | 9092 | Message queue | Always on |
 | MinIO | 9000 / 9001 | Object storage (CSV backup) | Always on |
 | Elasticsearch | 9200 | Search + vector DB | Always on |
 | Kibana | 5601 | Analytics dashboard | Always on |
