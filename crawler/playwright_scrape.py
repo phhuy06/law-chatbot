@@ -38,7 +38,7 @@ except ImportError:
     HAS_REALTIME = False
 
 BASEDIR = os.path.dirname(__file__)
-DEFAULT_CATEGORY = "giao-duc"
+DEFAULT_CATEGORY = "tai-nguyen-moi-truong"
 BASE_URL = "https://thuvienphapluat.vn/hoi-dap-phap-luat"
 START_URL = f"{BASE_URL}/{DEFAULT_CATEGORY}"  # referenced only by the standalone collect_links() helper
 START_PAGE = 1
@@ -474,7 +474,7 @@ def discover_categories(hub_url=BASE_URL, retries=3, timeout=20000) -> List[str]
 def collect_links(start_page=START_PAGE, end_page=END_PAGE):
     """Collect article links from START_URL?page=start_page..end_page and print counts."""
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=False, args=["--disable-blink-features=AutomationControlled"])
+        browser = pw.chromium.launch(headless=True, args=["--disable-blink-features=AutomationControlled"])
         page = browser.new_page()
         all_links = []
         for p in range(start_page, end_page + 1):

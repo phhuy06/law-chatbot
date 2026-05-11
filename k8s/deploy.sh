@@ -17,6 +17,8 @@ kubectl apply -f k8s/infrastructure/redis.yaml
 kubectl apply -f k8s/infrastructure/minio.yaml
 kubectl apply -f k8s/infrastructure/kafka.yaml
 kubectl apply -f k8s/infrastructure/elasticsearch.yaml
+kubectl apply -f k8s/infrastructure/prometheus.yaml
+kubectl apply -f k8s/infrastructure/grafana.yaml
 
 echo "==> Waiting for infra to be ready..."
 kubectl -n law-chatbot wait --for=condition=available --timeout=120s deployment/redis
@@ -25,6 +27,8 @@ kubectl -n law-chatbot wait --for=condition=available --timeout=120s deployment/
 kubectl -n law-chatbot wait --for=condition=available --timeout=180s deployment/kafka
 kubectl -n law-chatbot wait --for=condition=available --timeout=180s deployment/elasticsearch
 kubectl -n law-chatbot wait --for=condition=available --timeout=180s deployment/kibana
+kubectl -n law-chatbot wait --for=condition=available --timeout=120s deployment/prometheus
+kubectl -n law-chatbot wait --for=condition=available --timeout=120s deployment/grafana
 
 echo "==> Waiting for init jobs to complete..."
 kubectl -n law-chatbot wait --for=condition=complete --timeout=120s job/kafka-init
@@ -48,4 +52,8 @@ echo ""
 echo "==> Done! All services deployed in namespace 'law-chatbot':"
 kubectl -n law-chatbot get all
 echo ""
-echo "==> Access frontend: minikube service frontend -n law-chatbot"
+echo "==> Access services:"
+echo "    Frontend:   minikube service frontend -n law-chatbot"
+echo "    Grafana:    minikube service grafana -n law-chatbot (admin/admin123)"
+echo "    Prometheus: minikube service prometheus -n law-chatbot"
+echo "    Kibana:     minikube service kibana -n law-chatbot"

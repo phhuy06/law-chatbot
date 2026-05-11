@@ -24,11 +24,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_LOG_RETENTION_HOURS: 168
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "kafka-topics --bootstrap-server localhost:9092 --list || exit 1",
-        ]
+      test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 12
@@ -68,8 +64,7 @@ services:
     volumes:
       - es-data:/usr/share/elasticsearch/data
     healthcheck:
-      test:
-        ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health || exit 1"]
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 12
@@ -119,8 +114,7 @@ services:
   spark-master:
     image: apache/spark:3.5.8-python3
     entrypoint: ["/bin/bash", "-c"]
-    command:
-      ["/opt/spark/bin/spark-class org.apache.spark.deploy.master.Master"]
+    command: ["/opt/spark/bin/spark-class org.apache.spark.deploy.master.Master"]
     environment:
       - SPARK_MASTER_HOST=spark-master
     ports:
@@ -130,10 +124,7 @@ services:
   spark-worker:
     image: apache/spark:3.5.8-python3
     entrypoint: ["/bin/bash", "-c"]
-    command:
-      [
-        "/opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077",
-      ]
+    command: ["/opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077"]
     depends_on:
       - spark-master
     environment:

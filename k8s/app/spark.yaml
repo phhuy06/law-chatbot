@@ -50,8 +50,7 @@ spec:
         - name: spark-master
           image: apache/spark:3.5.8-python3
           command: ["/bin/bash", "-c"]
-          args:
-            ["/opt/spark/bin/spark-class org.apache.spark.deploy.master.Master"]
+          args: ["/opt/spark/bin/spark-class org.apache.spark.deploy.master.Master"]
           env:
             - name: SPARK_MASTER_HOST
               value: "spark-master"
@@ -86,10 +85,7 @@ spec:
         - name: spark-worker
           image: apache/spark:3.5.8-python3
           command: ["/bin/bash", "-c"]
-          args:
-            [
-              "/opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077",
-            ]
+          args: ["/opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077"]
           env:
             - name: SPARK_WORKER_MEMORY
               value: "2g"
