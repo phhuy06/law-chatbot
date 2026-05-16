@@ -6,9 +6,9 @@
 | | |
 |---|---|
 | **Mon hoc** | Xu ly Du lieu Lon |
-| **Phien ban** | 2.1 |
+| **Phien ban** | 2.3 |
 | **Ngay tao** | 26/3/2026 |
-| **Cap nhat** | 19/4/2026 |
+| **Cap nhat** | 16/5/2026 |
 | **So thanh vien** | 5 nguoi |
 | **Thoi gian** | 8 tuan (1 ngay/tuan) |
 | **Moi truong** | Mac Mini M4 — Local K8s (Minikube) |
@@ -33,9 +33,13 @@ Du an trien khai Lambda Architecture voi hai layer chinh:
 
 **Speed Layer (Spark Structured Streaming):** Xu ly van ban moi real-time ngay khi crawler thu thap duoc. Van ban moi xuat hien trong chatbot sau ~30 giay.
 
-**Batch Layer (Spark Batch — chay thu cong):** Re-process toan bo corpus tu MinIO khi can — nang cap model embedding, sua bug xu ly, hoac phuc hoi Elasticsearch sau su co.
+**Batch Layer (Spark Batch — chay theo schedule):** Re-process toan bo corpus tu CSV/MinIO theo dinh ky (K8s CronJob `spark-batch`, mac dinh moi 6 gio; tuong duong docker-compose service `spark-batch-cron` voi `BATCH_INTERVAL_SECONDS=21600`). Co the trigger thu cong qua `run_batch.sh` khi can re-index khan cap.
 
 **Serving Layer:** Elasticsearch (vector search + full-text) + Redis (cache) + FastAPI (RAG pipeline) + GPT-4o mini (sinh cau tra loi).
+
+**Observability Layer:** Prometheus (scrape metrics tu pods/services) + Grafana (dashboard infrastructure) + Kibana (dashboard data analytics + audit log).
+
+**Governance & Fault Tolerance:** Audit log (index `phapluat-audit`, PII-sanitized) + Snapshot ES → MinIO (CronJob `es-snapshot`, mac dinh moi 24 gio) + RAG eval framework (`eval/` — precision@k, recall@k, category hit rate).
 
 **Luu y:** He thong su dung **mot ES index duy nhat** (`phapluat`) cho ca speed va batch layer. Khong tach rieng index.
 
@@ -156,7 +160,9 @@ Ngoai pham vi:
 | Embedding | text-embedding-3-small | Tao vector 1536 chieu cho chunks va cau hoi | Nhanh, re, chat luong tot |
 | Backend API | FastAPI (Python) | RAG pipeline endpoint, orchestrate toan bo serving | Async, fast, tu sinh OpenAPI docs |
 | Frontend | React + TypeScript | Giao dien chat, hien thi cau tra loi + nguon trich dan | Component-based, de phat trien |
-| Orchestration | Docker Compose (dev) / K8s (demo) | Chay tat ca service | Production-like |
+| Metrics | Prometheus | Scrape metrics tu pods/services trong namespace `law-chatbot` | Chuan de-facto cho monitoring K8s, tich hop san service discovery |
+| Monitoring | Grafana | Dashboard infrastructure metrics (CPU/RAM/network theo pod, ES/Kafka/Redis health) | Tich hop san voi Prometheus datasource |
+| Orchestration | Kubernetes (Minikube) | Trien khai toan bo service trong namespace `law-chatbot` | Production-like, mot lenh `deploy.sh` khoi dong toan he thong |
 
 ### 2.1 Cau truc luu tru MinIO
 
@@ -167,10 +173,16 @@ Ngoai pham vi:
 | phapluat/csv/processed/*.csv | CSV da duoc batch ingest xu ly | data-ingest | Khong ai (luu tru) |
 | phapluat/raw/{YYYY}/{MM}/{doc_id}.json | JSON per-document dump tu kafka-consumer, dung de replay / audit | kafka-consumer | Khong ai (chi luu tru) |
 | checkpoints/streaming_python/ | Spark Structured Streaming checkpoint (offset + state) — local FS, khong phai MinIO | Spark Streaming | Spark Streaming (auto) |
+| bucket `es-snapshots` | Elasticsearch snapshots (repository S3 `phapluat-snapshots`) — disaster recovery cho ca `phapluat` va `phapluat-audit` | CronJob `es-snapshot` (24h) | `_snapshot/_restore` API khi recovery |
 
-### 2.2 Elasticsearch Index
+### 2.2 Elasticsearch Indices
 
-He thong su dung **mot index duy nhat**: `phapluat`
+He thong su dung **2 index**:
+
+- **`phapluat`** — corpus phap luat (full-text + kNN vector search).
+- **`phapluat-audit`** — audit log cau hoi nguoi dung (PII da redact).
+
+#### Index `phapluat`
 
 | Field | Type | Analyzer / dims | Mo ta |
 |---|---|---|---|
@@ -190,25 +202,54 @@ He thong su dung **mot index duy nhat**: `phapluat`
 - Cung bai viet, cung noi dung chunk → ghi de (upsert)
 - Cho phep re-index ma khong tao ban sao
 
+#### Index `phapluat-audit`
+
+Audit log cua moi cau hoi vao `/api/chat`. PII bi redact truoc khi luu (xem Section 8.1).
+
+| Field | Type | Mo ta |
+|---|---|---|
+| timestamp | date | Thoi diem nhan request (UTC, ISO 8601) |
+| question_hash | keyword | SHA-256 cua cau hoi goc (de dedup ma khong luu nguyen ban) |
+| question_sanitized | text | Cau hoi sau khi redact PII ([EMAIL], [PHONE], [ID], [TAX_ID]) |
+| answer_length | integer | Do dai cau tra loi (so ky tu) |
+| source_count | integer | So nguon trich dan trong response |
+| latency_ms | integer | Tong latency tu request den response |
+| cache_hit | boolean | Cau hoi tra ve tu Redis cache hay khong |
+| pii_redactions | integer | So PII bi redact trong cau hoi |
+
 ---
 
-## 3. Truc Quan Hoa Du Lieu — Kibana
+## 3. Truc Quan Hoa Du Lieu va Monitoring
 
-Kibana duoc deploy cung Elasticsearch, truy cap qua trinh duyet tai http://localhost:5601.
+He thong co hai lop truc quan hoa rieng biet:
 
-Kibana doc truc tiep tu Elasticsearch index — moi van ban Spark xu ly va ghi vao ES deu xuat hien ngay trong dashboard.
+- **Kibana** — dashboard du lieu nghiep vu (so van ban, so chunks, phan loai theo category). Doc truc tiep tu Elasticsearch.
+- **Grafana** — dashboard ha tang (CPU/RAM tung pod, trang thai ES/Kafka/Redis). Doc tu Prometheus.
 
-### 3.1 Cac dashboard da xay dung
+### 3.1 Kibana — Data Analytics
+
+Kibana deploy cung Elasticsearch, truy cap qua `minikube service kibana -n law-chatbot`.
+
+Kibana doc truc tiep tu Elasticsearch index — moi van ban Spark xu ly va ghi vao ES deu xuat hien ngay trong dashboard. Job `kibana-init` (chay 1 lan sau khi Kibana ready) tu dong import data view + dashboard tu file `kibana/dashboard-export.ndjson`.
 
 | Dashboard | Mo ta | Visualizations |
 |---|---|---|
-| Legal Chatbot - Document Analytics | Buc tranh toan canh du lieu da thu thap | Total Chunks (Metric), Unique Documents (Metric), Chunks by Category (Pie), Top Agencies (Bar), Document Details (Table) |
+| Legal Chatbot - Document Analytics | Buc tranh toan canh du lieu da thu thap | Total Chunks (Metric), Unique Documents (Metric), Avg Chunks per Document (Metric), Chunks by Category (Pie), Documents per Category (Bar), Top 10 Longest Documents (Bar), Document Details (Table) |
 
-### 3.2 Index pattern
+**Index pattern:** `phapluat` — mot index duy nhat cho moi visualization.
 
-| Index Pattern | Dung cho |
-|---|---|
-| phapluat | Tat ca dashboard — mot index duy nhat |
+### 3.2 Grafana — Infrastructure Monitoring
+
+Grafana truy cap qua `minikube service grafana -n law-chatbot` (login: admin / admin123).
+
+Datasource Prometheus duoc cau hinh san (provisioning). Prometheus scrape:
+
+- Pods trong namespace `law-chatbot` co annotation `prometheus.io/scrape: "true"`
+- Services trong namespace `law-chatbot` (cung annotation)
+- Kubernetes nodes (cAdvisor metrics)
+- Elasticsearch, Kafka, Redis (static targets)
+
+Retention: 15 ngay. Storage: PVC 10Gi.
 
 ---
 
@@ -281,8 +322,8 @@ Spark Streaming (spark/streaming/consumer.py)
 ### 5.2 Luong Batch (chay thu cong khi can)
 
 ```
-1. Upload CSV vao MinIO (phapluat/csv/)
-2. Chay: docker-compose run --rm data-ingest
+1. Upload CSV vao MinIO (phapluat/csv/) qua console http://<minikube>/minio
+2. Deployment `data-ingest` (long-running poller, mac dinh 10s/lan):
        |
        +-- data-ingest doc CSV tu MinIO
        +-- Parse tung row → push Kafka
@@ -290,9 +331,17 @@ Spark Streaming (spark/streaming/consumer.py)
        |
        v
 3. Kafka → Spark Streaming → ES (cung pipeline nhu realtime)
+
+Scheduled re-index (Lambda batch layer):
+    K8s     : CronJob `spark-batch` (schedule `0 */6 * * *` — moi 6 gio)
+    Docker  : service `spark-batch-cron` (loop sleep ${BATCH_INTERVAL_SECONDS}, mac dinh 21600s)
+
+Re-index khan cap (manual):
+    Local   : ./run_batch.sh                # toan bo CSV trong crawler/output
+    K8s     : kubectl -n law-chatbot create job --from=cronjob/spark-batch spark-batch-manual
 ```
 
-**Kich hoat khi:** (a) initial seed lan dau, (b) re-index sau su co, (c) nang cap model embedding
+**Kich hoat thu cong khi:** (a) initial seed lan dau, (b) re-index sau su co, (c) nang cap model embedding. CronJob dam bao corpus on dinh khi co CSV moi roi vao `crawler/output/`.
 
 ### 5.3 Luong Serving (Nguoi dung hoi chatbot)
 
@@ -363,27 +412,118 @@ Spark Streaming (spark/streaming/consumer.py)
 
 ## 7. Services va Ports
 
-| Service | Port | Vai tro | Chay |
-|---|---|---|---|
-| Zookeeper | 2181 | Kafka coordination | Always on |
-| Kafka | 9092 | Message queue | Always on |
-| MinIO | 9000 / 9001 | Object storage (CSV backup) | Always on |
-| Elasticsearch | 9200 | Search + vector DB | Always on |
-| Kibana | 5601 | Analytics dashboard | Always on |
-| Redis | 6379 | Response cache | Always on |
-| Spark Master | 7077 / 8080 | Processing cluster | Always on |
-| Spark Worker | — | Processing node | Always on |
-| Spark Job | — | Streaming: Kafka → ES | Always on |
-| Backend | 8000 | FastAPI (RAG pipeline) | Always on |
-| Frontend | 3000 | React UI (Nginx) | Always on |
-| data-ingest | — | Batch: MinIO → Kafka | Manual trigger |
+Tat ca service chay trong K8s namespace `law-chatbot`. Cot "Service port" la port noi bo cluster (ClusterIP). Cot "NodePort" chi co o nhung service can truy cap tu host (Minikube tunnel).
 
-**Khoi dong:** `docker-compose up -d`
-**Chay batch:** `docker-compose run --rm data-ingest`
+| Service | Service port | NodePort | Loai | Vai tro |
+|---|---|---|---|---|
+| Zookeeper | 2181 | — | Deployment | Kafka coordination |
+| Kafka | 9092 | — | Deployment | Message queue |
+| kafka-init | — | — | Job (one-shot) | Tao topic `van-ban-phap-luat` luc khoi dong |
+| MinIO | 9000 / 9001 | — | Deployment | Object storage |
+| Elasticsearch | 9200 / 9300 | — | Deployment + PVC 10Gi | Search + vector DB |
+| Kibana | 5601 | — | Deployment | Data analytics dashboard |
+| kibana-init | — | — | Job (one-shot) | Import dashboard `dashboard-export.ndjson` luc khoi dong |
+| es-init | — | — | Job (one-shot) | Tao index `phapluat` voi Vietnamese ICU analyzer + HNSW mapping |
+| Redis | 6379 | — | Deployment | Response cache |
+| Spark Master | 7077 / 8080 | — | Deployment | Processing cluster |
+| Spark Worker | — | — | Deployment | Processing node |
+| spark-job | — | — | Deployment | Streaming: Kafka → ES (24/7) |
+| spark-batch | — | — | CronJob (`0 */6 * * *`) | Batch re-index full corpus (Lambda batch layer) |
+| es-snapshot-init | — | — | Job (one-shot) | Tao bucket `es-snapshots` + register repository S3 `phapluat-snapshots` |
+| es-snapshot | — | — | CronJob (`0 2 * * *`) | Snapshot daily `phapluat` + `phapluat-audit` → MinIO |
+| kafka-consumer | — | — | Deployment | Kafka → MinIO raw JSON dump |
+| data-ingest | — | — | Deployment | Poll MinIO csv/ → Kafka |
+| Backend | 8000 | — | Deployment | FastAPI (RAG pipeline) |
+| Frontend | 80 | 30080 | Deployment (NodePort) | React UI (Nginx, proxy /api/ → backend) |
+| Prometheus | 9090 | 30090 | Deployment + PVC 10Gi + RBAC | Scrape pods/services metrics |
+| Grafana | 3000 | 30300 | Deployment + PVC 5Gi | Dashboard infrastructure (admin/admin123) |
+
+**Khoi dong toan bo:** `bash k8s/deploy.sh`
+**Truy cap dashboard:**
+- `minikube service frontend -n law-chatbot`
+- `minikube service kibana -n law-chatbot`
+- `minikube service grafana -n law-chatbot`
+- `minikube service prometheus -n law-chatbot`
 
 ---
 
-## 8. Yeu Cau Phi Chuc Nang
+## 8. Governance, Chat Luong Du Lieu & Chiu Loi
+
+### 8.1 Audit log + PII sanitization
+
+Moi cau hoi vao `/api/chat` duoc ghi vao ES index `phapluat-audit` (xem Section 2.2). Truoc khi luu, `AuditService` (file `backend/services/audit.py`) redact PII bang regex:
+
+| Pattern | Vi du dau vao | Output sau redact |
+|---|---|---|
+| Email | `user@example.com` | `[EMAIL]` |
+| Phone VN | `0912345678`, `+84912345678`, `0912.345.678` | `[PHONE]` |
+| CMND 9 / CCCD 12 so | `123456789`, `012345678901` | `[ID]` |
+| Ma so thue 10 so | `0312345678-001` | `[TAX_ID]` |
+
+Cau hoi goc khong duoc luu — chi luu `question_hash` (SHA-256) de tracing va `question_sanitized` cho analytics. Audit ghi best-effort: neu ES not reachable, request chinh van thanh cong, chi log warning.
+
+Kibana co the visualize index `phapluat-audit` de theo doi: query volume theo gio, top categories duoc hoi, cache hit rate, latency P95, so PII redactions per query (signal cho compliance).
+
+### 8.2 RAG Evaluation Framework
+
+Thu muc `eval/`:
+
+| File | Mo ta |
+|---|---|
+| `eval/gold_set.json` | ~12 cau hoi tieng Viet tieu bieu (doanh nghiep, giao thong, thue, lao dong, ...) voi expected keywords + categories |
+| `eval/run_eval.py` | Chay tung cau qua backend (`--backend`) hoac ES truc tiep (`--direct`), tinh `precision@k`, `recall@k`, `category_hit_rate`, mean latency |
+| `eval/README.md` | Huong dan su dung |
+
+**Metric:**
+- **precision@k** — ti le sources tra ve match expected keywords trong title/text/url.
+- **recall@k** — 1.0 neu it nhat 1 source match, 0.0 neu khong.
+- **category hit rate** — ti le query co source dung category mong doi.
+
+Chay offline khong can LLM key voi `--direct` mode → eval rieng tang retrieval, tach roi rui ro GPT.
+
+### 8.3 Unit testing
+
+Thu muc `tests/` voi pytest:
+
+| File | Test |
+|---|---|
+| `tests/test_chunker.py` | `clean_text` (strip HTML, NFC normalize, whitespace collapse, empty input) + `chunk_text` (short text, max_length, long single sentence, sentence boundaries) |
+| `tests/test_audit.py` | PII sanitization cho email / phone / CMND / CCCD / clean text khong bi sai redact |
+
+Chay: `pytest tests/ -v` (16 tests, ~0.1s). Pure Python — khong can SparkSession nho refactor `spark/utils/text.py` tach pure functions khoi UDF wrappers.
+
+### 8.4 Fault tolerance: ES snapshot → MinIO
+
+Disaster recovery cho ca corpus va audit log:
+
+| Buoc | Component |
+|---|---|
+| 1. Install `repository-s3` plugin | `elasticsearch/Dockerfile` (custom image `law-chatbot/elasticsearch:latest`) |
+| 2. Tao bucket `es-snapshots` + register repo `phapluat-snapshots` | Job `es-snapshot-init` (chay 1 lan luc deploy) |
+| 3. Snapshot dinh ky | CronJob `es-snapshot` (`0 2 * * *` — moi 24h) hoac docker-compose service `es-snapshot-cron` (default `SNAPSHOT_INTERVAL_SECONDS=86400`) |
+| 4. Restore | `POST _snapshot/phapluat-snapshots/snap-YYYYMMDD-HHMMSS/_restore` |
+
+Script: `scripts/snapshot_elasticsearch.py` — idempotent, dung `httpx` PUT thay vi client lib de tranh version drift.
+
+### 8.5 Mapping tu nhom "Bai hoc kinh nghiem"
+
+| Nhom bai hoc | Implementation |
+|---|---|
+| Thu thap du lieu | Section 5.1, 5.2; crawler patchright + ES `--stop-on-seen` dedup |
+| Xu ly du lieu voi Spark | Section 4; `fetch_existing_doc_ids` + batch embed 100 texts/call |
+| Xu ly luong | Section 5.1; Kafka offset checkpoint + deterministic chunk `_id` |
+| Luu tru du lieu | Section 2.1, 2.2; MinIO hot (raw JSON) / cold (snapshot) + ES dense_vector |
+| Tich hop he thong | Section 5.3; K8s service DNS + Redis cache + best-effort audit |
+| Toi uu hieu nang | Section 5.3; Redis TTL 1h + event-driven invalidation + hybrid search tuning |
+| Giam sat & go loi | Section 3; Prometheus/Grafana + Kibana data dashboard + audit log analytics |
+| Mo rong (Scaling) | Section 7; Spark master/worker, ES single-node co the scale len multi-node |
+| Chat luong du lieu & kiem thu | Section 8.2, 8.3; eval framework + pytest |
+| Bao mat & quan tri | Section 8.1; PII sanitization + K8s Secret cho OPENAI_API_KEY (xem `k8s/app/backend.yaml`) |
+| Chiu loi | Section 8.4 + Section 10; ES snapshot + Spark checkpoint + chunk upsert |
+
+---
+
+## 9. Yeu Cau Phi Chuc Nang
 
 | Tieu chi | Yeu cau | Cach do |
 |---|---|---|
@@ -396,7 +536,7 @@ Spark Streaming (spark/streaming/consumer.py)
 
 ---
 
-## 9. Cau Truc Repository
+## 10. Cau Truc Repository
 
 ```
 legal-chatbot/
@@ -424,7 +564,8 @@ legal-chatbot/
 │   │   ├── pivot_job.py        # TODO: pivot/unpivot
 │   │   └── tfidf_rank.py       # TODO: MLlib TF-IDF
 │   ├── utils/
-│   │   └── udfs.py             # UDFs: clean_text, chunk_text (+ embed_text unused)
+│   │   ├── text.py             # Pure Python clean_text/chunk_text (unit-testable)
+│   │   └── udfs.py             # Spark UDF wrappers + embed_text
 │   └── Dockerfile
 ├── backend/                    # FastAPI + RAG pipeline
 │   ├── main.py
@@ -437,24 +578,37 @@ legal-chatbot/
 │   └── Dockerfile
 ├── frontend/                   # React + TypeScript (Vite)
 ├── scripts/
-│   └── init_elasticsearch.py   # ES index + Vietnamese ICU analyzer + HNSW mapping
+│   ├── init_elasticsearch.py   # ES indices (`phapluat` + `phapluat-audit`) + Vietnamese ICU analyzer + HNSW mapping
+│   └── snapshot_elasticsearch.py  # Register S3 snapshot repo + take snapshot to MinIO
+├── tests/                      # Pytest unit tests
+│   ├── test_chunker.py         # clean_text / chunk_text
+│   └── test_audit.py           # PII sanitization (email/phone/CMND/CCCD)
+├── eval/                       # RAG evaluation framework
+│   ├── gold_set.json           # Gold queries with expected keywords + categories
+│   ├── run_eval.py             # precision@k, recall@k, category hit rate
+│   └── README.md
 ├── kibana/
 │   ├── dashboard-export.ndjson # Kibana dashboard
 │   └── init-kibana.sh          # Auto-import on startup
-├── k8s/                        # Kubernetes manifests (Minikube)
-│   ├── infrastructure/         # Kafka, MinIO, ES, Redis
-│   ├── app/                    # Backend, Frontend, Spark, Kafka workers
-│   └── deploy.sh               # One-click K8s deploy
+├── k8s/                        # Kubernetes manifests (Minikube) — deployment target
+│   ├── infrastructure/         # Kafka + kafka-init Job, MinIO, ES (custom image with
+│   │                           # repository-s3 plugin) + Kibana + es-init Job, kibana-init
+│   │                           # Job, Redis, Prometheus (+ RBAC), Grafana, es-snapshot.yaml
+│   │                           # (snapshot init Job + daily CronJob)
+│   ├── app/                    # Backend, Frontend (NodePort 30080), Spark (master/worker/
+│   │                           # streaming Deployment + batch CronJob `0 */6 * * *`),
+│   │                           # Kafka workers (kafka-consumer + data-ingest Deployments)
+│   ├── namespace.yaml          # Namespace `law-chatbot`
+│   └── deploy.sh               # One-click K8s deploy: build images → apply manifests → wait
 ├── run_realtime.sh             # Manual realtime crawl (delegate to crawler/run_hourly.sh)
-├── run_batch.sh                # Manual Spark batch via docker-compose
-├── docker-compose.yml
+├── run_batch.sh                # Manual Spark batch (local-dev shortcut)
 ├── .env
 └── CLAUDE.md
 ```
 
 ---
 
-## 10. Rui Ro va Giam Thieu
+## 11. Rui Ro va Giam Thieu
 
 | Rui ro | Kha nang | Tac dong | Giam thieu |
 |---|---|---|---|
@@ -463,11 +617,37 @@ legal-chatbot/
 | Mac Mini M4 het RAM khi chay tat ca (16GB) | Thap | He thong crash khi demo | Giam ES heap xuong 512MB, tat Spark Batch khi khong can |
 | OpenAI API cost vuot budget | Trung binh | Ton tien khong can thiet | (a) Cache aggressively Redis TTL 1h + event invalidation, (b) batch embedding 100 texts/call, (c) ES-side dedup truoc khi embed → khong embed lai doc da co, (d) dung text-embedding-3-small thay vi -large |
 | Spark Streaming mat checkpoint | Thap | Xu ly trung van ban | Checkpoint local (`checkpoints/streaming_python/`) + chunk `_id` deterministic (upsert vao ES neu trung) |
-| Elasticsearch index corrupt | Rat thap | Mat toan bo data tim kiem | Raw JSON per-doc van trong MinIO (`phapluat/raw/.../`), CSV backup trong `phapluat/csv/backup/`, chay Spark Batch de rebuild |
+| Elasticsearch index corrupt | Rat thap | Mat toan bo data tim kiem | (a) Snapshot daily → MinIO bucket `es-snapshots` (CronJob `es-snapshot`, Section 8.4) restore tu snapshot gan nhat; (b) Raw JSON per-doc trong MinIO `phapluat/raw/.../`; (c) CSV backup trong `phapluat/csv/backup/`; (d) chay Spark Batch de rebuild tu ngoai |
+| MinIO mat data | Rat thap | Mat snapshot ES + raw JSON | Single-node + emptyDir/PVC khong erasure-coded → bo sung off-cluster backup khi production. Trong scope demo: chap nhan rui ro, du lieu nguon van co the crawl lai tu thuvienphapluat.vn |
+| Lo PII trong audit log | Trung binh | Compliance / privacy | PII regex sanitization (Section 8.1) — email/phone/CMND/CCCD/MST redact truoc khi index. Cau hoi goc khong bao gio luu — chi luu hash SHA-256 |
 
 ---
 
-## 11. Changelog
+## 12. Changelog
+
+### v2.3 (16/5/2026)
+
+Cap nhat de bao phu day du 11 nhom "Bai hoc kinh nghiem" theo de bai IT4931:
+
+- **Batch layer scheduled:** chuyen `spark-batch` tu Job thu cong sang CronJob (K8s `0 */6 * * *`) va service `spark-batch-cron` (docker-compose, loop `BATCH_INTERVAL_SECONDS=21600`). Lambda batch layer thuc thu chay tu dong, khong con phu thuoc thao tac thu cong.
+- **Audit log:** them ES index `phapluat-audit` + service `backend/services/audit.py`. Moi cau hoi vao `/api/chat` duoc log voi sanitized question + latency + cache_hit + redaction count. PII (email, phone VN, CMND/CCCD, ma so thue) bi redact bang regex truoc khi ghi.
+- **ES snapshot → MinIO:** them `repository-s3` plugin trong custom image `law-chatbot/elasticsearch:latest`. `scripts/snapshot_elasticsearch.py` register repo `phapluat-snapshots` + take snapshot. K8s `es-snapshot-init` Job + `es-snapshot` CronJob (`0 2 * * *`). Docker-compose: services `es-snapshot-init` + `es-snapshot-cron`.
+- **RAG eval:** them `eval/gold_set.json` (12 query tieng Viet) + `eval/run_eval.py` (precision@k, recall@k, category hit rate, hai mode: `--backend` qua FastAPI hoac `--direct` qua ES — eval rieng retrieval khong ton LLM cost).
+- **Unit testing:** them `tests/` voi pytest (16 tests). Refactor `spark/utils/udfs.py` → `spark/utils/text.py` (pure Python) de chunker/cleaner unit-testable khong can SparkSession.
+- **Section 2.2:** tach `phapluat` va `phapluat-audit` thanh 2 sub-section voi mapping rieng.
+- **Section 8 moi:** Governance, Chat luong du lieu & Chiu loi (audit log, eval, tests, snapshot, mapping 11 nhom bai hoc).
+- **Section 10 (Rui ro):** them mitigation snapshot daily, bo sung rui ro MinIO single-node + rui ro lo PII.
+
+### v2.2 (15/5/2026)
+Cap nhat theo state thuc te tren branch `main` sau cac PR k8s parity:
+
+- **Observability:** them Prometheus (scrape pods/services trong namespace, RBAC cluster-level, PVC 10Gi, retention 15 ngay) + Grafana (datasource Prometheus provisioned, NodePort 30300, admin/admin123).
+- **K8s parity voi local dev:** them Job `kibana-init` (import dashboard tu ConfigMap `kibana-dashboards`) va Deployment `data-ingest` (long-running MinIO csv/ poller, mirror dev `data-ingest` service).
+- **Section 3 (Truc quan hoa):** tach thanh 2 muc — Kibana (data analytics) va Grafana (infrastructure monitoring).
+- **Section 3.1 (Kibana dashboard):** cap nhat list visualization theo file `kibana/dashboard-export.ndjson` thuc te (them Avg Chunks per Document, Documents per Category, Top 10 Longest Documents; bo "Top Agencies").
+- **Section 5.2 (Batch flow):** thay command dev `docker-compose run --rm data-ingest` bang K8s Deployment thuong truc + Job `spark-batch` cho full re-index.
+- **Section 7 (Services va Ports):** chuyen sang mo hinh K8s — ClusterIP service port + NodePort (Frontend 30080, Prometheus 30090, Grafana 30300). Liet ke them tat ca Job va Deployment (kafka-init, es-init, kibana-init, spark-batch, kafka-consumer, data-ingest).
+- **Section 9 (Repository):** mo ta chi tiet hon k8s/infrastructure va k8s/app, bo dong `docker-compose.yml` (dev tool, khong phai deployment target).
 
 ### v2.1 (19/4/2026)
 Cap nhat theo thuc te code (sau milestone realtime crawl + end-to-end pipeline):
