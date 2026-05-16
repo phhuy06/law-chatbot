@@ -154,40 +154,48 @@ spec:
               memory: "2Gi"
               cpu: "1000m"
 ---
-# Spark Batch - manual trigger via Job
+# Spark Batch - scheduled re-processing of corpus (Lambda batch layer)
 apiVersion: batch/v1
-kind: Job
+kind: CronJob
 metadata:
   name: spark-batch
   namespace: law-chatbot
 spec:
-  backoffLimit: 2
-  template:
-    metadata:
-      labels:
-        app: spark-batch
+  schedule: "0 */6 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
     spec:
-      restartPolicy: OnFailure
-      containers:
-        - name: spark-batch
-          image: law-chatbot/spark:latest
-          imagePullPolicy: Never
-          command: ["python3", "-m", "spark.batch.pipeline"]
-          envFrom:
-            - configMapRef:
-                name: spark-config
-          env:
-            - name: SPARK_MASTER_URL
-              value: "spark://spark-master:7077"
-            - name: OPENAI_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: backend-secret
-                  key: OPENAI_API_KEY
-          resources:
-            requests:
-              memory: "1Gi"
-              cpu: "500m"
-            limits:
-              memory: "2Gi"
-              cpu: "1000m"
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            app: spark-batch
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: spark-batch
+              image: law-chatbot/spark:latest
+              imagePullPolicy: Never
+              command: ["python3", "-m", "spark.batch.pipeline"]
+              envFrom:
+                - configMapRef:
+                    name: spark-config
+              env:
+                - name: SPARK_MASTER_URL
+                  value: "spark://spark-master:7077"
+                - name: REDIS_URL
+                  value: "redis://redis:6379/0"
+                - name: OPENAI_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: backend-secret
+                      key: OPENAI_API_KEY
+              resources:
+                requests:
+                  memory: "1Gi"
+                  cpu: "500m"
+                limits:
+                  memory: "2Gi"
+                  cpu: "1000m"

@@ -157,6 +157,44 @@ services:
       ES_INDEX: phapluat
       MINIO_ENDPOINT: minio:9000
 
+  # Lambda batch layer: re-process corpus on a schedule (parity with K8s CronJob)
+  spark-batch-cron:
+    build:
+      context: .
+      dockerfile: spark/Dockerfile
+    depends_on:
+      spark-master:
+        condition: service_started
+      elasticsearch:
+        condition: service_healthy
+      minio:
+        condition: service_started
+      es-init:
+        condition: service_completed_successfully
+    env_file:
+      - .env
+    environment:
+      SPARK_MASTER_URL: spark://spark-master:7077
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ES_INDEX: phapluat
+      MINIO_ENDPOINT: minio:9000
+      REDIS_URL: redis://redis:6379/0
+      BATCH_INTERVAL_SECONDS: "21600"
+      BATCH_DATA_PATH: /app/crawler/output/*.csv
+    volumes:
+      - ./crawler/output:/app/crawler/output:ro
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        echo "[batch-cron] scheduler started, interval=${BATCH_INTERVAL_SECONDS}s"
+        while true; do
+          echo "[batch-cron] $(date -Iseconds) starting batch run"
+          python3 -m spark.batch.pipeline || echo "[batch-cron] run failed (non-fatal)"
+          echo "[batch-cron] $(date -Iseconds) sleeping ${BATCH_INTERVAL_SECONDS}s"
+          sleep "${BATCH_INTERVAL_SECONDS}"
+        done
+    restart: unless-stopped
+
   # --- Kafka Workers ---
   kafka-consumer:
     build:
