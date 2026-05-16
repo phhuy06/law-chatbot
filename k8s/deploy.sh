@@ -8,6 +8,7 @@ docker build -t law-chatbot/backend:latest -f backend/Dockerfile .
 docker build -t law-chatbot/frontend:latest -f frontend/Dockerfile ./frontend
 docker build -t law-chatbot/spark:latest -f spark/Dockerfile .
 docker build -t law-chatbot/kafka:latest -f kafka/Dockerfile .
+docker build -t law-chatbot/elasticsearch:latest -f elasticsearch/Dockerfile elasticsearch
 
 echo "==> Creating namespace..."
 kubectl apply -f k8s/namespace.yaml
@@ -40,6 +41,13 @@ echo "==> Waiting for init jobs to complete..."
 kubectl -n law-chatbot wait --for=condition=complete --timeout=120s job/kafka-init
 kubectl -n law-chatbot wait --for=condition=complete --timeout=120s job/es-init
 kubectl -n law-chatbot wait --for=condition=complete --timeout=180s job/kibana-init
+
+echo "==> Registering ES snapshot repository on MinIO..."
+kubectl -n law-chatbot create configmap es-snapshot-scripts \
+  --from-file=snapshot_elasticsearch.py=scripts/snapshot_elasticsearch.py \
+  --dry-run=client -o yaml | kubectl apply -f -
+kubectl apply -f k8s/infrastructure/es-snapshot.yaml
+kubectl -n law-chatbot wait --for=condition=complete --timeout=180s job/es-snapshot-init
 
 echo "==> Deploying application..."
 kubectl apply -f k8s/app/backend.yaml

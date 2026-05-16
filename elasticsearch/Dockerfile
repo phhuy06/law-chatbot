@@ -1,3 +1,4 @@
 FROM docker.elastic.co/elasticsearch/elasticsearch:8.12.2
 
-RUN bin/elasticsearch-plugin install --batch analysis-icu
+RUN bin/elasticsearch-plugin install --batch analysis-icu \
+ && bin/elasticsearch-plugin install --batch repository-s3

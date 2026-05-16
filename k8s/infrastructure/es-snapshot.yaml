@@ -1,0 +1,93 @@
+---
+# One-shot job to register the ES snapshot repository on MinIO
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: es-snapshot-init
+  namespace: law-chatbot
+spec:
+  backoffLimit: 5
+  template:
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        - name: wait-for-es
+          image: curlimages/curl:8.5.0
+          command:
+            - /bin/sh
+            - -c
+            - |
+              until curl -sf http://elasticsearch:9200/_cluster/health >/dev/null 2>&1; do
+                echo "ES not ready, retrying in 5s..."
+                sleep 5
+              done
+      containers:
+        - name: es-snapshot-init
+          image: python:3.11-slim
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              pip install -q 'elasticsearch>=8.12,<9' httpx minio
+              python /scripts/snapshot_elasticsearch.py init
+          env:
+            - name: ELASTICSEARCH_URL
+              value: "http://elasticsearch:9200"
+            - name: MINIO_ENDPOINT
+              value: "minio:9000"
+            - name: MINIO_ACCESS_KEY
+              value: "minioadmin"
+            - name: MINIO_SECRET_KEY
+              value: "minioadmin"
+            - name: ES_SNAPSHOT_BUCKET
+              value: "es-snapshots"
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+      volumes:
+        - name: scripts
+          configMap:
+            name: es-snapshot-scripts
+---
+# Scheduled snapshots (daily) — Lambda fault-tolerance: durable backups to MinIO
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: es-snapshot
+  namespace: law-chatbot
+spec:
+  schedule: "0 2 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: es-snapshot
+              image: python:3.11-slim
+              command: ["/bin/bash", "-c"]
+              args:
+                - |
+                  pip install -q 'elasticsearch>=8.12,<9' httpx minio
+                  python /scripts/snapshot_elasticsearch.py snapshot
+              env:
+                - name: ELASTICSEARCH_URL
+                  value: "http://elasticsearch:9200"
+                - name: MINIO_ENDPOINT
+                  value: "minio:9000"
+                - name: MINIO_ACCESS_KEY
+                  value: "minioadmin"
+                - name: MINIO_SECRET_KEY
+                  value: "minioadmin"
+                - name: ES_SNAPSHOT_BUCKET
+                  value: "es-snapshots"
+              volumeMounts:
+                - name: scripts
+                  mountPath: /scripts
+          volumes:
+            - name: scripts
+              configMap:
+                name: es-snapshot-scripts

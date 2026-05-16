@@ -105,6 +105,61 @@ services:
       - "pip install -q 'elasticsearch>=8.12,<9' && python scripts/init_elasticsearch.py"
     restart: "no"
 
+  # Register the ES snapshot repository on MinIO (one-shot, runs on every up)
+  es-snapshot-init:
+    image: python:3.11-slim
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    volumes:
+      - ./scripts:/app/scripts:ro
+    working_dir: /app
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      ES_SNAPSHOT_BUCKET: es-snapshots
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - "pip install -q 'elasticsearch>=8.12,<9' httpx minio && python scripts/snapshot_elasticsearch.py init"
+    restart: "no"
+
+  # Scheduled ES → MinIO snapshots (disaster recovery / fault tolerance)
+  es-snapshot-cron:
+    image: python:3.11-slim
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    volumes:
+      - ./scripts:/app/scripts:ro
+    working_dir: /app
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      ES_SNAPSHOT_BUCKET: es-snapshots
+      SNAPSHOT_INTERVAL_SECONDS: "86400"
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        pip install -q 'elasticsearch>=8.12,<9' httpx minio
+        echo "[snapshot-cron] scheduler started, interval=${SNAPSHOT_INTERVAL_SECONDS}s"
+        # Wait once for the init service to have registered the repo
+        sleep 30
+        while true; do
+          echo "[snapshot-cron] $(date -Iseconds) taking snapshot"
+          python scripts/snapshot_elasticsearch.py snapshot || echo "[snapshot-cron] snapshot failed (non-fatal)"
+          echo "[snapshot-cron] $(date -Iseconds) sleeping ${SNAPSHOT_INTERVAL_SECONDS}s"
+          sleep "${SNAPSHOT_INTERVAL_SECONDS}"
+        done
+    restart: unless-stopped
+
   redis:
     image: redis:7-alpine
     ports:
