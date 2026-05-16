@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     # Elasticsearch
     elasticsearch_url: str = "http://localhost:9200"
     es_index: str = "phapluat"
+    es_audit_index: str = "phapluat-audit"
 
     # Redis
     redis_url: str = "redis://localhost:6379/0"

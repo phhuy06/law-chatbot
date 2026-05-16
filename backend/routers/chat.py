@@ -1,9 +1,11 @@
 """POST /api/chat - RAG pipeline endpoint"""
 import logging
+import time
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
+from backend.services.audit import AuditService
 from backend.services.cache import CacheService
 from backend.services.llm import LLMService
 from backend.services.search import SearchService
@@ -15,6 +17,7 @@ router = APIRouter()
 cache_service = CacheService()
 search_service = SearchService()
 llm_service = LLMService()
+audit_service = AuditService()
 
 
 class ChatRequest(BaseModel):
@@ -38,10 +41,20 @@ async def chat(req: ChatRequest):
     if not question:
         raise HTTPException(status_code=400, detail="Question cannot be empty")
 
+    started = time.monotonic()
+
     # 1. Check cache
     cached = await cache_service.get(question)
     if cached:
-        logger.info("Cache hit for question: %s", question[:50])
+        logger.info("Cache hit for question (hash)")
+        latency_ms = int((time.monotonic() - started) * 1000)
+        await audit_service.log(
+            question=question,
+            answer_length=len(cached.get("answer", "")),
+            source_count=len(cached.get("sources", [])),
+            latency_ms=latency_ms,
+            cache_hit=True,
+        )
         return cached
 
     # 2. Embed question
@@ -101,5 +114,14 @@ async def chat(req: ChatRequest):
 
     # 6. Cache response
     await cache_service.set(question, response)
+
+    latency_ms = int((time.monotonic() - started) * 1000)
+    await audit_service.log(
+        question=question,
+        answer_length=len(answer),
+        source_count=len(sources),
+        latency_ms=latency_ms,
+        cache_hit=False,
+    )
 
     return response

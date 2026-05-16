@@ -39,8 +39,25 @@ INDEX_MAPPING = {
     },
 }
 
+AUDIT_INDEX_MAPPING = {
+    "settings": {"number_of_shards": 1, "number_of_replicas": 0},
+    "mappings": {
+        "properties": {
+            "timestamp": {"type": "date"},
+            "question_hash": {"type": "keyword"},
+            "question_sanitized": {"type": "text", "analyzer": "standard"},
+            "answer_length": {"type": "integer"},
+            "source_count": {"type": "integer"},
+            "latency_ms": {"type": "integer"},
+            "cache_hit": {"type": "boolean"},
+            "pii_redactions": {"type": "integer"},
+        }
+    },
+}
+
 INDICES = [
-    os.environ.get("ES_INDEX", "phapluat"),
+    (os.environ.get("ES_INDEX", "phapluat"), INDEX_MAPPING),
+    (os.environ.get("ES_AUDIT_INDEX", "phapluat-audit"), AUDIT_INDEX_MAPPING),
 ]
 
 
@@ -59,16 +76,16 @@ def wait_for_es(es: Elasticsearch, retries: int = 30, delay: int = 2):
 
 
 def create_indices(es: Elasticsearch):
-    for index in INDICES:
+    for index, mapping in INDICES:
         if es.indices.exists(index=index):
             print(f"Index '{index}' already exists, skipping.")
             continue
         es.indices.create(
             index=index,
-            settings=INDEX_MAPPING["settings"],
-            mappings=INDEX_MAPPING["mappings"],
+            settings=mapping["settings"],
+            mappings=mapping["mappings"],
         )
-        print(f"Created index '{index}' with dense_vector mapping.")
+        print(f"Created index '{index}'.")
 
 
 def main():

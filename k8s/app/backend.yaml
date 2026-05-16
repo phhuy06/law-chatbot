@@ -7,6 +7,7 @@ metadata:
 data:
   ELASTICSEARCH_URL: "http://elasticsearch:9200"
   ES_INDEX: "phapluat"
+  ES_AUDIT_INDEX: "phapluat-audit"
   REDIS_URL: "redis://redis:6379/0"
   REDIS_CACHE_TTL: "3600"
 ---
