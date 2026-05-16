@@ -1,0 +1,53 @@
+---
+# Manual one-shot Job: re-process the entire MinIO raw/ master dataset
+# WITHOUT the ES dedup skip. Use after an embedding model or chunker
+# upgrade. Re-embeds every chunk — costs roughly the same as the first
+# initial ingest. Apply with:
+#
+#     kubectl apply -f k8s/app/spark-batch-force.yaml
+#
+# When done, delete it so you can re-apply later:
+#
+#     kubectl -n law-chatbot delete job spark-batch-force
+#
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: spark-batch-force
+  namespace: law-chatbot
+spec:
+  backoffLimit: 2
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app: spark-batch-force
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: spark-batch-force
+          image: law-chatbot/spark:latest
+          imagePullPolicy: Never
+          command: ["python3", "-m", "spark.batch.pipeline"]
+          envFrom:
+            - configMapRef:
+                name: spark-config
+          env:
+            - name: SPARK_MASTER_URL
+              value: "spark://spark-master:7077"
+            - name: REDIS_URL
+              value: "redis://redis:6379/0"
+            - name: BATCH_FORCE
+              value: "true"
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: OPENAI_API_KEY
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
