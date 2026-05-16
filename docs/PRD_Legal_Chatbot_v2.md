@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | **Mon hoc** | Xu ly Du lieu Lon |
-| **Phien ban** | 2.3 |
+| **Phien ban** | 2.4 |
 | **Ngay tao** | 26/3/2026 |
 | **Cap nhat** | 16/5/2026 |
 | **So thanh vien** | 5 nguoi |
@@ -33,7 +33,12 @@ Du an trien khai Lambda Architecture voi hai layer chinh:
 
 **Speed Layer (Spark Structured Streaming):** Xu ly van ban moi real-time ngay khi crawler thu thap duoc. Van ban moi xuat hien trong chatbot sau ~30 giay.
 
-**Batch Layer (Spark Batch — chay theo schedule):** Re-process toan bo corpus tu CSV/MinIO theo dinh ky (K8s CronJob `spark-batch`, mac dinh moi 6 gio; tuong duong docker-compose service `spark-batch-cron` voi `BATCH_INTERVAL_SECONDS=21600`). Co the trigger thu cong qua `run_batch.sh` khi can re-index khan cap.
+**Batch Layer (Spark Batch — chay theo schedule):** Re-process **master dataset** tu MinIO `phapluat/raw/{YYYY}/{MM}/*.json` (immutable per-doc JSON do kafka-consumer ghi). Cung 1 nguon o moi moi truong: K8s CronJob `spark-batch` (`0 */6 * * *`) va docker service `spark-batch-cron` (`BATCH_INTERVAL_SECONDS=21600`) doc cung path → khong con su khac biet local-FS vs container.
+
+Mac dinh batch lam **dedup-skip** (chi xu ly doc_id chua co trong ES) de tiet kiem token OpenAI. Khi can authoritative re-derive (vd upgrade embedding model, fix chunker), kich hoat `BATCH_FORCE=true`:
+
+- Local: `./run_batch.sh --force`
+- K8s: `kubectl apply -f k8s/app/spark-batch-force.yaml`
 
 **Serving Layer:** Elasticsearch (vector search + full-text) + Redis (cache) + FastAPI (RAG pipeline) + GPT-4o mini (sinh cau tra loi).
 
@@ -332,16 +337,24 @@ Spark Streaming (spark/streaming/consumer.py)
        v
 3. Kafka → Spark Streaming → ES (cung pipeline nhu realtime)
 
-Scheduled re-index (Lambda batch layer):
+Master dataset (immutable): MinIO phapluat/raw/{YYYY}/{MM}/{doc_id}.json
+                            (ghi boi kafka-consumer khi nhan moi message tu Kafka)
+
+Scheduled re-process (Lambda batch layer — dedup-skip mode):
     K8s     : CronJob `spark-batch` (schedule `0 */6 * * *` — moi 6 gio)
     Docker  : service `spark-batch-cron` (loop sleep ${BATCH_INTERVAL_SECONDS}, mac dinh 21600s)
+    Source  : MinIO `phapluat/raw/*/*/*.json` (cung 1 nguon o ca 2 moi truong)
 
-Re-index khan cap (manual):
-    Local   : ./run_batch.sh                # toan bo CSV trong crawler/output
-    K8s     : kubectl -n law-chatbot create job --from=cronjob/spark-batch spark-batch-manual
+Force re-embed (authoritative — sau khi upgrade model/chunker):
+    Local   : ./run_batch.sh --force
+    K8s     : kubectl apply -f k8s/app/spark-batch-force.yaml
+    Effect  : skip ES dedup, re-embed toan corpus
+
+Legacy local CSV (back-compat cho dev local):
+    Local   : ./run_batch.sh --local '*.csv'    # doc crawler/output/*.csv
 ```
 
-**Kich hoat thu cong khi:** (a) initial seed lan dau, (b) re-index sau su co, (c) nang cap model embedding. CronJob dam bao corpus on dinh khi co CSV moi roi vao `crawler/output/`.
+**CronJob dam bao** corpus duoc re-process dinh ky kem dedup-skip → bat duoc doc moi (do speed layer co the bo lo neu Kafka outage), va idempotent o tang chunk `_id` nen ghi de an toan.
 
 ### 5.3 Luong Serving (Nguoi dung hoi chatbot)
 
@@ -428,7 +441,8 @@ Tat ca service chay trong K8s namespace `law-chatbot`. Cot "Service port" la por
 | Spark Master | 7077 / 8080 | — | Deployment | Processing cluster |
 | Spark Worker | — | — | Deployment | Processing node |
 | spark-job | — | — | Deployment | Streaming: Kafka → ES (24/7) |
-| spark-batch | — | — | CronJob (`0 */6 * * *`) | Batch re-index full corpus (Lambda batch layer) |
+| spark-batch | — | — | CronJob (`0 */6 * * *`) | Batch re-process master dataset MinIO `raw/` (Lambda batch layer, dedup-skip) |
+| spark-batch-force | — | — | Job (manual apply) | Force re-embed corpus, skip ES dedup. Use sau khi upgrade embedding model/chunker |
 | es-snapshot-init | — | — | Job (one-shot) | Tao bucket `es-snapshots` + register repository S3 `phapluat-snapshots` |
 | es-snapshot | — | — | CronJob (`0 2 * * *`) | Snapshot daily `phapluat` + `phapluat-audit` → MinIO |
 | kafka-consumer | — | — | Deployment | Kafka → MinIO raw JSON dump |
@@ -505,16 +519,35 @@ Disaster recovery cho ca corpus va audit log:
 
 Script: `scripts/snapshot_elasticsearch.py` — idempotent, dung `httpx` PUT thay vi client lib de tranh version drift.
 
-### 8.5 Mapping tu nhom "Bai hoc kinh nghiem"
+### 8.5 Toi uu chi phi cho Batch Layer (Lambda) — Lessons Learned
+
+He thong su dung **convergent Lambda** (speed + batch ghi cung 1 ES index `phapluat`). Day la deliberate trade-off: tranh maintain 2 index rieng + complicated query-time merge, danh doi chinh "authoritative re-derivation" classic. Cac ky thuat dang dung va co the dung de tiet kiem chi phi:
+
+| Ky thuat | Trang thai | Mo ta | Tiet kiem |
+|---|---|---|---|
+| **Idempotent writes (deterministic ID)** | ✅ implemented | `_id = doc_id + md5(doc_id:chunk_text)[:12]` → batch chay lai chi upsert, khong duplicate | Khong ton dung luong ES, khong sai du lieu |
+| **Dedup-skip (BATCH_FORCE=false)** | ✅ implemented | Truoc khi embed, query ES aggregation `doc_id` → bo doc da co. Chi embed doc moi | ~99% chi phi OpenAI cho cac batch run sau initial seed |
+| **Driver-side batch embedding** | ✅ implemented | 100 texts/call OpenAI thay vi 1 text/call → giam so request | Giam ~99% so HTTP overhead |
+| **Cache invalidation event-driven** | ✅ implemented | Sau khi batch ghi ES thanh cong, xoa Redis `chat:*` → user thay doc moi ngay ma khong can doi TTL | Tranh stale response cho cau hoi cu |
+| **Authoritative escape hatch (BATCH_FORCE=true)** | ✅ implemented | Cho phep skip dedup khi can re-derive (upgrade model/chunker). Cost ~full initial embedding bill | Co the toi uu khi can mà van controlled |
+| **Hot/cold tiering (Parquet cho cold)** | ⚠️ partial | MinIO `raw/` JSON la cold archive; hot path la ES. Co the chuyen JSON sang Parquet khi corpus > 10k docs (column pruning) | ~10x giam IO khi scan cold archive |
+| **Incremental batch (watermark)** | ❌ not yet | Theo doi "last batch run timestamp", chi xu ly file MinIO co `LastModified > watermark` | Bo qua scan toan bo raw/ moi chu ky |
+| **Versioned embeddings** | ❌ not yet | Them field `embedding_model_version` vao ES; batch chi re-embed neu version khac → khong can BATCH_FORCE toan corpus | Cho phep gradual upgrade |
+| **Spot/preemptible compute** | n/a | Khong ap dung trong Minikube demo, nhung la lesson chinh cho production (batch chiu duoc kill, dung spot tiet kiem 60-80%) | — |
+| **API rate-limit circuit breaker** | ❌ not yet | Cap so OpenAI call per batch run, dung som neu vuot quota | Tranh runaway cost neu logic bug |
+
+**Lesson chinh:** Lambda batch trong thuc te khong phai "re-compute tat ca tu raw moi run" (do la textbook). De economical, batch can co incremental + idempotent + versioning. Day la su khac biet giua dien dan academic Lambda va production Lambda.
+
+### 8.6 Mapping tu nhom "Bai hoc kinh nghiem"
 
 | Nhom bai hoc | Implementation |
 |---|---|
 | Thu thap du lieu | Section 5.1, 5.2; crawler patchright + ES `--stop-on-seen` dedup |
-| Xu ly du lieu voi Spark | Section 4; `fetch_existing_doc_ids` + batch embed 100 texts/call |
+| Xu ly du lieu voi Spark | Section 4, 8.5; `fetch_existing_doc_ids` + batch embed 100 texts/call + BATCH_FORCE escape hatch |
 | Xu ly luong | Section 5.1; Kafka offset checkpoint + deterministic chunk `_id` |
-| Luu tru du lieu | Section 2.1, 2.2; MinIO hot (raw JSON) / cold (snapshot) + ES dense_vector |
+| Luu tru du lieu | Section 2.1, 2.2; MinIO `raw/` = master dataset (immutable JSON) + ES dense_vector + ES snapshot cold archive |
 | Tich hop he thong | Section 5.3; K8s service DNS + Redis cache + best-effort audit |
-| Toi uu hieu nang | Section 5.3; Redis TTL 1h + event-driven invalidation + hybrid search tuning |
+| Toi uu hieu nang | Section 5.3, 8.5; Redis TTL 1h + event-driven invalidation + hybrid search tuning + batch dedup-skip |
 | Giam sat & go loi | Section 3; Prometheus/Grafana + Kibana data dashboard + audit log analytics |
 | Mo rong (Scaling) | Section 7; Spark master/worker, ES single-node co the scale len multi-node |
 | Chat luong du lieu & kiem thu | Section 8.2, 8.3; eval framework + pytest |
@@ -624,6 +657,20 @@ legal-chatbot/
 ---
 
 ## 12. Changelog
+
+### v2.4 (16/5/2026)
+
+Lambda architecture cleanup — batch layer reads tu master dataset chung, k8s + docker doc cung 1 source:
+
+- **Master dataset:** MinIO `phapluat/raw/{YYYY}/{MM}/{doc_id}.json` (do `kafka-consumer` ghi tu Kafka) chinh thuc tro thanh nguon doc cho batch layer. Khong con doc tu `crawler/output/*.csv` (local FS).
+- **`spark/batch/pipeline.py`:** dung boto3 (da co trong requirements-spark) → list + fetch JSON tu MinIO, then `spark.createDataFrame`. Khong them hadoop-aws/s3a (boto3 noi chuyen voi MinIO truc tiep, ko can Spark Hadoop FileSystem layer).
+- **`BATCH_FORCE` env flag:** mac dinh `false` (dedup-skip — tiet kiem ~99% OpenAI cost). Set `true` → skip ES dedup, re-embed toan corpus. Trigger:
+  - `./run_batch.sh --force`
+  - `kubectl apply -f k8s/app/spark-batch-force.yaml` (one-shot Job)
+- **`run_batch.sh`:** them `--force` va `--local <glob>` flags. Default doc MinIO raw/; `--local` cho phep fall-back doc CSV trong `crawler/output/` (back-compat dev).
+- **Docker / K8s parity:** `spark-batch-cron` (docker) va `spark-batch` (K8s CronJob) doc cung MinIO `raw/`. K8s khong con "no data" gap, docker khong con phu thuoc bind-mount.
+- **Section 8.5 moi:** "Toi uu chi phi cho Batch Layer" — bai hoc Lambda kinh dien vs production reality, liet ke 9 ky thuat tiet kiem (5 da apply, 4 to-do).
+- **Architecture framing:** chinh thuc goi la "convergent Lambda" — speed + batch ghi 1 ES index chung, danh doi authoritative re-derivation classic de tranh complex query-time merge.
 
 ### v2.3 (16/5/2026)
 
