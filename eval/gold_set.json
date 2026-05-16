@@ -1,0 +1,77 @@
+{
+  "description": "Gold-set of Vietnamese legal queries with expected relevant doc keywords. Used by eval/run_eval.py to compute precision@k and recall@k against the deployed RAG pipeline.",
+  "queries": [
+    {
+      "id": "q1",
+      "question": "Điều kiện thành lập doanh nghiệp tư nhân là gì?",
+      "expected_categories": ["doanh-nghiep"],
+      "expected_keywords": ["doanh nghiệp tư nhân", "thành lập"]
+    },
+    {
+      "id": "q2",
+      "question": "Mức phạt khi vượt đèn đỏ là bao nhiêu?",
+      "expected_categories": ["giao-thong"],
+      "expected_keywords": ["vượt đèn đỏ", "phạt"]
+    },
+    {
+      "id": "q3",
+      "question": "Thuế thu nhập cá nhân tính như thế nào?",
+      "expected_categories": ["thue", "tai-chinh"],
+      "expected_keywords": ["thuế thu nhập cá nhân", "thuế suất"]
+    },
+    {
+      "id": "q4",
+      "question": "Quy định về thời gian thử việc tối đa?",
+      "expected_categories": ["lao-dong"],
+      "expected_keywords": ["thử việc", "lao động"]
+    },
+    {
+      "id": "q5",
+      "question": "Thủ tục đăng ký kết hôn cần giấy tờ gì?",
+      "expected_categories": ["bo-may-hanh-chinh"],
+      "expected_keywords": ["kết hôn", "đăng ký"]
+    },
+    {
+      "id": "q6",
+      "question": "Quyền sở hữu trí tuệ đối với sáng chế?",
+      "expected_categories": ["so-huu-tri-tue"],
+      "expected_keywords": ["sáng chế", "sở hữu trí tuệ"]
+    },
+    {
+      "id": "q7",
+      "question": "Hợp đồng đặt cọc mua bán bất động sản?",
+      "expected_categories": ["bat-dong-san"],
+      "expected_keywords": ["đặt cọc", "bất động sản"]
+    },
+    {
+      "id": "q8",
+      "question": "Trách nhiệm hình sự của người dưới 18 tuổi?",
+      "expected_categories": ["trach-nhiem-hinh-su"],
+      "expected_keywords": ["dưới 18 tuổi", "hình sự"]
+    },
+    {
+      "id": "q9",
+      "question": "Quy định bảo vệ dữ liệu cá nhân?",
+      "expected_categories": ["cong-nghe-thong-tin"],
+      "expected_keywords": ["dữ liệu cá nhân", "bảo vệ"]
+    },
+    {
+      "id": "q10",
+      "question": "Điều kiện hưởng bảo hiểm xã hội một lần?",
+      "expected_categories": ["bao-hiem"],
+      "expected_keywords": ["bảo hiểm xã hội", "một lần"]
+    },
+    {
+      "id": "q11",
+      "question": "Quy định về niêm yết chứng khoán?",
+      "expected_categories": ["chung-khoan"],
+      "expected_keywords": ["niêm yết", "chứng khoán"]
+    },
+    {
+      "id": "q12",
+      "question": "Thủ tục ly hôn đơn phương?",
+      "expected_categories": ["bo-may-hanh-chinh"],
+      "expected_keywords": ["ly hôn", "đơn phương"]
+    }
+  ]
+}
