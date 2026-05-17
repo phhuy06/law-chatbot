@@ -27,6 +27,19 @@ spec:
   selector:
     app: elasticsearch
 ---
+# MinIO credentials are loaded into the ES keystore at pod startup so the
+# repository-s3 module can read them. ES 8.x rejects inline access_key /
+# secret_key in the snapshot repository body — keystore is the only path.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: minio-creds
+  namespace: law-chatbot
+type: Opaque
+stringData:
+  access_key: "minioadmin"
+  secret_key: "minioadmin"
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -34,6 +47,10 @@ metadata:
   namespace: law-chatbot
 spec:
   replicas: 1
+  # PVC is ReadWriteOnce; rolling update would race two pods for the data
+  # lock. Recreate stops the old pod before starting the new one.
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: elasticsearch
@@ -49,6 +66,41 @@ spec:
           volumeMounts:
             - name: es-data
               mountPath: /usr/share/elasticsearch/data
+        # Build an ES keystore that holds S3 credentials for the
+        # repository-s3 module, copy it into a shared emptyDir, and mount
+        # it read-only into the main ES container via subPath. Idempotent:
+        # the keystore lives in emptyDir so it's regenerated on every pod
+        # restart from the Secret.
+        - name: load-keystore
+          image: law-chatbot/elasticsearch:latest
+          imagePullPolicy: Never
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
+              cd /usr/share/elasticsearch
+              # Fresh keystore each pod start
+              rm -f config/elasticsearch.keystore
+              bin/elasticsearch-keystore create
+              echo -n "$MINIO_ACCESS_KEY" | bin/elasticsearch-keystore add -x -f s3.client.default.access_key
+              echo -n "$MINIO_SECRET_KEY" | bin/elasticsearch-keystore add -x -f s3.client.default.secret_key
+              cp config/elasticsearch.keystore /keystore/elasticsearch.keystore
+              chmod 660 /keystore/elasticsearch.keystore
+          env:
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio-creds
+                  key: access_key
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio-creds
+                  key: secret_key
+          volumeMounts:
+            - name: keystore-shared
+              mountPath: /keystore
       containers:
         - name: elasticsearch
           image: law-chatbot/elasticsearch:latest
@@ -73,6 +125,10 @@ spec:
           volumeMounts:
             - name: es-data
               mountPath: /usr/share/elasticsearch/data
+            - name: keystore-shared
+              mountPath: /usr/share/elasticsearch/config/elasticsearch.keystore
+              subPath: elasticsearch.keystore
+              readOnly: true
           resources:
             requests:
               memory: "1Gi"
@@ -84,6 +140,8 @@ spec:
         - name: es-data
           persistentVolumeClaim:
             claimName: elasticsearch-pvc
+        - name: keystore-shared
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
@@ -120,12 +178,14 @@ spec:
           env:
             - name: ELASTICSEARCH_HOSTS
               value: "http://elasticsearch:9200"
+            - name: NODE_OPTIONS
+              value: "--max-old-space-size=768"
           resources:
             requests:
-              memory: "256Mi"
+              memory: "512Mi"
               cpu: "100m"
             limits:
-              memory: "512Mi"
+              memory: "1Gi"
               cpu: "500m"
 ---
 # es-init: initialize Elasticsearch indices with kNN mappings

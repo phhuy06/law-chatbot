@@ -23,6 +23,7 @@ spec:
       labels:
         app: spark-batch-force
     spec:
+      enableServiceLinks: false
       restartPolicy: OnFailure
       containers:
         - name: spark-batch-force

@@ -49,6 +49,10 @@ def ensure_bucket():
 
 
 def register_repo(es: Elasticsearch):
+    # ES 8.x reads S3 credentials from the keystore (s3.client.default.*).
+    # The keystore is built at ES pod startup by the `load-keystore`
+    # initContainer in k8s/infrastructure/elasticsearch.yaml, so we don't
+    # pass access_key / secret_key here.
     body = {
         "type": "s3",
         "settings": {
@@ -56,8 +60,6 @@ def register_repo(es: Elasticsearch):
             "endpoint": MINIO_ENDPOINT,
             "protocol": "http",
             "path_style_access": "true",
-            "access_key": MINIO_ACCESS_KEY,
-            "secret_key": MINIO_SECRET_KEY,
         },
     }
     # Use raw HTTP to avoid client-version-specific kwargs.

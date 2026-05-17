@@ -46,14 +46,21 @@ spec:
       labels:
         app: spark-master
     spec:
+      # Suppress auto-injected ${NAME}_PORT=tcp://… env vars that collide
+      # with Spark's own SPARK_MASTER_PORT integer config.
+      enableServiceLinks: false
       containers:
         - name: spark-master
           image: apache/spark:3.5.8-python3
           command: ["/bin/bash", "-c"]
           args: ["/opt/spark/bin/spark-class org.apache.spark.deploy.master.Master"]
           env:
+            # Bind to the pod IP (Service ClusterIP is not an interface on
+            # the pod and `bind` returns "Cannot assign requested address").
             - name: SPARK_MASTER_HOST
-              value: "spark-master"
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
           ports:
             - containerPort: 7077
             - containerPort: 8080
@@ -81,6 +88,7 @@ spec:
       labels:
         app: spark-worker
     spec:
+      enableServiceLinks: false
       containers:
         - name: spark-worker
           image: apache/spark:3.5.8-python3
@@ -115,6 +123,7 @@ spec:
       labels:
         app: spark-job
     spec:
+      enableServiceLinks: false
       initContainers:
         - name: wait-for-deps
           image: curlimages/curl:8.5.0
@@ -141,6 +150,13 @@ spec:
           env:
             - name: SPARK_MASTER_URL
               value: "spark://spark-master:7077"
+            # Required so the streaming consumer can SCAN+DEL chat:* keys
+            # after each foreachBatch write; without it
+            # invalidate_chat_cache() short-circuits and stale
+            # "không tìm thấy" answers stick in Redis even though the
+            # doc is freshly indexed in ES.
+            - name: REDIS_URL
+              value: "redis://redis:6379/0"
             - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -173,6 +189,7 @@ spec:
           labels:
             app: spark-batch
         spec:
+          enableServiceLinks: false
           restartPolicy: OnFailure
           containers:
             - name: spark-batch
