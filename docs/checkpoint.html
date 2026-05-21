@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kiến trúc tổng thể — ChatBot Pháp luật Việt Nam</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FAF7EF;
+    --paper-2: #F2EEE3;
+    --ink: #1A1A1A;
+    --ink-2: #3C3C3C;
+    --ink-muted: #6D6A62;
+    --accent:  #B0211F;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; background: var(--paper); }
+  body {
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 40px 28px 60px;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+    opacity: 0.028;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+  }
+
+  .frame { max-width: 1440px; margin: 0 auto; }
+
+  .diagram-wrap { background: var(--paper); padding: 0; position: relative; }
+  svg.diag { display: block; width: 100%; height: auto; }
+  svg.diag text { font-family: "IBM Plex Sans", sans-serif; }
+  .mono { font-family: "JetBrains Mono", monospace; }
+  .serif { font-family: "Fraunces", serif; }
+
+  /* ===== Info icon + tooltip ===== */
+  .info-icon { cursor: help; }
+  .info-icon circle { transition: fill 0.15s, stroke 0.15s; }
+  .info-icon text { transition: fill 0.15s; pointer-events: none; user-select: none; }
+  .info-icon:hover circle { fill: var(--accent); stroke: var(--accent); }
+  .info-icon:hover text { fill: #FAF7EF; }
+
+  .tooltip {
+    position: fixed;
+    display: none;
+    max-width: 420px;
+    background: #1F1E1A;
+    color: #FAF7EF;
+    padding: 14px 16px 13px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    z-index: 10000;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.22), 0 2px 6px rgba(0,0,0,0.12);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    white-space: pre-line;
+  }
+  .tooltip.show { opacity: 1; display: block; }
+  .tooltip b { color: #F1C26E; font-weight: 600; }
+  .tooltip i { color: #E6DFB0; font-style: italic; }
+  .tooltip code {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    background: rgba(255,255,255,0.08);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: #E6DFB0;
+  }
+
+  /* ===== Legend ===== */
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 22px;
+    justify-content: center;
+    margin-top: 28px;
+    font-size: 13px; color: var(--ink-muted);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .sw { width: 22px; height: 3px; display: inline-block; border-radius: 2px; }
+
+  footer.meta {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #D8D2C2;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--ink-muted);
+  }
+</style>
+</head>
+<body>
+<main class="frame">
+
+<div class="diagram-wrap">
+<svg class="diag" viewBox="0 0 1440 1240" xmlns="http://www.w3.org/2000/svg" role="img"
+     aria-label="Kiến trúc tổng thể ChatBot Pháp luật Việt Nam">
+  <defs>
+    <filter id="soft" x="-6%" y="-10%" width="112%" height="120%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1.4"/>
+      <feOffset dx="0" dy="1.5" result="o"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.18"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <marker id="a"  viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#1A1A1A"/>
+    </marker>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#B0211F"/>
+    </marker>
+    <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#2B4870"/>
+    </marker>
+
+    <symbol id="info" overflow="visible">
+      <circle r="8" fill="#FAF7EF" stroke="#6D6A62" stroke-width="1.2"/>
+      <text text-anchor="middle" y="4" font-family="Fraunces, serif" font-size="12" font-style="italic" font-weight="600" fill="#6D6A62">i</text>
+    </symbol>
+    <symbol id="info-sm" overflow="visible">
+      <circle r="7" fill="#FAF7EF" stroke="#6D6A62" stroke-width="1.1"/>
+      <text text-anchor="middle" y="3.5" font-family="Fraunces, serif" font-size="10.5" font-style="italic" font-weight="600" fill="#6D6A62">i</text>
+    </symbol>
+  </defs>
+
+  <!-- ========== EXTERNAL ROW ========== -->
+  <g filter="url(#soft)">
+    <rect x="80" y="30" width="280" height="70" rx="10" fill="#FAF7EF" stroke="#1A1A1A" stroke-width="1.3"/>
+  </g>
+  <circle cx="108" cy="68" r="5" fill="#1A1A1A"/>
+  <text x="126" y="72" font-size="17" font-weight="600">thuvienphapluat.vn</text>
+  <g class="info-icon" data-key="tvpl" transform="translate(345, 45)"><use href="#info"/></g>
+
+  <g filter="url(#soft)">
+    <rect x="1080" y="30" width="280" height="70" rx="10" fill="#FAF7EF" stroke="#1A1A1A" stroke-width="1.3"/>
+  </g>
+  <circle cx="1108" cy="68" r="5" fill="#1A1A1A"/>
+  <text x="1126" y="72" font-size="17" font-weight="600">OpenAI API</text>
+  <g class="info-icon" data-key="openai" transform="translate(1345, 45)"><use href="#info"/></g>
+
+  <!-- ========== NAMESPACE FRAME ========== -->
+  <rect x="40" y="130" width="1360" height="1080" rx="14" fill="none"
+        stroke="#B9B2A0" stroke-width="1.3" stroke-dasharray="6 4"/>
+  <g>
+    <rect x="60" y="118" width="280" height="22" rx="11" fill="#FAF7EF"/>
+    <text x="72" y="134" class="mono" font-size="11" fill="#6D6A62" letter-spacing="2">KUBERNETES · namespace: law-chatbot</text>
+  </g>
+
+  <!-- ================== LAYER 01 — INGESTION ================== -->
+  <rect x="60" y="160" width="1320" height="160" rx="10" fill="#F4EEE0" opacity="0.55"/>
+  <rect x="60" y="160" width="5" height="160" fill="#C08A1A"/>
+  <text x="78" y="182" class="mono" font-size="11" fill="#8A6515" letter-spacing="2.5">01 · THU THẬP DỮ LIỆU</text>
+
+  <!-- Crawler -->
+  <g filter="url(#soft)">
+    <rect x="110" y="200" width="280" height="104" rx="10" fill="#FAF7EF" stroke="#1A1A1A" stroke-width="1.3"/>
+  </g>
+  <circle cx="132" cy="224" r="6" fill="#C08A1A"/>
+  <text x="148" y="229" font-size="19" font-weight="600">Crawler</text>
+  <text x="130" y="258" class="mono" font-size="12" fill="#6D6A62">Patchright · mỗi giờ</text>
+  <g class="info-icon" data-key="crawler" transform="translate(375, 215)"><use href="#info"/></g>
+
+  <!-- Kafka -->
+  <g filter="url(#soft)">
+    <rect x="450" y="200" width="280" height="104" rx="10" fill="#FAF7EF" stroke="#1A1A1A" stroke-width="1.3"/>
+  </g>
+  <circle cx="472" cy="224" r="6" fill="#C08A1A"/>
+  <text x="488" y="229" font-size="19" font-weight="600">Kafka</text>
+  <text x="470" y="258" class="mono" font-size="12" fill="#6D6A62">topic: van-ban-phap-luat</text>
+  <text x="470" y="282" font-size="14" fill="#3C3C3C" font-style="italic">Hàng đợi thông điệp</text>
+  <g class="info-icon" data-key="kafka" transform="translate(715, 215)"><use href="#info"/></g>
+
+  <!-- MinIO -->
+  <g filter="url(#soft)">
+    <rect x="790" y="200" width="540" height="104" rx="10" fill="#FAF7EF" stroke="#1A1A1A" stroke-width="1.3"/>
+  </g>
+  <circle cx="812" cy="224" r="6" fill="#C08A1A"/>
+  <text x="828" y="229" font-size="19" font-weight="600">MinIO</text>
+  <text x="810" y="258" class="mono" font-size="12" fill="#6D6A62">bucket: phapluat · S3 compatible</text>
+  <text x="810" y="282" font-size="14" fill="#3C3C3C" font-style="italic">Lưu trữ đối tượng</text>
+  <g class="info-icon" data-key="minio" transform="translate(1315, 215)"><use href="#info"/></g>
+
+  <!-- Arrows in band 01 -->
+  <line x1="220" y1="100" x2="220" y2="198" stroke="#1A1A1A" stroke-width="1.6" marker-end="url(#a)"/>
+  <rect x="232" y="138" width="64" height="20" rx="4" fill="#FAF7EF" stroke="none"/>
+  <text x="264" y="152" text-anchor="middle" font-size="12" fill="#3C3C3C" font-style="italic">thu thập</text>
+
+  <line x1="390" y1="252" x2="448" y2="252" stroke="#1A1A1A" stroke-width="1.6" marker-end="url(#a)"/>
+  <rect x="395" y="231" width="50" height="18" rx="4" fill="#FAF7EF"/>
+  <text x="420" y="245" text-anchor="middle" class="mono" font-size="11" fill="#6D6A62">publish</text>
+
+  <line x1="730" y1="252" x2="788" y2="252" stroke="#1A1A1A" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#a)"/>
+  <rect x="721" y="231" width="80" height="18" rx="4" fill="#FAF7EF"/>
+  <text x="761" y="245" text-anchor="middle" class="mono" font-size="11" fill="#6D6A62">per-doc JSON</text>
+
+  <!-- ================== LAYER 02 — PROCESSING ================== -->
+  <rect x="60" y="340" width="1320" height="260" rx="10" fill="#FDF4E3" opacity="0.7"/>
+  <rect x="60" y="340" width="5" height="260" fill="#C08A1A"/>
+  <text x="78" y="362" class="mono" font-size="11" fill="#8A6515" letter-spacing="2.5">02 · XỬ LÝ DỮ LIỆU (SPARK)</text>
+
+  <!-- Spark Streaming -->
+  <g filter="url(#soft)">
+    <rect x="110" y="385" width="890" height="195" rx="12" fill="#FAF7EF" stroke="#C08A1A" stroke-width="1.8"/>
+  </g>
+  <rect x="110" y="385" width="890" height="38" rx="12" fill="#FDF4E3"/>
+  <rect x="110" y="411" width="890" height="12" fill="#FDF4E3"/>
+  <text x="130" y="410" font-family="Fraunces, serif" font-size="20" font-weight="600">Spark Structured Streaming</text>
+  <text x="955" y="410" text-anchor="end" class="mono" font-size="11" fill="#C08A1A" letter-spacing="2">SPEED LAYER · 24/7</text>
+  <g class="info-icon" data-key="streaming" transform="translate(980, 402)"><use href="#info"/></g>
+
+  <!-- 4 pipeline steps inside streaming -->
+  <g>
+    <rect x="140" y="448" width="190" height="110" rx="8" fill="#FAF7EF" stroke="#D9C795" stroke-width="1.3"/>
+    <text x="235" y="484" text-anchor="middle" font-size="15" font-weight="600">Làm sạch</text>
+    <text x="235" y="506" text-anchor="middle" class="mono" font-size="11" fill="#6D6A62">clean_text UDF</text>
+    <text x="235" y="528" text-anchor="middle" font-size="12" fill="#3C3C3C" font-style="italic">bỏ HTML · NFC</text>
+    <g class="info-icon" data-key="clean" transform="translate(315, 460)"><use href="#info-sm"/></g>
+  </g>
+
+  <g>
+    <rect x="345" y="448" width="190" height="110" rx="8" fill="#FAF7EF" stroke="#D9C795" stroke-width="1.3"/>
+    <text x="440" y="484" text-anchor="middle" font-size="15" font-weight="600">Chia đoạn</text>
+    <text x="440" y="506" text-anchor="middle" class="mono" font-size="11" fill="#6D6A62">chunk_text UDF</text>
+    <text x="440" y="528" text-anchor="middle" font-size="12" fill="#3C3C3C" font-style="italic">1000 ký tự · overlap 100</text>
+    <g class="info-icon" data-key="chunk" transform="translate(520, 460)"><use href="#info-sm"/></g>
+  </g>
+
+  <g>
+    <rect x="550" y="448" width="190" height="110" rx="8" fill="#FAF7EF" stroke="#B0211F" stroke-width="1.6"/>
+    <text x="645" y="484" text-anchor="middle" font-size="15" font-weight="600">Kiểm tra trùng</text>
+    <text x="645" y="506" text-anchor="middle" class="mono" font-size="11" fill="#6D6A62">truy vấn ES agg</text>
+    <text x="645" y="528" text-anchor="middle" font-size="12" fill="#3C3C3C" font-style="italic">bỏ doc_id đã có</text>
+    <g class="info-icon" data-key="dedup" transform="translate(725, 460)"><use href="#info-sm"/></g>
+  </g>
+
+  <g>
+    <rect x="755" y="448" width="220" height="110" rx="8" fill="#FAF7EF" stroke="#D9C795" stroke-width="1.3"/>
+    <text x="865" y="484" text-anchor="middle" font-size="15" font-weight="600">Embed theo lô</text>
+    <text x="865" y="506" text-anchor="middle" class="mono" font-size="11" fill="#6D6A62">text-embedding-3-small</text>
+    <text x="865" y="528" text-anchor="middle" font-size="12" fill="#3C3C3C" font-style="italic">100 văn bản / request</text>
+    <g class="info-icon" data-key="embed" transform="translate(960, 460)"><use href="#info-sm"/></g>
+  </g>
+
+  <!-- Inner arrows -->
+  <line x1="330" y1="503" x2="343" y2="503" stroke="#1A1A1A" stroke-width="1.4" marker-end="url(#a)"/>
+  <line x1="535" y1="503" x2="548" y2="503" stroke="#1A1A1A" stroke-width="1.4" marker-end="url(#a)"/>
+  <line x1="740" y1="503" x2="753" y2="503" stroke="#1A1A1A" stroke-width="1.4" marker-end="url(#a)"/>
+
+  <!-- Spark Batch -->
+  <g filter="url(#soft)">
+    <rect x="1040" y="385" width="290" height="195" rx="12" fill="#FAF7EF" stroke="#5A6B3A" stroke-width="1.8"/>
+  </g>
+  <rect x="1040" y="385" width="290" height="38" rx="12" fill="#EEF3E5"/>
+  <rect x="1040" y="411" width="290" height="12" fill="#EEF3E5"/>
+  <text x="1060" y="410" font-family="Fraunces, serif" font-size="20" font-weight="600">Spark Batch</text>
+  <text x="1290" y="410" text-anchor="end" class="mono" font-size="10.5" fill="#5A6B3A" letter-spacing="1.5">CRONJOB · MỖI 6H</text>
+  <g class="info-icon" data-key="batch" transform="translate(1315, 402)"><use href="#info"/></g>
+
+  <text x="1060" y="452" font-size="13" fill="#3C3C3C" font-style="italic">Re-process master dataset MinIO raw/</text>
+  <text x="1060" y="480" font-size="13" fill="#3C3C3C">• Dedup-skip mặc định (cheap)</text>
+  <text x="1060" y="502" font-size="13" fill="#3C3C3C">• BATCH_FORCE=true → re-embed</text>
+  <text x="1060" y="524" font-size="13" fill="#3C3C3C">• Lambda batch layer hội tụ ES</text>
+  <text x="1060" y="552" class="mono" font-size="11" fill="#6D6A62">Cùng logic clean + chunk + embed</text>
+
+  <!-- Kafka → Spark Streaming -->
+  <line x1="590" y1="304" x2="590" y2="383" stroke="#1A1A1A" stroke-width="1.6" marker-end="url(#a)"/>
+  <rect x="598" y="333" width="74" height="18" rx="4" fill="#FDF4E3"/>
+  <text x="635" y="347" text-anchor="middle" class="mono" font-size="11" fill="#6D6A62">readStream</text>
+
+  <!-- MinIO → Spark Batch -->
+  <line x1="1185" y1="304" x2="1185" y2="383" stroke="#1A1A1A" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#a)"/>
+  <rect x="1186" y="333" width="84" height="18" rx="4" fill="#FDF4E3"/>
+  <text x="1228" y="347" text-anchor="middle" class="mono" font-size="11" fill="#6D6A62">read raw/ (boto3)</text>
+
+  <!-- Streaming → OpenAI -->
+  <path d="M 975 503 L 1020 503 L 1020 594 L 1388 594 L 1388 60 L 1362 60" fill="none" stroke="#B0211F" stroke-width="1.4" stroke-dasharray="5 3" marker-end="url(#ar)"/>
+  <rect x="1140" y="584" width="130" height="20" rx="4" fill="#FDF4E3"/>
+  <text x="1205" y="598" text-anchor="middle" font-size="12" fill="#B0211F" font-style="italic">embed indexing</text>
+
+  <!-- Batch → OpenAI -->
+  <path d="M 1330 430 L 1372 430 L 1372 50 L 1362 50" fill="none" stroke="#B0211F" stroke-width="1.3" stroke-dasharray="5 3" marker-end="url(#ar)"/>
+
+  <!-- ================== LAYER 03 — STORAGE ================== -->
+  <rect x="60" y="620" width="1320" height="160" rx="10" fill="#E9EFEC" opacity="0.7"/>
+  <rect x="60" y="620" width="5" height="160" fill="#34716C"/>
+  <text x="78" y="642" class="mono" font-size="11" fill="#245955" letter-spacing="2.5">03 · LƯU TRỮ</text>
+
+  <!-- Elasticsearch -->
+  <g filter="url(#soft)">
+    <rect x="110" y="660" width="320" height="104" rx="10" fill="#FAF7EF" stroke="#34716C" stroke-width="1.7"/>
+  </g>
+  <circle cx="132" cy="684" r="6" fill="#34716C"/>
+  <text x="148" y="689" font-size="19" font-weight="600">Elasticsearch</text>
+  <text x="130" y="718" class="mono" font-size="12" fill="#6D6A62">phapluat + phapluat-audit</text>
+  <text x="130" y="742" font-size="14" fill="#3C3C3C" font-style="italic">kNN 1536d · snapshot → MinIO (keystore)</text>
+  <g class="info-icon" data-key="es" transform="translate(415, 675)"><use href="#info"/></g>
+
+  <!-- Redis -->
+  <g filter="url(#soft)">
+    <rect x="470" y="660" width="280" height="104" rx="10" fill="#FAF7EF" stroke="#34716C" stroke-width="1.7"/>
+  </g>
+  <circle cx="492" cy="684" r="6" fill="#34716C"/>
+  <text x="508" y="689" font-size="19" font-weight="600">Redis</text>
+  <text x="490" y="718" class="mono" font-size="12" fill="#6D6A62">chat:{sha256(q)} · TTL 1 giờ</text>
+  <text x="490" y="742" font-size="14" fill="#3C3C3C" font-style="italic">Bộ nhớ đệm câu trả lời</text>
+  <g class="info-icon" data-key="redis" transform="translate(735, 675)"><use href="#info"/></g>
+
+  <!-- Kibana -->
+  <g filter="url(#soft)">
+    <rect x="790" y="660" width="280" height="104" rx="10" fill="#FAF7EF" stroke="#34716C" stroke-width="1.7"/>
+  </g>
+  <circle cx="812" cy="684" r="6" fill="#34716C"/>
+  <text x="828" y="689" font-size="19" font-weight="600">Kibana</text>
+  <text x="810" y="718" class="mono" font-size="12" fill="#6D6A62">:5601</text>
+  <text x="810" y="742" font-size="14" fill="#3C3C3C" font-style="italic">Dashboard thống kê corpus</text>
+  <g class="info-icon" data-key="kibana" transform="translate(1055, 675)"><use href="#info"/></g>
+
+  <!-- Spark Cluster badge -->
+  <g filter="url(#soft)">
+    <rect x="1110" y="660" width="220" height="104" rx="10" fill="#FAF7EF" stroke="#1A1A1A" stroke-width="1.3" stroke-dasharray="4 3"/>
+  </g>
+  <text x="1220" y="695" text-anchor="middle" font-size="17" font-weight="600">Spark Cluster</text>
+  <text x="1220" y="718" text-anchor="middle" class="mono" font-size="12" fill="#6D6A62">Master + Worker</text>
+  <text x="1220" y="742" text-anchor="middle" font-size="13" font-style="italic" fill="#3C3C3C">điều phối cả 2 layer</text>
+  <g class="info-icon" data-key="spark-cluster" transform="translate(1315, 675)"><use href="#info"/></g>
+
+  <!-- Streaming → ES -->
+  <line x1="270" y1="580" x2="270" y2="658" stroke="#1A1A1A" stroke-width="1.7" marker-end="url(#a)"/>
+  <rect x="278" y="610" width="72" height="18" rx="4" fill="#E9EFEC"/>
+  <text x="314" y="624" text-anchor="middle" class="mono" font-size="11" fill="#3C3C3C">bulk ghi</text>
+
+  <!-- Streaming → Redis -->
+  <line x1="610" y1="580" x2="610" y2="658" stroke="#B0211F" stroke-width="1.4" stroke-dasharray="5 3" marker-end="url(#ar)"/>
+  <rect x="615" y="610" width="78" height="18" rx="4" fill="#E9EFEC"/>
+  <text x="654" y="624" text-anchor="middle" font-size="11.5" fill="#B0211F" font-style="italic">xóa cache</text>
+
+  <!-- Batch → ES -->
+  <path d="M 1185 580 L 1185 612 L 430 612 L 430 658" fill="none" stroke="#1A1A1A" stroke-width="1.3" stroke-dasharray="4 3"/>
+  <polygon points="425,652 430,664 435,652" fill="#1A1A1A"/>
+  <rect x="900" y="603" width="80" height="18" rx="4" fill="#E9EFEC"/>
+  <text x="940" y="617" text-anchor="middle" class="mono" font-size="11" fill="#6D6A62">bulk ghi</text>
+
+  <!-- ES → Kibana -->
+  <path d="M 270 660 L 270 648 L 930 648 L 930 658" fill="none" stroke="#1A1A1A" stroke-width="1.4" marker-end="url(#a)"/>
+  <rect x="577" y="638" width="46" height="18" rx="4" fill="#E9EFEC"/>
+  <text x="600" y="652" text-anchor="middle" class="mono" font-size="11" fill="#6D6A62">read</text>
+
+  <!-- ================== LAYER 04 — SERVING ================== -->
+  <rect x="60" y="800" width="1320" height="140" rx="10" fill="#E9EFF5" opacity="0.7"/>
+  <rect x="60" y="800" width="5" height="140" fill="#2B4870"/>
+  <text x="78" y="822" class="mono" font-size="11" fill="#1C3556" letter-spacing="2.5">04 · PHỤC VỤ NGƯỜI DÙNG</text>
+
+  <!-- FastAPI -->
+  <g filter="url(#soft)">
+    <rect x="110" y="840" width="480" height="84" rx="10" fill="#FAF7EF" stroke="#2B4870" stroke-width="1.7"/>
+  </g>
+  <circle cx="132" cy="864" r="6" fill="#2B4870"/>
+  <text x="148" y="872" font-size="19" font-weight="600">FastAPI Backend</text>
+  <text x="130" y="898" class="mono" font-size="12" fill="#6D6A62">POST /api/chat · RAG + audit (PII redact)</text>
+  <g class="info-icon" data-key="fastapi" transform="translate(575, 855)"><use href="#info"/></g>
+
+  <!-- Frontend -->
+  <g filter="url(#soft)">
+    <rect x="630" y="840" width="340" height="84" rx="10" fill="#FAF7EF" stroke="#6C3F6A" stroke-width="1.7"/>
+  </g>
+  <circle cx="652" cy="864" r="6" fill="#6C3F6A"/>
+  <text x="668" y="872" font-size="19" font-weight="600">React Frontend</text>
+  <text x="650" y="898" class="mono" font-size="12" fill="#6D6A62">Vite · TypeScript · Nginx :3000</text>
+  <g class="info-icon" data-key="frontend" transform="translate(955, 855)"><use href="#info"/></g>
+
+  <!-- User -->
+  <g filter="url(#soft)">
+    <rect x="1010" y="840" width="320" height="84" rx="10" fill="#FAF7EF" stroke="#1A1A1A" stroke-width="1.3"/>
+  </g>
+  <circle cx="1032" cy="864" r="6" fill="#1A1A1A"/>
+  <text x="1048" y="872" font-size="19" font-weight="600">Người dùng</text>
+  <text x="1030" y="898" font-size="13.5" fill="#3C3C3C" font-style="italic">đặt câu hỏi pháp luật</text>
+  <g class="info-icon" data-key="user" transform="translate(1315, 855)"><use href="#info"/></g>
+
+  <!-- ES → FastAPI -->
+  <line x1="200" y1="764" x2="200" y2="838" stroke="#2B4870" stroke-width="1.6" marker-end="url(#ab)"/>
+  <rect x="206" y="787" width="110" height="20" rx="4" fill="#E9EFF5"/>
+  <text x="261" y="801" text-anchor="middle" class="mono" font-size="11" fill="#2B4870">hybrid search</text>
+
+  <!-- Redis → FastAPI -->
+  <line x1="500" y1="764" x2="500" y2="838" stroke="#2B4870" stroke-width="1.6" marker-end="url(#ab)"/>
+  <rect x="506" y="787" width="100" height="20" rx="4" fill="#E9EFF5"/>
+  <text x="556" y="801" text-anchor="middle" class="mono" font-size="11" fill="#2B4870">get · setex</text>
+
+  <!-- FastAPI → OpenAI -->
+  <path d="M 590 840 L 590 792 L 1396 792 L 1396 70 L 1362 70" fill="none" stroke="#2B4870" stroke-width="1.4" stroke-dasharray="5 3" marker-end="url(#ab)"/>
+  <rect x="1170" y="782" width="224" height="20" rx="4" fill="#FAF7EF"/>
+  <text x="1282" y="797" text-anchor="middle" font-size="12" fill="#2B4870" font-style="italic">embed câu hỏi + gpt-4o-mini</text>
+
+  <!-- FastAPI ↔ Frontend -->
+  <line x1="590" y1="876" x2="628" y2="876" stroke="#1A1A1A" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="630" y1="896" x2="592" y2="896" stroke="#1A1A1A" stroke-width="1.6" marker-end="url(#a)"/>
+
+  <!-- Frontend ↔ User -->
+  <line x1="970" y1="876" x2="1008" y2="876" stroke="#1A1A1A" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="1010" y1="896" x2="972" y2="896" stroke="#1A1A1A" stroke-width="1.6" marker-end="url(#a)"/>
+
+  <!-- ================== LAYER 05 — OBSERVABILITY ================== -->
+  <rect x="60" y="970" width="1320" height="200" rx="10" fill="#EDE9F3" opacity="0.7"/>
+  <rect x="60" y="970" width="5" height="200" fill="#6C3F6A"/>
+  <text x="78" y="992" class="mono" font-size="11" fill="#4F2C4E" letter-spacing="2.5">05 · GIÁM SÁT &amp; VẬN HÀNH</text>
+
+  <!-- Prometheus -->
+  <g filter="url(#soft)">
+    <rect x="110" y="1010" width="320" height="100" rx="10" fill="#FAF7EF" stroke="#6C3F6A" stroke-width="1.7"/>
+  </g>
+  <circle cx="132" cy="1034" r="6" fill="#6C3F6A"/>
+  <text x="148" y="1039" font-size="19" font-weight="600">Prometheus</text>
+  <text x="130" y="1068" class="mono" font-size="12" fill="#6D6A62">scrape pods + services (RBAC)</text>
+  <text x="130" y="1092" font-size="14" fill="#3C3C3C" font-style="italic">Retention 15 ngày · PVC 10Gi</text>
+  <g class="info-icon" data-key="prometheus" transform="translate(415, 1025)"><use href="#info"/></g>
+
+  <!-- Grafana -->
+  <g filter="url(#soft)">
+    <rect x="470" y="1010" width="320" height="100" rx="10" fill="#FAF7EF" stroke="#6C3F6A" stroke-width="1.7"/>
+  </g>
+  <circle cx="492" cy="1034" r="6" fill="#6C3F6A"/>
+  <text x="508" y="1039" font-size="19" font-weight="600">Grafana</text>
+  <text x="490" y="1068" class="mono" font-size="12" fill="#6D6A62">datasource provisioned</text>
+  <text x="490" y="1092" font-size="14" fill="#3C3C3C" font-style="italic">Dashboard infra · NodePort 30300</text>
+  <g class="info-icon" data-key="grafana" transform="translate(775, 1025)"><use href="#info"/></g>
+
+  <!-- K8s Jobs / CronJobs -->
+  <g filter="url(#soft)">
+    <rect x="830" y="1010" width="500" height="100" rx="10" fill="#FAF7EF" stroke="#1A1A1A" stroke-width="1.3" stroke-dasharray="4 3"/>
+  </g>
+  <text x="850" y="1039" font-size="17" font-weight="600">K8s Jobs · CronJobs</text>
+  <text x="850" y="1063" class="mono" font-size="11.5" fill="#6D6A62">es-init · kafka-init · kibana-init · es-snapshot-init  (one-shot)</text>
+  <text x="850" y="1083" class="mono" font-size="11.5" fill="#6D6A62">spark-batch  0 */6 * * *  ·  es-snapshot  0 2 * * *</text>
+  <text x="850" y="1103" class="mono" font-size="11.5" fill="#6D6A62">spark-batch-force  (manual: kubectl apply)</text>
+  <g class="info-icon" data-key="cronjobs" transform="translate(1315, 1025)"><use href="#info"/></g>
+
+  <!-- Prometheus → up (symbolic scrape) -->
+  <line x1="270" y1="1008" x2="270" y2="960" stroke="#6C3F6A" stroke-width="1.4" stroke-dasharray="3 3"/>
+  <line x1="270" y1="960" x2="690" y2="960" stroke="#6C3F6A" stroke-width="1.4" stroke-dasharray="3 3"/>
+  <rect x="430" y="945" width="120" height="20" rx="4" fill="#EDE9F3"/>
+  <text x="490" y="959" text-anchor="middle" class="mono" font-size="11" fill="#6C3F6A">scrape /metrics</text>
+
+  <!-- Grafana ← Prometheus -->
+  <line x1="432" y1="1058" x2="468" y2="1058" stroke="#6C3F6A" stroke-width="1.4" marker-end="url(#ar)"/>
+  <text x="450" y="1052" text-anchor="middle" class="mono" font-size="9.5" fill="#6C3F6A">query</text>
+
+  <!-- ES → MinIO es-snapshots/ (snapshot data flow, routed through the
+       inter-layer gap to avoid crossing other boxes) -->
+  <path d="M 270 658 L 270 610 L 1345 610 L 1345 280 L 1330 280"
+        fill="none" stroke="#34716C" stroke-width="1.3" stroke-dasharray="6 3" marker-end="url(#a)"/>
+  <rect x="660" y="600" width="180" height="20" rx="4" fill="#FAF7EF" stroke="#34716C" stroke-width="0.8"/>
+  <text x="750" y="614" text-anchor="middle" class="mono" font-size="10.5" fill="#34716C">snapshot → es-snapshots/</text>
+
+  <!-- Audit log path: FastAPI → phapluat-audit -->
+  <path d="M 380 838 L 380 800 L 380 770" fill="none" stroke="#B0211F" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <polygon points="375,770 380,758 385,770" fill="#B0211F"/>
+  <rect x="316" y="780" width="128" height="20" rx="4" fill="#E9EFF5"/>
+  <text x="380" y="794" text-anchor="middle" class="mono" font-size="10.5" fill="#B0211F">audit → phapluat-audit</text>
+</svg>
+</div>
+
+<div id="tooltip" class="tooltip" role="tooltip" aria-hidden="true"></div>
+
+</main>
+
+<script>
+(() => {
+  // Tooltip content — built as structured tokens then rendered via safe DOM APIs.
+  // Tokens: "text" (plain), ["b","text"] (bold), ["i","text"] (italic),
+  //         ["code","text"] (code), ["br"] (line break).
+  const TT = {
+    tvpl: [
+      "Trang web nguồn thu thập văn bản pháp luật. Crawler quét định kỳ hub ",
+      ["code", "/hoi-dap-phap-luat"],
+      ", tự khám phá mọi category slug và lấy danh sách bài trong pages 1-3 newest-first."
+    ],
+    openai: [
+      "Hai endpoint được sử dụng:", ["br"],
+      "• ", ["b", "text-embedding-3-small"], " — sinh vector 1536 chiều cho cả indexing (Spark) và query (Backend).", ["br"],
+      "• ", ["b", "gpt-4o-mini"], " — sinh câu trả lời từ context pháp luật, temperature 0.3, max 1024 tokens, trả JSON có ",
+      ["code", "used_sources"], "."
+    ],
+    crawler: [
+      ["b", "Patchright"], " (Playwright + stealth patches) chạy headed Chrome với persistent profile để giữ cookie ",
+      ["code", "cf_clearance"], ". Cron ", ["code", "run_hourly.sh"],
+      ": list-categories → sweep pages 1-3 từng category với ", ["code", "--stop-on-seen"],
+      ". Xuất CSV 10 cột + publish Kafka + upload MinIO backup nếu có row mới."
+    ],
+    kafka: [
+      ["b", "Apache Kafka 7.6.0"], " + Zookeeper. Topic ", ["code", "van-ban-phap-luat"],
+      " (1 partition, replication 1). Message ", ["b", "key = doc_id"],
+      " đảm bảo partitioning in-order cho cùng bài. Retention ", ["b", "168 giờ (7 ngày)"],
+      " cho phép replay từ offset cũ khi cần re-process với embedding model mới."
+    ],
+    minio: [
+      ["b", "S3-compatible"], " object storage. Hai bucket:", ["br"],
+      ["b", "phapluat/"], ":", ["br"],
+      "• ", ["code", "csv/*.csv"], " — upload thủ công (data-ingest poll vào Kafka)", ["br"],
+      "• ", ["code", "csv/backup/*.csv"], " — crawler tự upload sau khi có row mới", ["br"],
+      "• ", ["code", "csv/processed/*.csv"], " — sau khi data-ingest xử lý", ["br"],
+      "• ", ["code", "raw/{YYYY}/{MM}/{doc_id}.json"], " — ", ["b", "master dataset"],
+      " (kafka-consumer ghi từng văn bản, Spark Batch đọc qua boto3)", ["br"],
+      ["b", "es-snapshots/"], " — ES snapshot daily, repo ", ["code", "phapluat-snapshots"],
+      ", ", ["b", "disaster recovery"], " (verified: snap-20260517 state=SUCCESS, 28 files ~5MB).", ["br"],
+      "UI web tại :9001."
+    ],
+    streaming: [
+      ["b", "Spark Structured Streaming 3.5.8"], ". readStream từ Kafka với ",
+      ["code", "maxOffsetsPerTrigger=3"], ", output mode ", ["b", "append"],
+      ", checkpoint local ", ["code", "checkpoints/streaming_python/"], ". ",
+      ["code", "foreachBatch"], " làm 4 việc: kiểm tra trùng → embed theo lô → bulk ghi ES → invalidate Redis cache. Chạy liên tục 24/7."
+    ],
+    clean: [
+      ["b", "UDF Python"], " (", ["code", "spark/utils/udfs.py"], "): BeautifulSoup ",
+      ["code", ".get_text()"], " bỏ HTML tag, ", ["code", "unicodedata.normalize('NFC')"],
+      " chuẩn hoá tiếng Việt, regex collapse whitespace."
+    ],
+    chunk: [
+      ["b", "UDF Python"], ": split câu theo dấu chấm / xuống dòng, gom dần đến tối đa ",
+      ["b", "1000 ký tự"], " mỗi chunk, ", ["b", "overlap 100"],
+      " ký tự giữa 2 chunk liên tiếp để giữ ngữ cảnh. Dùng ",
+      ["code", "explode('chunks')"], " để fan-out."
+    ],
+    dedup: [
+      "Trong ", ["code", "foreachBatch"], ": lấy unique ", ["code", "doc_id"],
+      " của batch, query ES aggregation (", ["code", "terms on doc_id"],
+      "), bỏ mọi chunk thuộc doc_id đã có trong index. Giúp ",
+      ["b", "tiết kiệm token OpenAI"], " và đảm bảo không tạo bản sao trong ES."
+    ],
+    embed: [
+      ["code", "client.embeddings.create(model='text-embedding-3-small', input=[100 texts])"],
+      ". Batch 100 texts / request giảm latency và cost đáng kể so với per-chunk. Output ",
+      ["b", "vector 1536 chiều"], " float32. Không có API key → fill zeros fallback."
+    ],
+    batch: [
+      ["b", "Lambda batch layer (hội tụ)"], " — cùng code path ", ["i", "clean → chunk → embed"],
+      " như streaming, nhưng đọc ", ["b", "master dataset"], " từ MinIO ",
+      ["code", "phapluat/raw/{YYYY}/{MM}/*.json"], " qua boto3 (không cần hadoop-aws).", ["br"],
+      ["b", "Scheduled"], ": K8s CronJob ", ["code", "spark-batch"], " (",
+      ["code", "0 */6 * * *"], "); docker service ", ["code", "spark-batch-cron"],
+      " (loop 21600s).", ["br"],
+      ["b", "BATCH_FORCE=false"], " (mặc định): dedup-skip — query ES agg theo doc_id, bỏ doc đã có → ",
+      ["b", "tiết kiệm ~99% OpenAI cost"], " sau initial seed.", ["br"],
+      ["b", "BATCH_FORCE=true"], ": re-embed toàn corpus, dùng khi nâng cấp embedding model / chunker. Trigger qua ",
+      ["code", "./run_batch.sh --force"], " hoặc ", ["code", "kubectl apply -f spark-batch-force.yaml"], ".", ["br"],
+      ["b", "Idempotent"], ": ", ["code", "_id = doc_id + md5(doc_id:chunk)[:12]"],
+      " deterministic → ES upsert, không bao giờ tạo bản sao."
+    ],
+    es: [
+      ["b", "ES 8.12.2"], " single-node, heap 512MB. ", ["b", "Hai index"], ":", ["br"],
+      "• ", ["code", "phapluat"], " — corpus pháp luật (dense_vector 1536d cosine HNSW + ICU Vietnamese analyzer)", ["br"],
+      "• ", ["code", "phapluat-audit"], " — audit log mỗi request /api/chat, PII đã redact, lưu hash thay vì raw question", ["br"],
+      ["b", "Hybrid search"], ": kNN boost 0.3 + chunk_text boost 5.0 + title boost 3.0, top_k=10.", ["br"],
+      ["b", "Snapshot → MinIO"], ": ", ["code", "repository-s3"], " module bundled. ES 8.x chặn inline cred → ",
+      ["b", "ES keystore"], " load qua initContainer ", ["code", "load-keystore"],
+      " (emptyDir + subPath mount). Deployment strategy ", ["code", "Recreate"],
+      " vì PVC RWO race node.lock khi rolling update."
+    ],
+    redis: [
+      ["b", "Redis 7"], " in-memory. Key ", ["code", "chat:{sha256(question)}"], ", value JSON ",
+      ["code", "{answer, sources}"], ", TTL 3600s. Cache hit trả < 500ms. Spark ",
+      ["code", "SCAN + DELETE chat:*"],
+      " sau mỗi batch ghi ES thành công → luôn serve câu trả lời phản ánh ES mới nhất, không đợi TTL hết."
+    ],
+    kibana: [
+      ["b", "Kibana 8.12.2"], ". Dashboard ", ["i", "'Legal Chatbot — Document Analytics'"],
+      " tự import khi start (Job ", ["code", "kibana-init"],
+      "). Bao gồm Metric (Total Chunks, Unique Documents, Avg Chunks per Document — Lens formula), Pie (Chunks by Category), Bar (Documents per Category + Top 10 Longest Documents), Table (Document Details). Index pattern: ",
+      ["code", "phapluat"],
+      ". Có thể dựng dashboard thứ hai trên ",
+      ["code", "phapluat-audit"], " để theo dõi query volume, P95 latency, cache hit rate, PII redaction count."
+    ],
+    "spark-cluster": [
+      ["b", "1 Master + 1 Worker"], ", mỗi Worker 2 cores / 2 GiB. Chạy trong K8s Deployment. Nhận job từ ",
+      ["code", "spark-job"], " Deployment (streaming 24/7) hoặc ", ["code", "spark-batch"],
+      " Job (manual trigger). Spark UI tại :8080."
+    ],
+    fastapi: [
+      ["b", "Python 3.11 async"], ". ", ["code", "POST /api/chat"], ":", ["br"],
+      "(1) Check Redis cache theo ", ["code", "sha256(q)"], ["br"],
+      "(2) Embed câu hỏi qua OpenAI", ["br"],
+      "(3) Hybrid search ES top_k=10", ["br"],
+      "(4) Gọi ", ["code", "gpt-4o-mini"], " với prompt yêu cầu JSON ",
+      ["code", "{answer, used_sources:[i,...]}"], ["br"],
+      "(5) Filter sources theo used_sources, dedup URL", ["br"],
+      "(6) ", ["code", "SETEX"], " Redis TTL 3600s", ["br"],
+      "(7) ", ["b", "Audit log"], " → ES ", ["code", "phapluat-audit"], ": ",
+      ["code", "sha256(q)"], " + sanitized question (PII regex redact email / phone VN / CMND / CCCD / mã số thuế) + latency + cache_hit + redaction count. ",
+      ["i", "Best-effort"], " — fail không block user response."
+    ],
+    frontend: [
+      ["b", "React 18 + TypeScript + Vite"], ". Nginx serve build tĩnh + reverse proxy ",
+      ["code", "/api/*"], " → ", ["code", "backend:8000"],
+      ". Component chính: ChatInput, ChatMessages, SourceList — hiển thị câu trả lời kèm danh sách nguồn trích dẫn (title + URL)."
+    ],
+    user: [
+      "Đối tượng sử dụng: học viên, luật sư, nhân viên văn phòng — đặt câu hỏi bằng tiếng Việt. Ví dụ: ",
+      ["i", "'Mua vàng nhẫn có cần chuyển khoản không?'"], ", ",
+      ["i", "'Thủ tục đăng ký kết hôn là gì?'"], "."
+    ],
+    prometheus: [
+      ["b", "Prometheus v2.48.0"], ". Scrape pods + services trong namespace ",
+      ["code", "law-chatbot"], " có annotation ",
+      ["code", "prometheus.io/scrape: \"true\""],
+      "; thêm kubernetes-nodes (cAdvisor) qua ClusterRole RBAC. Retention ",
+      ["b", "15 ngày"], ", lưu trên PVC 10Gi. NodePort ",
+      ["code", "30090"], ".", ["br"],
+      ["b", "Lưu ý"], ": ES / Kafka / Redis hiện DOWN trên target list vì chưa deploy exporter chuyên dụng (",
+      ["code", "elasticsearch_exporter"], ", ", ["code", "kafka_exporter"], ", ",
+      ["code", "redis_exporter"], "). Đây là known gap, không phải bug Prometheus."
+    ],
+    grafana: [
+      ["b", "Grafana 10.2.2"], ". Datasource ", ["code", "Prometheus → http://prometheus:9090"],
+      " được provision sẵn qua ConfigMap ", ["code", "grafana-datasources"], ". ",
+      ["b", "Login"], ": admin / admin123. NodePort ", ["code", "30300"], ".", ["br"],
+      "Dashboard infrastructure: CPU / RAM / network theo pod, health của ES + Kafka + Redis (sau khi cài exporter)."
+    ],
+    cronjobs: [
+      ["b", "Vận hành tự động qua K8s Jobs + CronJobs"], ":", ["br"],
+      ["b", "One-shot init Jobs"], " (chạy 1 lần lúc deploy):", ["br"],
+      "• ", ["code", "es-init"], " — tạo index ", ["code", "phapluat"], " + ",
+      ["code", "phapluat-audit"], " với ICU analyzer + dense_vector mapping", ["br"],
+      "• ", ["code", "kafka-init"], " — tạo topic ", ["code", "van-ban-phap-luat"], ["br"],
+      "• ", ["code", "kibana-init"], " — import dashboard từ ConfigMap ", ["code", "kibana-dashboards"], ["br"],
+      "• ", ["code", "es-snapshot-init"], " — tạo bucket ", ["code", "es-snapshots"], " + register repository ",
+      ["code", "phapluat-snapshots"], ["br"],
+      ["b", "CronJobs"], ":", ["br"],
+      "• ", ["code", "spark-batch"], " — schedule ", ["code", "0 */6 * * *"],
+      " — re-process MinIO raw/ với dedup-skip mặc định", ["br"],
+      "• ", ["code", "es-snapshot"], " — schedule ", ["code", "0 2 * * *"],
+      " — snapshot daily phapluat + phapluat-audit → MinIO", ["br"],
+      ["b", "Manual one-shot"], ":", ["br"],
+      "• ", ["code", "spark-batch-force"], " — apply để re-embed toàn corpus, ",
+      ["code", "BATCH_FORCE=true"], " (TTL 24h tự xoá sau khi xong)"
+    ],
+  };
+
+  const render = (tokens, target) => {
+    while (target.firstChild) target.removeChild(target.firstChild);
+    for (const tok of tokens) {
+      if (typeof tok === 'string') {
+        target.appendChild(document.createTextNode(tok));
+      } else if (Array.isArray(tok)) {
+        const [tag, text] = tok;
+        if (tag === 'br') {
+          target.appendChild(document.createElement('br'));
+        } else {
+          const el = document.createElement(tag);
+          el.textContent = text || '';
+          target.appendChild(el);
+        }
+      }
+    }
+  };
+
+  const tip = document.getElementById('tooltip');
+  const icons = document.querySelectorAll('.info-icon');
+  const PAD = 14;
+
+  const show = (el) => {
+    const key = el.getAttribute('data-key');
+    const tokens = TT[key];
+    if (!tokens) return;
+    render(tokens, tip);
+    tip.classList.add('show');
+    const tRect = tip.getBoundingClientRect();
+    const r = el.getBoundingClientRect();
+    let x = r.right + 12;
+    let y = r.top + (r.height / 2) - (tRect.height / 2);
+    if (x + tRect.width + PAD > window.innerWidth) x = r.left - tRect.width - 12;
+    if (x < PAD) x = PAD;
+    if (y < PAD) y = PAD;
+    if (y + tRect.height + PAD > window.innerHeight) y = window.innerHeight - tRect.height - PAD;
+    tip.style.left = x + 'px';
+    tip.style.top = y + 'px';
+  };
+  const hide = () => tip.classList.remove('show');
+
+  icons.forEach(el => {
+    el.addEventListener('mouseenter', () => show(el));
+    el.addEventListener('mouseleave', hide);
+    el.addEventListener('focus', () => show(el));
+    el.addEventListener('blur', hide);
+    el.setAttribute('tabindex', '0');
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') hide();
+  });
+})();
+</script>
+</body>
+</html>

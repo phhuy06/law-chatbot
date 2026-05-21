@@ -4,9 +4,10 @@ from contextlib import asynccontextmanager
 
 import redis.asyncio as aioredis
 from elasticsearch import AsyncElasticsearch
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
 from backend.config import settings
 from backend.routers.chat import router as chat_router
@@ -32,6 +33,11 @@ app.add_middleware(
 )
 
 app.include_router(chat_router)
+
+
+@app.get("/metrics")
+async def metrics():
+    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 
 @app.get("/health")

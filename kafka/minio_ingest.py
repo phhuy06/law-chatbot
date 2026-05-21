@@ -20,8 +20,8 @@ MINIO_BUCKET = os.environ.get("MINIO_BUCKET", "phapluat")
 KAFKA_BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "kafka:9092")
 KAFKA_TOPIC = os.environ.get("KAFKA_TOPIC", "van-ban-phap-luat")
 
-UNPROCESSED_PREFIX = os.environ.get("INGEST_UNPROCESSED_PREFIX", "csv/")
-PROCESSED_PREFIX = os.environ.get("INGEST_PROCESSED_PREFIX", "csv/processed/")
+UNPROCESSED_PREFIX = os.environ.get("INGEST_UNPROCESSED_PREFIX", "raw/")
+PROCESSED_PREFIX = os.environ.get("INGEST_PROCESSED_PREFIX", "raw/processed/")
 # TODO(prod): This is the speed layer (10s) for dev/testing.
 # In production, batch layer should run on a nightly cron schedule instead
 # of polling. Set INGEST_POLL_INTERVAL=86400 or replace with a scheduler.

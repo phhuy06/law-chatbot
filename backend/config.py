@@ -15,6 +15,12 @@ class Settings(BaseSettings):
     redis_url: str = "redis://localhost:6379/0"
     redis_cache_ttl: int = 3600
 
+    # Retrieval
+    # If the top ES hit's score is below this, skip GPT and return "no info".
+    # Hybrid query mixes text-match (boost 5/3) with kNN (boost 0.3), so legal
+    # hits usually score > 5 and smalltalk noise scores < 2.
+    min_retrieval_score: float = 2.0
+
     # Kafka
     kafka_bootstrap_servers: str = "localhost:9092"
     kafka_topic: str = "van-ban-phap-luat"

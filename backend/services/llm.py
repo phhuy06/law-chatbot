@@ -53,6 +53,51 @@ Câu hỏi: {question}"""
         )
         return response.data[0].embedding
 
+    async def rewrite_query(self, history: list[dict], question: str) -> str:
+        """Rewrite a follow-up question into a standalone search query using chat history.
+
+        history is a list of {"role": "user"|"assistant", "content": str} from prior turns.
+        Returns the original question unchanged if history is empty or rewrite fails.
+        """
+        if not history:
+            return question
+
+        rewrite_system = (
+            "Bạn nhận lịch sử hội thoại và một câu hỏi tiếp theo. "
+            "Nhiệm vụ: viết lại câu hỏi đó thành MỘT câu truy vấn ĐỘC LẬP, đầy đủ ngữ cảnh, "
+            "giữ nguyên ngôn ngữ tiếng Việt, dùng để tìm kiếm trong cơ sở dữ liệu pháp luật. "
+            "Không thêm thông tin mới, không trả lời câu hỏi, chỉ viết lại. "
+            "Nếu câu hỏi đã độc lập (không phụ thuộc lịch sử), trả về nguyên văn."
+        )
+        history_text = "\n".join(
+            f"{'User' if turn.get('role') == 'user' else 'Assistant'}: {turn.get('content', '')}"
+            for turn in history[-6:]  # cap to last 6 turns
+        )
+        user_content = (
+            f"Lịch sử hội thoại:\n{history_text}\n\nCâu hỏi tiếp theo: {question}\n\n"
+            "Câu truy vấn độc lập:"
+        )
+        try:
+            response = await self._client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": rewrite_system},
+                    {"role": "user", "content": user_content},
+                ],
+                temperature=0,
+                max_tokens=200,
+            )
+            rewritten = (response.choices[0].message.content or "").strip()
+            # Strip surrounding quotes if model added them.
+            if (rewritten.startswith('"') and rewritten.endswith('"')) or (
+                rewritten.startswith("'") and rewritten.endswith("'")
+            ):
+                rewritten = rewritten[1:-1].strip()
+            return rewritten or question
+        except Exception as exc:
+            logger.warning("Query rewrite failed, using original: %s", exc)
+            return question
+
     async def generate(self, question: str, chunks: list[dict]) -> tuple[str, list[int]]:
         """Returns (answer_text, list_of_used_chunk_indices)."""
         messages = self._build_messages(question, chunks)

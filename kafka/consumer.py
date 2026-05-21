@@ -42,7 +42,7 @@ class DocumentConsumer:
     def _minio_path(self, crawled_at: str, doc_id: str | None = None) -> str:
         dt = datetime.fromisoformat(crawled_at.replace("Z", "+00:00"))
         filename = doc_id if doc_id else crawled_at
-        return f"phapluat/raw/{dt.year}/{dt.month:02d}/{filename}.json"
+        return f"master/{dt.year}/{dt.month:02d}/{filename}.json"
 
     def _save_to_minio(self, document: dict):
         path = self._minio_path(

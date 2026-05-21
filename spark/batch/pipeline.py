@@ -1,17 +1,17 @@
 """Lambda batch layer.
 
 Reads the master dataset (immutable per-document JSON in MinIO at
-``phapluat/raw/{YYYY}/{MM}/{doc_id}.json`` — written by kafka-consumer),
+``phapluat/master/{YYYY}/{MM}/{doc_id}.json`` — written by kafka-consumer),
 re-runs clean + chunk + embed, and bulk-writes into Elasticsearch.
 
 Env vars:
-    BATCH_DATA_PATH   Default empty → read MinIO raw/. If set to a local
+    BATCH_DATA_PATH   Default empty → read MinIO master/. If set to a local
                       glob like ``/app/crawler/output/*.csv``, falls back to
                       the legacy CSV path (used by ``./run_batch.sh --local``).
     BATCH_FORCE       "true" → skip the ES dedup query so every doc is
                       re-embedded (cost: full OpenAI embedding bill). Use
                       after model or chunker upgrade. Default: dedup enabled.
-    BATCH_RAW_PREFIX  Prefix inside the MinIO bucket. Default ``raw/``.
+    BATCH_RAW_PREFIX  Prefix inside the MinIO bucket. Default ``master/``.
     MINIO_ENDPOINT / MINIO_ACCESS_KEY / MINIO_SECRET_KEY / MINIO_BUCKET
                       Standard MinIO connection vars.
 """
@@ -123,7 +123,7 @@ def chunk_id(doc_id: str, chunk_text: str) -> str:
 
 
 def fetch_raw_from_minio() -> list[dict]:
-    """List + download every per-document JSON in MinIO ``phapluat/raw/``.
+    """List + download every per-document JSON in MinIO ``phapluat/master/``.
 
     Driver-side fan-out: list with paginator, fetch each object, json.loads.
     For our data volume (~10k docs × ~10KB) this is trivial; no s3a:// /
@@ -135,7 +135,7 @@ def fetch_raw_from_minio() -> list[dict]:
     access_key = os.environ.get("MINIO_ACCESS_KEY", "minioadmin")
     secret_key = os.environ.get("MINIO_SECRET_KEY", "minioadmin")
     bucket = os.environ.get("MINIO_BUCKET", "phapluat")
-    prefix = os.environ.get("BATCH_RAW_PREFIX", "raw/")
+    prefix = os.environ.get("BATCH_RAW_PREFIX", "master/")
 
     scheme = "https" if endpoint.startswith("https://") else "http"
     host = endpoint.replace("http://", "").replace("https://", "")

@@ -8,12 +8,17 @@ import "./App.css";
 const API_BASE = import.meta.env.VITE_API_URL || "";
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === "true";
 
+type HistoryTurn = { role: "user" | "assistant"; content: string };
+
 // Real API call
-const sendQuestion = async (question: string): Promise<ChatResponse> => {
+const sendQuestion = async (
+  question: string,
+  history: HistoryTurn[]
+): Promise<ChatResponse> => {
   const res = await fetch(`${API_BASE}/api/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question }),
+    body: JSON.stringify({ question, history }),
   });
 
   if (!res.ok) {
@@ -77,10 +82,16 @@ export default function App() {
     setMessages((prev) => [...prev, loadingMessage]);
 
     try {
+      // Send last 6 turns of history for follow-up rewriting
+      const history: HistoryTurn[] = messages
+        .filter((m) => !m.isLoading && m.content)
+        .slice(-6)
+        .map((m) => ({ role: m.role, content: m.content }));
+
       // Gọi API hoặc mock
       const response = USE_MOCK
         ? await mockResponse(question)
-        : await sendQuestion(question);
+        : await sendQuestion(question, history);
 
       // Replace loading message — store full answer for history
       const assistantMessageId = loadingId;

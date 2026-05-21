@@ -399,7 +399,7 @@ def upload_bytes_to_minio(data: bytes, category: str, endpoint: str, access_key:
             secure=False
         )
         ts = datetime.now().strftime("%Y%m%d-%H%M%S")
-        remote_path = f"csv/backup/{category}/{ts}.csv"
+        remote_path = f"raw/backup/{category}/{ts}.csv"
         client.put_object(
             MINIO_BUCKET,
             remote_path,

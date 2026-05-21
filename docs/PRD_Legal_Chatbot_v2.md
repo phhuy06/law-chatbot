@@ -6,9 +6,9 @@
 | | |
 |---|---|
 | **Mon hoc** | Xu ly Du lieu Lon |
-| **Phien ban** | 2.4 |
+| **Phien ban** | 2.5 |
 | **Ngay tao** | 26/3/2026 |
-| **Cap nhat** | 16/5/2026 |
+| **Cap nhat** | 18/5/2026 |
 | **So thanh vien** | 5 nguoi |
 | **Thoi gian** | 8 tuan (1 ngay/tuan) |
 | **Moi truong** | Mac Mini M4 — Local K8s (Minikube) |
@@ -60,83 +60,81 @@ Ngoai pham vi:
 - Khong deploy len cloud public
 - Khong co tinh nang user authentication
 
-### 1.4 Kien truc chi tiet
+### 1.4 Kien truc chi tiet — Full flow (convergent Lambda)
 
 ```
-                          DATA INGESTION
-  +------------------------------------------------------------------+
-  |                                                                    |
-  |  Crawler (Patchright + BeautifulSoup)                              |
-  |  - Crawl thuvienphapluat.vn (bypass Cloudflare)                   |
-  |  - Persistent Chrome profile giu cf_clearance cookie              |
-  |  - Cron hourly (run_hourly.sh) hoac manual (run_realtime.sh)      |
-  |  - Pre-check: query ES doc_id → --stop-on-seen                    |
-  |       |                    |                                       |
-  |   (realtime)           (backup)                                    |
-  |       |                    |                                       |
-  |       v                    v                                       |
-  |  +----------+      +-----------+                                   |
-  |  |  Kafka   |      |   MinIO   |                                   |
-  |  | (message)|      | (CSV file)|                                   |
-  |  |          |      |           |                                   |
-  |  | topic:   |      | bucket:   |                                   |
-  |  | van-ban- |      | phapluat/ |                                   |
-  |  | phap-luat|      | csv/      |                                   |
-  |  +----+-----+      | csv/backup|                                   |
-  |       |            +-----------+                                   |
-  |       |                  ^                                         |
-  |       +---> kafka-consumer ---> phapluat/raw/{YYYY}/{MM}/{id}.json |
-  |             (luu JSON per-doc de replay / audit)                   |
-  +-------+-----------------------------------------------------------+
-          |
-  +-------+-----------------------------------------------------------+
-  |       v             PROCESSING (Spark)                             |
-  |                                                                    |
-  |  Spark Streaming (spark/streaming/consumer.py)                     |
-  |  1. readStream Kafka (maxOffsetsPerTrigger)                        |
-  |  2. clean_text UDF (remove HTML, NFC normalize)                    |
-  |  3. chunk_text UDF (1000 chars, 100 overlap, sentence-aware)       |
-  |  4. foreachBatch:                                                  |
-  |     4a. Batch-level ES dedup: skip chunks co doc_id da ton tai    |
-  |     4b. Batch embed driver-side (100 texts/call OpenAI)            |
-  |     4c. Bulk write ES (_id = doc_id + md5(doc_id:chunk)[0:12])    |
-  |     4d. Invalidate Redis chat:* keys neu co doc moi                |
-  |       |                                                            |
-  |  Spark Master + Spark Worker (cluster)                             |
-  +-------+-----------------------------------------------------------+
-          |
-  +-------+-----------------------------------------------------------+
-  |       v                  SERVING                                   |
-  |                                                                    |
-  |  +----------------+  +-----------+  +-----------+                  |
-  |  | Elasticsearch  |  |   Redis   |  |  Kibana   |                  |
-  |  | (index:phapluat)|  |  (cache)  |  |(dashboard)|                  |
-  |  |                |  |           |  |           |                  |
-  |  | - Full-text    |  | - Response|  | - Total   |                  |
-  |  | - kNN (cosine) |  |   caching |  |   chunks  |                  |
-  |  | - 1536-dim     |  | - TTL 1h  |  | - Unique  |                  |
-  |  |   vectors      |  |           |  |   docs    |                  |
-  |  +-------+--------+  +-----+-----+  +-----------+                 |
-  |          |                  |                                       |
-  |          +--------+---------+                                      |
-  |                   |                                                |
-  |                   v                                                |
-  |  +--------------------------------------+                          |
-  |  | Backend (FastAPI)          :8000     |                          |
-  |  | 1. Check Redis cache                |                          |
-  |  | 2. Embed question (OpenAI)          |                          |
-  |  | 3. Hybrid search ES (kNN + text)    |                          |
-  |  | 4. Generate answer (GPT-4o-mini)    |                          |
-  |  | 5. Cache response in Redis          |                          |
-  |  +------------------+------------------+                          |
-  |                      |                                             |
-  |                      v                                             |
-  |  +--------------------------------------+                          |
-  |  | Frontend (React + Vite)     :3000    |                          |
-  |  | Nginx reverse proxy -> Backend       |                          |
-  |  +--------------------------------------+                          |
-  +--------------------------------------------------------------------+
+                              CRAWLER (hourly cron)
+                       patchright + BeautifulSoup, ./crawler
+                                        |
+              +-------------------------+-------------------------+
+              | pre-check ES doc_id                               |
+              | (skip already-seen with --stop-on-seen)           |
+              v                                                   v
+       Kafka topic: van-ban-phap-luat              MinIO phapluat/csv/backup/*.csv
+                  (live event stream)                  (CSV archive, never read back)
+                       |
+       +---------------+----------------+
+       |                                |
+       v                                v
+  +----------------+         +------------------------+
+  | kafka-consumer |         | spark-streaming        |
+  | (Deployment)   |         | (Deployment, 24/7)     |
+  |                |         |                        |
+  | - subscribe    |         | 1. readStream Kafka    |
+  | - write raw    |         | 2. clean_text UDF      |
+  |   JSON to      |         | 3. chunk_text UDF      |
+  |   MinIO        |         | 4. foreachBatch:       |
+  |                |         |    a. dedup vs ES      |
+  +--------+-------+         |    b. batch_embed 100  |
+           |                 |    c. bulk write ES    |
+           v                 |    d. invalidate Redis |
+  MinIO phapluat/raw/        |       chat:* keys      |
+   {YYYY}/{MM}/              +------------+-----------+
+   {doc_id}.json                          |
+   <<== MASTER DATASET ==>>               |
+   (immutable, append-only)               |
+           |                              |
+           |                              v
+           |                    +----------------------+
+           |                    |  Elasticsearch       |
+           |                    |  index: phapluat     |
+           |                    |  (full-text + kNN)   |
+           v                    |                      |
+  +------------------+          |  <== SHARED SERVING ==>
+  | spark-batch      |--------->|     both layers      |
+  | (CronJob 0 */6 * * *)       |     converge here    |
+  |  docker: spark-  |  upsert  |                      |
+  |  batch-cron)     |          +----------+-----------+
+  |                  |                     |
+  | - list MinIO     |                     |
+  |   raw/ via boto3 |                     v
+  | - createDataFrame|           +----------------------+
+  | - check ES dedup |           |  FastAPI /api/chat   |
+  |   (unless        |           |                      |
+  |   BATCH_FORCE)   |           |  1. Redis cache      |
+  | - clean+chunk    |           |  2. embed question   |
+  | - batch_embed    |           |  3. hybrid search    |
+  | - bulk write ES  |           |     (kNN + text)     |
+  | - invalidate     |           |  4. GPT-4o-mini      |
+  |   Redis          |           |  5. cache + return   |
+  +------------------+           |  6. audit log -------+-> phapluat-audit
+           ^                     +----------+-----------+    (PII-sanitized)
+           |                                |
+           |                                v
+  spark-batch-force                ES snapshot CronJob
+  (kubectl apply k8s/app/         (0 2 * * *, daily)
+   spark-batch-force.yaml,         |
+   one-shot, BATCH_FORCE=true)     v
+                              MinIO bucket es-snapshots/
+                              (repository-s3, restore via
+                               _snapshot/_restore API)
 ```
+
+**Doc flow trong 1 cau:** crawler push Kafka → speed (spark-streaming) viet ES; kafka-consumer luu raw JSON xuong MinIO → batch (spark-batch CronJob) doc lai MinIO raw/, dedup voi ES, upsert. Hai layer converge tai 1 ES index.
+
+**End-to-end latency speed layer:** crawler -> chatbot queryable < 60s.
+
+**Batch cadence:** moi 6h (dedup-skip mode, gan zero cost). Force re-embed: manual one-shot `kubectl apply -f k8s/app/spark-batch-force.yaml`.
 
 ### 1.5 Deduplication (Chong trung lap)
 
@@ -512,12 +510,17 @@ Disaster recovery cho ca corpus va audit log:
 
 | Buoc | Component |
 |---|---|
-| 1. Install `repository-s3` plugin | `elasticsearch/Dockerfile` (custom image `law-chatbot/elasticsearch:latest`) |
-| 2. Tao bucket `es-snapshots` + register repo `phapluat-snapshots` | Job `es-snapshot-init` (chay 1 lan luc deploy) |
-| 3. Snapshot dinh ky | CronJob `es-snapshot` (`0 2 * * *` — moi 24h) hoac docker-compose service `es-snapshot-cron` (default `SNAPSHOT_INTERVAL_SECONDS=86400`) |
-| 4. Restore | `POST _snapshot/phapluat-snapshots/snap-YYYYMMDD-HHMMSS/_restore` |
+| 1. Module `repository-s3` (bundled trong ES 8.x — khong can install plugin) | `law-chatbot/elasticsearch:latest` (vẫn build custom image cho `analysis-icu`) |
+| 2. Nap S3 credentials vao ES keystore | `load-keystore` initContainer trong Deployment `elasticsearch` (tao keystore tu Secret `minio-creds`, mount qua subPath vao container chinh) |
+| 3. Tao bucket `es-snapshots` + register repo `phapluat-snapshots` | Job `es-snapshot-init` (chay 1 lan luc deploy) — body **khong** chua `access_key`/`secret_key`, ES doc tu keystore client `default` |
+| 4. Snapshot dinh ky | CronJob `es-snapshot` (`0 2 * * *` — moi 24h) hoac docker-compose service `es-snapshot-cron` (default `SNAPSHOT_INTERVAL_SECONDS=86400`) |
+| 5. Restore | `POST _snapshot/phapluat-snapshots/snap-YYYYMMDD-HHMMSS/_restore` |
 
 Script: `scripts/snapshot_elasticsearch.py` — idempotent, dung `httpx` PUT thay vi client lib de tranh version drift.
+
+**Bai hoc kinh dien tu ES 8.x:** truoc kia (ES 6/7) co the truyen `access_key`/`secret_key` inline trong body repo. ES 8.x chan inline cred va escape hatch `repositories.s3.allow_insecure_settings` cung da bi xoa. Duong di duy nhat la **ES keystore** — cac key luu trong file `config/elasticsearch.keystore` ma ES doc luc boot. Tren K8s, pattern chuan la dung initContainer build keystore tu Secret + emptyDir + subPath mount, idempotent moi lan pod restart.
+
+**Verify thuc te:** ngay 18/5/2026 da chay snapshot `snap-20260517-160729` thanh cong — state=SUCCESS, indices=`[phapluat, phapluat-audit]`, 28 objects (5MB) lưu xuong MinIO bucket `es-snapshots`.
 
 ### 8.5 Toi uu chi phi cho Batch Layer (Lambda) — Lessons Learned
 
@@ -653,10 +656,47 @@ legal-chatbot/
 | Elasticsearch index corrupt | Rat thap | Mat toan bo data tim kiem | (a) Snapshot daily → MinIO bucket `es-snapshots` (CronJob `es-snapshot`, Section 8.4) restore tu snapshot gan nhat; (b) Raw JSON per-doc trong MinIO `phapluat/raw/.../`; (c) CSV backup trong `phapluat/csv/backup/`; (d) chay Spark Batch de rebuild tu ngoai |
 | MinIO mat data | Rat thap | Mat snapshot ES + raw JSON | Single-node + emptyDir/PVC khong erasure-coded → bo sung off-cluster backup khi production. Trong scope demo: chap nhan rui ro, du lieu nguon van co the crawl lai tu thuvienphapluat.vn |
 | Lo PII trong audit log | Trung binh | Compliance / privacy | PII regex sanitization (Section 8.1) — email/phone/CMND/CCCD/MST redact truoc khi index. Cau hoi goc khong bao gio luu — chi luu hash SHA-256 |
+| Kafka khong on dinh tren K8s (ZK session expire, OOMKill, Controller bootstrap loop) | Cao luc deploy lan dau | Speed layer dung ban, init Job kafka-init khong hoan thanh | Fix nam trong commit `6ea4193`: `KAFKA_HEAP_OPTS=-Xms512m -Xmx768m` + memory limit 1.5Gi, full Confluent env vars (`KAFKA_LISTENERS`/`INTER_BROKER_LISTENER_NAME`/security-map), `enableServiceLinks: false` (tranh K8s inject `$KAFKA_PORT=tcp://…`), TCP readiness probe thay vi `kafka-topics --list`, va `publishNotReadyAddresses: true` tren kafka Service de Controller boot duoc |
+| Spark khong bind dia chi (Service ClusterIP), parse loi `tcp://…` lam port int | Cao luc deploy lan dau | spark-master/worker crash loop | `SPARK_MASTER_HOST = pod IP` qua Downward API; `enableServiceLinks: false` tren tat ca spark pod |
+| Cache stale sau re-ingest tu speed layer | Trung binh | Cau hoi cu tra ve "khong tim thay" trong 1h dung TTL | `spark/streaming/consumer.py` goi `invalidate_chat_cache` — yeu cau `REDIS_URL` env, ban dau thieu trong Deployment `spark-job`. Da fix trong commit `6ea4193` |
 
 ---
 
 ## 12. Changelog
+
+### v2.5 (18/5/2026)
+
+K8s deploy validated end-to-end tren Minikube, persist runtime patch vao manifest. Bug + tinh huong moi bo sung trong commit `6ea4193`:
+
+- **Kafka stability tren K8s + Confluent 7.6.0:**
+  - `KAFKA_HEAP_OPTS=-Xms512m -Xmx768m` + memory limit 1.5Gi → ngung OOMKill.
+  - Full env vars (`KAFKA_LISTENERS`, `KAFKA_INTER_BROKER_LISTENER_NAME`, `SECURITY_PROTOCOL_MAP`, transaction-state replication factor) — thieu khien Confluent entrypoint exit code 1 ngay sau "port is deprecated".
+  - `enableServiceLinks: false` — K8s tu dong inject `$KAFKA_PORT=tcp://…` collision voi Confluent's entrypoint, lam crash container.
+  - TCP socket readiness probe (initialDelay 30s) thay vi `kafka-topics --list` exec — probe exec hang trong cua so ZK reconnect, khien Pod khong bao gio Ready.
+  - `publishNotReadyAddresses: true` tren `kafka` Service — chicken-and-egg: Controller cua kafka tu mo `kafka:9092` ngay luc bootstrap, ma Service khong co endpoint vi pod chua Ready.
+
+- **Spark stability tren K8s:**
+  - `SPARK_MASTER_HOST` binds pod IP qua Downward API (`status.podIP`) — Service ClusterIP khong phai interface tren pod, bind throws "Cannot assign requested address".
+  - `enableServiceLinks: false` tren spark-master/worker/job/batch/batch-force — `SPARK_MASTER_PORT=tcp://…` injected boi K8s lam Scala parseInt throw NumberFormatException.
+
+- **ES snapshot via ES keystore (Section 8.4 cap nhat):**
+  - ES 8.x khong cho inline `access_key`/`secret_key` trong body repo, va escape hatch `repositories.s3.allow_insecure_settings` khong con la known setting → "unknown setting" boot error.
+  - Pattern moi: Secret `minio-creds` → initContainer `load-keystore` (chay ES image, goi `elasticsearch-keystore add s3.client.default.access_key/.secret_key`) → emptyDir → subPath mount vao container chinh.
+  - Deployment strategy doi sang `Recreate` (PVC `ReadWriteOnce` — rolling update se race node.lock).
+  - `scripts/snapshot_elasticsearch.py` bo inline cred trong body repo register.
+
+- **Cache invalidation bug trong speed layer:**
+  - Deployment `spark-job` (streaming) thieu `REDIS_URL` env → `invalidate_chat_cache()` short-circuit lang le.
+  - Trieu chung: xoa doc khoi ES, re-ingest qua speed layer (data-ingest → Kafka → spark-streaming → ES), chunks ve lai dung, nhung cau hoi cu van tra "khong tim thay" trong 1h TTL vi Redis vẫn giu cache.
+  - Fix: them `REDIS_URL=redis://redis:6379/0` vao Deployment `spark-job` env.
+
+- **Kibana memory:** bump limit len 1Gi + `NODE_OPTIONS=--max-old-space-size=768` — truoc do OOMKill khi tat ca infra cung len.
+
+- **Validation end-to-end:**
+  - 1,122 docs ingest qua batch CronJob (~5,800 chunks, ~$0.06 OpenAI cost).
+  - Chat queries (vd "Doanh nghiep ban hang da cap phai ky quy bao nhieu?") tra ve cau tra loi co trich dan dung doc_id + URL nguon.
+  - Snapshot `snap-20260517-160729` state=SUCCESS, indices `[phapluat, phapluat-audit]`, 28 objects (5MB) tren MinIO bucket `es-snapshots`.
+  - Speed layer round-trip: delete doc -> upload CSV vao MinIO `csv/` -> data-ingest -> Kafka -> spark-streaming -> ES lai co doc trong ~13s.
 
 ### v2.4 (16/5/2026)
 
