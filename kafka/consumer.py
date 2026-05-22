@@ -40,8 +40,15 @@ class DocumentConsumer:
             logger.info("Created MinIO bucket: %s", self._bucket)
 
     def _minio_path(self, crawled_at: str, doc_id: str | None = None) -> str:
-        dt = datetime.fromisoformat(crawled_at.replace("Z", "+00:00"))
-        filename = doc_id if doc_id else crawled_at
+        # Robust to legacy/corrupt rows where crawled_at is missing or contains
+        # garbage (a few old CSVs had columns shifted, putting a URL in this slot).
+        # In those cases we fall back to "now" so the doc still lands somewhere.
+        try:
+            dt = datetime.fromisoformat((crawled_at or "").replace("Z", "+00:00"))
+        except (ValueError, AttributeError):
+            from datetime import timezone
+            dt = datetime.now(timezone.utc)
+        filename = doc_id if doc_id else "unknown"
         return f"master/{dt.year}/{dt.month:02d}/{filename}.json"
 
     def _save_to_minio(self, document: dict):
@@ -72,9 +79,16 @@ class DocumentConsumer:
                     logger.warning("Consumer error: %s", msg.error())
                     continue
 
-                document = json.loads(msg.value().decode("utf-8"))
-                self._save_to_minio(document)
-                logger.info("Processed document: %s", document.get("id", "unknown"))
+                try:
+                    document = json.loads(msg.value().decode("utf-8"))
+                    self._save_to_minio(document)
+                    logger.info("Processed document: %s", document.get("id", "unknown"))
+                except Exception as e:
+                    # Never crash the consumer on a single malformed message —
+                    # log and skip. We've seen URLs in the crawled_at field on
+                    # legacy CSVs; the per-message try/except keeps the rest of
+                    # the batch flowing.
+                    logger.error("Skipping bad message: %s  (msg=%s)", e, msg.value()[:200])
         except KeyboardInterrupt:
             logger.info("Consumer stopped by user")
         finally:

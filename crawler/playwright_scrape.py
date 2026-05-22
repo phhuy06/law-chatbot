@@ -81,94 +81,55 @@ def _has_classes(tag, *classes):
 def parse_article(html: str) -> Dict[str, object]:
     """Parse an article HTML string and return {'question': str, 'answer': List[str]}.
 
-    This follows the path described: tvpl-main -> first div.row -> div.col-md-9 ps-md-0 ->
-    article -> div.row -> div.col-md-9 ct-main pe-md-0. Then extracts header>h1 as question
-    and all <p> / <blockquote> inside section.news-content#news-content as answer paragraphs.
-    Nested tags inside p/blockquote are flattened to text.
+    The site dropped the `div.tvpl-main` wrapper sometime in 2025; the article
+    body is now a flat ``<section id="news-content">`` and the title is the
+    first ``<h1>`` in the document. We grab them directly. Inline elements
+    inside <p>/<blockquote>/<h2>/<h3>/<li> get flattened to plain text.
     """
     soup = BeautifulSoup(html, "html.parser")
 
-    # root container
-    root = soup.find(lambda t: t.name == 'div' and (t.get('class') and 'tvpl-main' in t.get('class')))
-    if not root:
-        root = soup.find('div', class_='tvpl-main')
-    if not root:
-        return {"question": "", "answer": []}
-
-    # first row inside root
-    row1 = root.find('div', class_='row')
-    if not row1:
-        return {"question": "", "answer": []}
-
-    # target column: prefer div with both classes
-    col_main = row1.find(lambda t: t.name == 'div' and _has_classes(t, 'col-md-9', 'ps-md-0'))
-    if not col_main:
-        col_main = row1.find(lambda t: t.name == 'div' and ('col-md-9' in (t.get('class') or [])))
-    if not col_main:
-        return {"question": "", "answer": []}
-
-    article = col_main.find('article') or col_main
-    inner_row = article.find('div', class_='row')
-    if not inner_row:
-        return {"question": "", "answer": []}
-
-    target_col = inner_row.find(lambda t: t.name == 'div' and _has_classes(t, 'col-md-9', 'ct-main', 'pe-md-0'))
-    if not target_col:
-        target_col = inner_row.find(lambda t: t.name == 'div' and ('col-md-9' in (t.get('class') or [])))
-
-    # question from header > h1
+    # Title: first <h1>. The new layout has only one (the article heading).
+    h1 = soup.find("h1")
     question = ""
-    if target_col:
-        header = target_col.find('header')
-        if header:
-            h1 = header.find('h1')
-            if h1:
-                question = " ".join([ln.strip() for ln in h1.get_text(separator=" ").splitlines() if ln.strip()])
+    if h1:
+        question = " ".join(h1.get_text(separator=" ").split())
 
-    # answer: collect p and blockquote inside section.news-content#news-content
+    # Body: <section id="news-content"> — collect headings, paragraphs, quotes,
+    # list items. Skip <p> that only contain images.
     answer_list: List[str] = []
-    if target_col:
-        section = target_col.find('section', id='news-content') or target_col.find('section', class_='news-content')
-        if section:
-            elems = section.find_all(['p', 'blockquote'])
-            for el in elems:
-                # skip empty
-                txt = " ".join([ln.strip() for ln in el.get_text(separator=" ").splitlines() if ln.strip()])
-                if txt:
-                    answer_list.append(txt)
+    section = soup.find("section", id="news-content")
+    if section:
+        for el in section.find_all(["h2", "h3", "p", "blockquote", "li"]):
+            if el.name == "p" and el.find("img") and not el.get_text(strip=True):
+                continue
+            txt = " ".join(el.get_text(separator=" ").split())
+            if txt:
+                answer_list.append(txt)
 
     return {"question": question, "answer": answer_list}
 
 
 def extract_from_detail(page, url, category_slug: str = ""):
-    # Wait for the main detail container
+    # Wait for the main article body (new layout — section#news-content is the
+    # one stable anchor across the site's redesigns).
     try:
-        page.wait_for_selector("div.tvpl-main.container.pt-3.pb-3.wap-page-detail", timeout=5000)
+        page.wait_for_selector("section#news-content", timeout=10000)
     except Exception:
         pass
 
-    # Locate detail container and prefer article inside it
-    detail = page.query_selector("div.tvpl-main.container.pt-3.pb-3.wap-page-detail") or page.query_selector("div.wap-page-detail") or page
-
-    # Remove non-article top-level divs inside the detail container to avoid breadcrumbs/ads
-    try:
-        page.eval_on_selector("div.tvpl-main.container.pt-3.pb-3.wap-page-detail", "(container) => { Array.from(container.querySelectorAll(':scope > div')).forEach(d=>{ if(!d.querySelector('article')) d.remove(); }); }")
-    except Exception:
-        # ignore if selector not present
-        pass
-
-    # prefer article element for the answer/content
+    # The new layout is flat — no .tvpl-main wrapper. Use the whole page as the
+    # detail container; the answer extraction below already scopes to section#news-content.
+    detail = page
     article = detail.query_selector("article") or detail
 
     # id from URL
     m = re.search(r"-(\d+)\.html$", url)
     doc_id = m.group(1) if m else ""
 
-    # title: first h1.h3.fw-bold.title inside header (within article if present)
+    # title: first <h1> on the page (new layout has only one).
     title = ""
     try:
-        header = article.query_selector("header") or article
-        t = header.query_selector("h1.h3.fw-bold.title")
+        t = page.query_selector("h1")
         if t:
             title = normalize_text(t.inner_text())
     except Exception:
@@ -184,16 +145,15 @@ def extract_from_detail(page, url, category_slug: str = ""):
     except Exception:
         parsed = {"question": "", "answer": []}
 
-    # Remove inner divs inside the big detail/article to avoid sidebar/menu text
-    try:
-        article.evaluate("node => { Array.from(node.querySelectorAll('div')).forEach(d=>d.remove()); Array.from(node.querySelectorAll('script, style, .ads, .sidebar, .related-questions, .social-share')).forEach(e=>e.remove()); }")
-    except Exception:
-        pass
-
-    # answer: ONLY gather <p> and <blockquote> inside section.news-content#news-content (skip <p> that contain <img>)
+    # answer: ONLY gather <p> and <blockquote> inside section#news-content.
+    # We deliberately DON'T strip surrounding <div>s anymore — the new layout
+    # is flat and removing divs would nuke the body.
     answer = ""
     try:
-        section = article.query_selector('section.news-content#news-content') or article.query_selector('section#news-content')
+        section = (
+            article.query_selector('section#news-content')
+            or page.query_selector('section#news-content')
+        )
         parts = []
         if section:
             # 1) collect h2 headings (if any)
@@ -249,23 +209,43 @@ def extract_from_detail(page, url, category_slug: str = ""):
     except Exception:
         pass
 
-    # published date: from breadcrumb container span.news-time. The site renders
-    # it as "HH:MM | DD/MM/YYYY", so preserve the time — it is the only way to
-    # order two articles published on the same day.
+    # published date — two sources on the new layout, try most reliable first:
+    #   1. JSON-LD `"datePublished":"YYYY-MM-DD"` in <script type="application/ld+json">
+    #   2. Visible <span class="small text-muted text-nowrap ms-auto">HH:MM | DD/MM/YYYY</span>
+    # We emit ISO 8601 always so lexicographic sort = chronological.
     published_date = ""
     try:
-        pub_el = page.query_selector("div.d-flex.justify-content-between.align-items-baseline.tvpl-breadcrumb-container span.news-time") or page.query_selector("span.news-time")
-        pub = normalize_text(pub_el.inner_text()) if pub_el else ""
-        if pub:
-            for fmt in ("%H:%M | %d/%m/%Y", "%d/%m/%Y", "%d-%m-%Y", "%Y-%m-%d", "%Y/%m/%d"):
+        # 1) JSON-LD (preferred — structured data, robust to template tweaks)
+        html_full = ""
+        try:
+            html_full = page.content() or ""
+        except Exception:
+            html_full = ""
+        m = re.search(r'"datePublished"\s*:\s*"([^"]+)"', html_full)
+        if m:
+            raw = m.group(1).strip()
+            for fmt in ("%Y-%m-%dT%H:%M:%S%z", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"):
                 try:
-                    dt = datetime.strptime(pub.strip(), fmt)
-                    # Always emit ISO 8601 so lexicographic sort == chronological
-                    # (date-only rows get a 00:00:00 suffix, sort before same-day timed ones)
+                    dt = datetime.strptime(raw, fmt)
                     published_date = dt.strftime("%Y-%m-%dT%H:%M:%S")
                     break
                 except Exception:
                     continue
+        # 2) Fallback to the visible span (also catches old layouts)
+        if not published_date:
+            pub_el = (
+                page.query_selector("span.small.text-muted.text-nowrap.ms-auto")
+                or page.query_selector("span.news-time")
+            )
+            pub = normalize_text(pub_el.inner_text()) if pub_el else ""
+            if pub:
+                for fmt in ("%H:%M | %d/%m/%Y", "%d/%m/%Y", "%d-%m-%Y", "%Y-%m-%d", "%Y/%m/%d"):
+                    try:
+                        dt = datetime.strptime(pub.strip(), fmt)
+                        published_date = dt.strftime("%Y-%m-%dT%H:%M:%S")
+                        break
+                    except Exception:
+                        continue
     except Exception:
         published_date = ""
 
@@ -431,6 +411,36 @@ def safe_goto(page, url, retries=3, timeout=20000):
             time.sleep(backoff)
 
 
+def discover_links_from_hub(page, hub_url=BASE_URL, retries=3, timeout=20000) -> List[str]:
+    """Fetch the hub page and extract article URLs.
+
+    Used as a fallback when category subpages (``/hoi-dap-phap-luat/<slug>``)
+    return 403 — a server-side rule the site added around late-2025. The hub
+    page itself stays accessible and links to ~300+ Q&A articles.
+
+    Loses category metadata (each article's slug doesn't reliably encode its
+    category), but the article body itself still has the category, so the
+    per-article ``extract_from_detail`` will fill it in.
+    """
+    ok = safe_goto(page, hub_url, retries=retries, timeout=timeout)
+    if not ok:
+        return []
+    _clear_cf_challenge(page)
+    links: List[str] = []
+    seen = set()
+    pattern = re.compile(r"/hoi-dap-phap-luat/[^/]+-\d+\.html$")
+    for a in page.query_selector_all("a[href]"):
+        href = a.get_attribute("href") or ""
+        if not pattern.search(href):
+            continue
+        if href.startswith("/"):
+            href = "https://thuvienphapluat.vn" + href
+        if href.startswith("http") and href not in seen:
+            seen.add(href)
+            links.append(href)
+    return links
+
+
 def discover_categories(hub_url=BASE_URL, retries=3, timeout=20000) -> List[str]:
     """Fetch the hub page and return category slugs found in its navigation.
 
@@ -540,7 +550,7 @@ def main(start_url, output_path,
          start_page=START_PAGE, end_page=END_PAGE, per_page_limit=0, delay_min=1.0, delay_max=2.0, retries=3,
          realtime=False, es_url="http://localhost:9200", kafka_servers="localhost:29092",
          minio_endpoint="localhost:9000", minio_access="minioadmin", minio_secret="minioadmin",
-         stop_on_seen=False):
+         stop_on_seen=False, seed_urls: Optional[List[str]] = None):
 
     # Initialize realtime components
     es = None
@@ -578,8 +588,15 @@ def main(start_url, output_path,
         except Exception:
             pass
 
-        all_links = []
+        # --url mode: caller passed explicit article URLs, skip listing entirely.
+        if seed_urls:
+            print(f"Seed mode: skipping listing, processing {len(seed_urls)} URL(s)")
+            all_links = list(seed_urls)
+        else:
+            all_links = []
         for p in range(start_page, end_page + 1):
+            if seed_urls:
+                break
             list_url = f"{start_url}?page={p}"
             print(f"Fetching list page: {list_url}")
             try:
@@ -590,39 +607,19 @@ def main(start_url, output_path,
                 print(f"Failed to load list page {list_url}: {e}")
                 continue
 
-            # clear any Cloudflare challenge, then wait for list container
             _clear_cf_challenge(page)
-            try:
-                page.wait_for_selector("div.tvpl-main.container.pt-3.pb-3", timeout=5000)
-            except Exception:
-                pass
-
-            # traverse path: body -> div.tvpl-main.container.pt-3.pb-3 -> div.row -> div.col-md-9 -> section -> article.news-card
+            # New layout has no .tvpl-main wrapper — extract by URL pattern.
+            # All listing articles match /hoi-dap-phap-luat/<slug>-<id>.html.
             links = []
-            try:
-                container = page.query_selector("div.tvpl-main.container.pt-3.pb-3") or page
-                row = container.query_selector("div.row") or container
-                col = row.query_selector("div.col-md-9") or row
-                section = col.query_selector("section") or col
-                articles = section.query_selector_all("article.news-card") if section else []
-                if not articles:
-                    articles = page.query_selector_all("article.news-card")
-                for a in articles:
-                    anchor = a.query_selector("a")
-                    if anchor:
-                        href = anchor.get_attribute("href")
-                        if href and href.startswith("/"):
-                            href = "https://thuvienphapluat.vn" + href
-                        if href and href.startswith("http"):
-                            links.append(href)
-            except Exception:
-                # fallback: scan page for links matching pattern
-                for a in page.query_selector_all("a"):
-                    href = a.get_attribute("href")
-                    if href and "/hoi-dap-phap-luat/" in href and href.endswith('.html'):
-                        if href.startswith('/'):
-                            href = 'https://thuvienphapluat.vn' + href
-                        links.append(href)
+            article_re = re.compile(r"/hoi-dap-phap-luat/[^/]+-\d+\.html$")
+            for a in page.query_selector_all("a[href]"):
+                href = a.get_attribute("href") or ""
+                if not article_re.search(href):
+                    continue
+                if href.startswith("/"):
+                    href = "https://thuvienphapluat.vn" + href
+                if href.startswith("http"):
+                    links.append(href)
 
             # dedupe per page and add
             seen_local = set()
@@ -633,6 +630,12 @@ def main(start_url, output_path,
 
             # polite delay between list pages
             time.sleep(random.uniform(1.0, 2.0))
+
+        # NOTE: removed hub fallback. When category listings 403 (e.g. thua-ke),
+        # we used to fall back to /hoi-dap-phap-luat and assign all hub articles
+        # to the requested category — which is wrong for bulk per-category crawls
+        # (every CSV would contain the same hub articles). For targeted recrawls
+        # use --url instead. For bulk runs, blocked categories just get skipped.
 
         # dedupe overall
         seen = set()
@@ -802,6 +805,8 @@ if __name__ == '__main__':
     parser.add_argument('--minio-endpoint', default='localhost:9000', help='MinIO endpoint')
     parser.add_argument('--minio-access', default='minioadmin', help='MinIO access key')
     parser.add_argument('--minio-secret', default='minioadmin', help='MinIO secret key')
+    parser.add_argument('--url', action='append', default=None,
+                        help='Crawl one or more specific article URL(s) instead of listing. Repeatable.')
     args = parser.parse_args()
 
     if args.list_categories:
@@ -831,4 +836,5 @@ if __name__ == '__main__':
         start_url=start_url,
         output_path=output_path,
         stop_on_seen=args.stop_on_seen,
+        seed_urls=args.url,
     )

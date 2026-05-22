@@ -133,12 +133,15 @@ start_pf() {
   kubectl -n "$NS" port-forward "svc/$svc" "${local_port}:${remote_port}" \
     >"/tmp/pf-${svc}.log" 2>&1 &
 }
-start_pf frontend   8080            80
-start_pf backend    "$BACKEND_LOCAL" 8000
-start_pf grafana    3000            3000
-start_pf kibana     5601            5601
-start_pf prometheus 9090            9090
-start_pf minio      9001            9001
+start_pf frontend     8080            80
+start_pf backend      "$BACKEND_LOCAL" 8000
+start_pf grafana      3000            3000
+start_pf kibana       5601            5601
+start_pf prometheus   9090            9090
+start_pf minio        9001            9001   # web console
+start_pf minio        9000            9000   # S3 API (used by bulk_load_to_minio.py)
+start_pf elasticsearch 9200           9200   # ES API (used by demo + bulk scripts)
+start_pf kafka        29092           9094   # external listener (used by host crawler)
 sleep 2
 
 cat <<EOF
