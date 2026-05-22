@@ -768,18 +768,12 @@ def main(start_url, output_path,
                         w.writerow(r)
                 print(f"Wrote {len(rows_sorted)} rows to {os.path.basename(output_path)} (upsert + sorted by published_date desc)")
 
-        # Realtime: upload buffered CSV to MinIO, grouped by category
-        if realtime and new_rows_count > 0 and buf is not None:
-            category = os.path.splitext(os.path.basename(output_path))[0]
-            upload_bytes_to_minio(
-                buf.getvalue().encode("utf-8"),
-                category,
-                minio_endpoint,
-                minio_access,
-                minio_secret,
-            )
-        elif realtime:
-            print("No new rows — skipping MinIO upload")
+        # NOTE: previously this also uploaded the buffered CSV to MinIO at
+        # raw/backup/<category>/<ts>.csv as an "archive." Removed because
+        # data-ingest polls raw/ recursively and would re-publish those rows
+        # to Kafka — duplicating every article in --realtime mode (once via
+        # publish_to_kafka above, once via data-ingest). The direct Kafka
+        # publish is the single source of truth for realtime ingestion.
 
         context.close()
     return new_rows_count

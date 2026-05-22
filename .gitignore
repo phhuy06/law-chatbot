@@ -57,3 +57,6 @@ logs/
 data/
 *.parquet
 *.json.gz
+
+# Internal docs — kept locally, not tracked
+docs/
