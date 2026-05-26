@@ -93,7 +93,7 @@ def main():
     else:
         print("Some services are not ready")
         print("\nMake sure to start services:")
-        print("  docker-compose up -d elasticsearch kafka minio")
+        print("  bash k8s/start.sh")
         sys.exit(1)
 
 

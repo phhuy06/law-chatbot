@@ -57,7 +57,7 @@ spec:
 ---
 # data-ingest: polls MinIO raw/ for new CSV files, pushes rows to Kafka,
 # then moves CSVs to raw/processed/. Long-running poller (default 10s
-# interval). Mirrors docker-compose's data-ingest service.
+# interval). Used for bulk-loading CSV corpus into the pipeline.
 apiVersion: apps/v1
 kind: Deployment
 metadata:

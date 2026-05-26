@@ -39,11 +39,12 @@ npm run build
 
 Output sẽ ở thư mục `dist/`.
 
-## Chạy với Docker
+## Chạy trên Kubernetes
 
 ```bash
 # Từ thư mục gốc của project
-docker-compose up frontend
+kubectl apply -f k8s/app/frontend.yaml
+kubectl port-forward -n law-chatbot svc/frontend 3000:3000
 ```
 
 Frontend sẽ chạy tại: http://localhost:3000

@@ -16,11 +16,11 @@ Lambda architecture: Spark Streaming (speed) + Spark Batch + Elasticsearch servi
 - **Backend**: FastAPI (Python)
 - **Frontend**: React + TypeScript (Vite)
 - **LLM**: GPT-4o mini (OpenAI API)
-- **Orchestration**: Docker Compose (dev) / Kubernetes Minikube (demo)
+- **Orchestration**: Kubernetes (Minikube for dev/demo)
 
 ## Development Workflow
 
-- `docker-compose up -d` to start infra
+- `bash k8s/start.sh` to deploy infra + app to minikube
 - `source .venv/bin/activate` for Python work
 - `cd frontend && npm run dev` for frontend
 
