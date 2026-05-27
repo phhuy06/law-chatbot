@@ -118,6 +118,21 @@ kubectl -n "$NS" wait --for=condition=available --timeout=300s \
   deployment/backend deployment/frontend deployment/kafka-consumer deployment/data-ingest \
   deployment/spark-master deployment/spark-worker deployment/spark-job
 
+# ----- 6b. Ensure Kafka topic exists -----
+# Kafka has no persistent volume, so a pod/cluster restart wipes all topics.
+# kafka-init is a one-shot Job that does NOT re-run, so re-assert the topic here
+# (idempotent). Only bounce the consumers when the topic was actually missing.
+echo "==> Ensuring Kafka topic 'van-ban-phap-luat' exists..."
+if kubectl -n "$NS" exec deploy/kafka -- kafka-topics --bootstrap-server localhost:9092 --list 2>/dev/null | grep -qx van-ban-phap-luat; then
+  echo "    topic already present"
+else
+  kubectl -n "$NS" exec deploy/kafka -- kafka-topics --bootstrap-server localhost:9092 \
+    --create --if-not-exists --topic van-ban-phap-luat --partitions 1 --replication-factor 1
+  echo "    topic created — restarting spark-job + kafka-consumer to re-subscribe"
+  kubectl -n "$NS" rollout restart deployment/spark-job deployment/kafka-consumer >/dev/null 2>&1 || true
+  kubectl -n "$NS" rollout status deployment/spark-job --timeout=120s >/dev/null 2>&1 || true
+fi
+
 # ----- 7. Port-forwards -----
 echo "==> Resetting port-forwards..."
 pkill -f "kubectl.*port-forward.*${NS}" 2>/dev/null || true
@@ -142,6 +157,30 @@ start_pf minio        9001            9001   # web console
 start_pf minio        9000            9000   # S3 API (used by bulk_load_to_minio.py)
 start_pf elasticsearch 9200           9200   # ES API (used by demo + bulk scripts)
 start_pf kafka        29092           9094   # external listener (used by host crawler)
+sleep 2
+
+# ----- 8. Verify port-forwards are actually listening (retry once) -----
+# Port-forwards can die if their target pod restarts (e.g. grafana after the
+# rollout above). Re-check each local port and retry any that aren't up.
+echo "==> Verifying port-forwards..."
+verify_pf() {
+  local svc=$1 local_port=$2 remote_port=$3
+  if ! nc -z localhost "$local_port" 2>/dev/null; then
+    echo "    :$local_port ($svc) not up — retrying"
+    kubectl -n "$NS" port-forward "svc/$svc" "${local_port}:${remote_port}" \
+      >"/tmp/pf-${svc}-${local_port}.log" 2>&1 &
+  fi
+}
+sleep 1
+verify_pf frontend 8080 80
+verify_pf backend "$BACKEND_LOCAL" 8000
+verify_pf grafana 3000 3000
+verify_pf kibana 5601 5601
+verify_pf prometheus 9090 9090
+verify_pf minio 9001 9001
+verify_pf minio 9000 9000
+verify_pf elasticsearch 9200 9200
+verify_pf kafka 29092 9094
 sleep 2
 
 cat <<EOF
